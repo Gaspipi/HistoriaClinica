@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "beGAS/ufQxSOBpabP5G/6NYRqAezcoKs0xQGafrzxq4JKbV+9gmv2X+nbpdfn/OITMiRDD1zl1kz/1A4p7P3Ww==",
+  "success": true,
+  "projectFilePath": "F:\\OneDrive\\Documentos\\Cursos\\NET\\WinFormsApp1\\WinFormsApp1.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ferre\\.nuget\\packages\\system.data.odbc\\7.0.0\\system.data.odbc.7.0.0.nupkg.sha512",
+    "C:\\Users\\ferre\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\ferre\\.nuget\\packages\\system.text.encoding.codepages\\7.0.0\\system.text.encoding.codepages.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
