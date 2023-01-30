@@ -30,27 +30,29 @@
         {
             this.TabControl = new System.Windows.Forms.TabControl();
             this.Paciente = new System.Windows.Forms.TabPage();
-            this.NewPacienteButton = new System.Windows.Forms.Button();
+            this.FirstNameTextBox = new System.Windows.Forms.TextBox();
+            this.LastNameTextBox = new System.Windows.Forms.TextBox();
             this.PhoneTextBox = new System.Windows.Forms.TextBox();
+            this.BirthDateTextBox = new System.Windows.Forms.TextBox();
+            this.ObraSocialTextBox = new System.Windows.Forms.TextBox();
+            this.NroAsociadoTextBox = new System.Windows.Forms.TextBox();
+            this.NewPacienteButton = new System.Windows.Forms.Button();
             this.PhoneLabel = new System.Windows.Forms.Label();
             this.SaveButton = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.AntecFamiTextBox = new System.Windows.Forms.TextBox();
             this.AntecPersTextBox = new System.Windows.Forms.TextBox();
-            this.FirstNameTextBox = new System.Windows.Forms.TextBox();
             this.NroAsociadoLabel = new System.Windows.Forms.Label();
-            this.BirthDateTextBox = new System.Windows.Forms.TextBox();
             this.ObraSocialLabel = new System.Windows.Forms.Label();
             this.LastNameLabel = new System.Windows.Forms.Label();
             this.FirstNameLabel = new System.Windows.Forms.Label();
             this.BirthLabel = new System.Windows.Forms.Label();
-            this.NroAsociadoTextBox = new System.Windows.Forms.TextBox();
-            this.ObraSocialTextBox = new System.Windows.Forms.TextBox();
-            this.LastNameTextBox = new System.Windows.Forms.TextBox();
             this.HistoriaClinica = new System.Windows.Forms.TabPage();
+            this.DeleteButton = new System.Windows.Forms.Button();
+            this.IndicacionesLabel = new System.Windows.Forms.Label();
+            this.IndicacionesTextBox = new System.Windows.Forms.TextBox();
             this.NewButton = new System.Windows.Forms.Button();
-            this.SaveButton2 = new System.Windows.Forms.Button();
             this.FichasDiariasLabel = new System.Windows.Forms.Label();
             this.MotivoLabel = new System.Windows.Forms.Label();
             this.EnfermedadLabel = new System.Windows.Forms.Label();
@@ -85,24 +87,25 @@
             // 
             // Paciente
             // 
-            this.Paciente.Controls.Add(this.NewPacienteButton);
+            this.Paciente.BackColor = System.Drawing.SystemColors.Menu;
+            this.Paciente.Controls.Add(this.FirstNameTextBox);
+            this.Paciente.Controls.Add(this.LastNameTextBox);
             this.Paciente.Controls.Add(this.PhoneTextBox);
+            this.Paciente.Controls.Add(this.BirthDateTextBox);
+            this.Paciente.Controls.Add(this.ObraSocialTextBox);
+            this.Paciente.Controls.Add(this.NroAsociadoTextBox);
+            this.Paciente.Controls.Add(this.NewPacienteButton);
             this.Paciente.Controls.Add(this.PhoneLabel);
             this.Paciente.Controls.Add(this.SaveButton);
             this.Paciente.Controls.Add(this.label8);
             this.Paciente.Controls.Add(this.label7);
             this.Paciente.Controls.Add(this.AntecFamiTextBox);
             this.Paciente.Controls.Add(this.AntecPersTextBox);
-            this.Paciente.Controls.Add(this.FirstNameTextBox);
             this.Paciente.Controls.Add(this.NroAsociadoLabel);
-            this.Paciente.Controls.Add(this.BirthDateTextBox);
             this.Paciente.Controls.Add(this.ObraSocialLabel);
             this.Paciente.Controls.Add(this.LastNameLabel);
             this.Paciente.Controls.Add(this.FirstNameLabel);
             this.Paciente.Controls.Add(this.BirthLabel);
-            this.Paciente.Controls.Add(this.NroAsociadoTextBox);
-            this.Paciente.Controls.Add(this.ObraSocialTextBox);
-            this.Paciente.Controls.Add(this.LastNameTextBox);
             this.Paciente.Location = new System.Drawing.Point(4, 24);
             this.Paciente.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Paciente.Name = "Paciente";
@@ -110,8 +113,75 @@
             this.Paciente.Size = new System.Drawing.Size(879, 534);
             this.Paciente.TabIndex = 0;
             this.Paciente.Text = "Paciente";
-            this.Paciente.UseVisualStyleBackColor = true;
             this.Paciente.Click += new System.EventHandler(this.tabPage1_Click);
+            // 
+            // FirstNameTextBox
+            // 
+            this.FirstNameTextBox.Location = new System.Drawing.Point(16, 26);
+            this.FirstNameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.FirstNameTextBox.MaxLength = 50;
+            this.FirstNameTextBox.Name = "FirstNameTextBox";
+            this.FirstNameTextBox.ReadOnly = true;
+            this.FirstNameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.FirstNameTextBox.Size = new System.Drawing.Size(187, 23);
+            this.FirstNameTextBox.TabIndex = 7;
+            // 
+            // LastNameTextBox
+            // 
+            this.LastNameTextBox.Location = new System.Drawing.Point(239, 27);
+            this.LastNameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.LastNameTextBox.MaxLength = 50;
+            this.LastNameTextBox.Name = "LastNameTextBox";
+            this.LastNameTextBox.ReadOnly = true;
+            this.LastNameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.LastNameTextBox.Size = new System.Drawing.Size(187, 23);
+            this.LastNameTextBox.TabIndex = 8;
+            // 
+            // PhoneTextBox
+            // 
+            this.PhoneTextBox.Location = new System.Drawing.Point(239, 78);
+            this.PhoneTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.PhoneTextBox.MaxLength = 50;
+            this.PhoneTextBox.Name = "PhoneTextBox";
+            this.PhoneTextBox.ReadOnly = true;
+            this.PhoneTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.PhoneTextBox.Size = new System.Drawing.Size(187, 23);
+            this.PhoneTextBox.TabIndex = 10;
+            this.PhoneTextBox.TextChanged += new System.EventHandler(this.PhoneTextBox_TextChanged);
+            // 
+            // BirthDateTextBox
+            // 
+            this.BirthDateTextBox.Location = new System.Drawing.Point(16, 78);
+            this.BirthDateTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.BirthDateTextBox.MaxLength = 10;
+            this.BirthDateTextBox.Name = "BirthDateTextBox";
+            this.BirthDateTextBox.ReadOnly = true;
+            this.BirthDateTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.BirthDateTextBox.Size = new System.Drawing.Size(119, 23);
+            this.BirthDateTextBox.TabIndex = 9;
+            this.BirthDateTextBox.TextChanged += new System.EventHandler(this.BirthDateTextBox_TextChanged_1);
+            // 
+            // ObraSocialTextBox
+            // 
+            this.ObraSocialTextBox.Location = new System.Drawing.Point(16, 137);
+            this.ObraSocialTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ObraSocialTextBox.MaxLength = 50;
+            this.ObraSocialTextBox.Name = "ObraSocialTextBox";
+            this.ObraSocialTextBox.ReadOnly = true;
+            this.ObraSocialTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.ObraSocialTextBox.Size = new System.Drawing.Size(187, 23);
+            this.ObraSocialTextBox.TabIndex = 11;
+            // 
+            // NroAsociadoTextBox
+            // 
+            this.NroAsociadoTextBox.Location = new System.Drawing.Point(239, 137);
+            this.NroAsociadoTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.NroAsociadoTextBox.MaxLength = 50;
+            this.NroAsociadoTextBox.Name = "NroAsociadoTextBox";
+            this.NroAsociadoTextBox.ReadOnly = true;
+            this.NroAsociadoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.NroAsociadoTextBox.Size = new System.Drawing.Size(187, 23);
+            this.NroAsociadoTextBox.TabIndex = 12;
             // 
             // NewPacienteButton
             // 
@@ -124,18 +194,6 @@
             this.NewPacienteButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.NewPacienteButton.UseVisualStyleBackColor = true;
             this.NewPacienteButton.Click += new System.EventHandler(this.NewPacienteButton_Click);
-            // 
-            // PhoneTextBox
-            // 
-            this.PhoneTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.PhoneTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.PhoneTextBox.Location = new System.Drawing.Point(239, 78);
-            this.PhoneTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.PhoneTextBox.MaxLength = 50;
-            this.PhoneTextBox.Name = "PhoneTextBox";
-            this.PhoneTextBox.ReadOnly = true;
-            this.PhoneTextBox.Size = new System.Drawing.Size(187, 23);
-            this.PhoneTextBox.TabIndex = 10;
             // 
             // PhoneLabel
             // 
@@ -202,18 +260,6 @@
             this.AntecPersTextBox.Size = new System.Drawing.Size(382, 184);
             this.AntecPersTextBox.TabIndex = 13;
             // 
-            // FirstNameTextBox
-            // 
-            this.FirstNameTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.FirstNameTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.FirstNameTextBox.Location = new System.Drawing.Point(16, 27);
-            this.FirstNameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.FirstNameTextBox.MaxLength = 50;
-            this.FirstNameTextBox.Name = "FirstNameTextBox";
-            this.FirstNameTextBox.ReadOnly = true;
-            this.FirstNameTextBox.Size = new System.Drawing.Size(187, 23);
-            this.FirstNameTextBox.TabIndex = 7;
-            // 
             // NroAsociadoLabel
             // 
             this.NroAsociadoLabel.AutoSize = true;
@@ -223,19 +269,6 @@
             this.NroAsociadoLabel.Size = new System.Drawing.Size(79, 15);
             this.NroAsociadoLabel.TabIndex = 30;
             this.NroAsociadoLabel.Text = "Nro Asociado";
-            // 
-            // BirthDateTextBox
-            // 
-            this.BirthDateTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.BirthDateTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.BirthDateTextBox.Location = new System.Drawing.Point(16, 78);
-            this.BirthDateTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.BirthDateTextBox.MaxLength = 10;
-            this.BirthDateTextBox.Name = "BirthDateTextBox";
-            this.BirthDateTextBox.ReadOnly = true;
-            this.BirthDateTextBox.Size = new System.Drawing.Size(116, 23);
-            this.BirthDateTextBox.TabIndex = 9;
-            this.BirthDateTextBox.Text = "00/00/0000";
             // 
             // ObraSocialLabel
             // 
@@ -277,48 +310,12 @@
             this.BirthLabel.TabIndex = 24;
             this.BirthLabel.Text = "Nacimiento";
             // 
-            // NroAsociadoTextBox
-            // 
-            this.NroAsociadoTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.NroAsociadoTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.NroAsociadoTextBox.Location = new System.Drawing.Point(239, 137);
-            this.NroAsociadoTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.NroAsociadoTextBox.MaxLength = 50;
-            this.NroAsociadoTextBox.Name = "NroAsociadoTextBox";
-            this.NroAsociadoTextBox.ReadOnly = true;
-            this.NroAsociadoTextBox.Size = new System.Drawing.Size(187, 23);
-            this.NroAsociadoTextBox.TabIndex = 12;
-            this.NroAsociadoTextBox.TextChanged += new System.EventHandler(this.NroAsociadoTextBox_TextChanged);
-            // 
-            // ObraSocialTextBox
-            // 
-            this.ObraSocialTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.ObraSocialTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ObraSocialTextBox.Location = new System.Drawing.Point(16, 137);
-            this.ObraSocialTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ObraSocialTextBox.MaxLength = 50;
-            this.ObraSocialTextBox.Name = "ObraSocialTextBox";
-            this.ObraSocialTextBox.ReadOnly = true;
-            this.ObraSocialTextBox.Size = new System.Drawing.Size(187, 23);
-            this.ObraSocialTextBox.TabIndex = 11;
-            // 
-            // LastNameTextBox
-            // 
-            this.LastNameTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.LastNameTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.LastNameTextBox.Location = new System.Drawing.Point(239, 27);
-            this.LastNameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.LastNameTextBox.MaxLength = 50;
-            this.LastNameTextBox.Multiline = true;
-            this.LastNameTextBox.Name = "LastNameTextBox";
-            this.LastNameTextBox.ReadOnly = true;
-            this.LastNameTextBox.Size = new System.Drawing.Size(187, 23);
-            this.LastNameTextBox.TabIndex = 8;
-            // 
             // HistoriaClinica
             // 
+            this.HistoriaClinica.Controls.Add(this.DeleteButton);
+            this.HistoriaClinica.Controls.Add(this.IndicacionesLabel);
+            this.HistoriaClinica.Controls.Add(this.IndicacionesTextBox);
             this.HistoriaClinica.Controls.Add(this.NewButton);
-            this.HistoriaClinica.Controls.Add(this.SaveButton2);
             this.HistoriaClinica.Controls.Add(this.FichasDiariasLabel);
             this.HistoriaClinica.Controls.Add(this.MotivoLabel);
             this.HistoriaClinica.Controls.Add(this.EnfermedadLabel);
@@ -333,28 +330,48 @@
             this.HistoriaClinica.TabIndex = 1;
             this.HistoriaClinica.Text = "Historia Clinica";
             this.HistoriaClinica.UseVisualStyleBackColor = true;
+            this.HistoriaClinica.Click += new System.EventHandler(this.HistoriaClinica_Click);
+            // 
+            // DeleteButton
+            // 
+            this.DeleteButton.Location = new System.Drawing.Point(28, 467);
+            this.DeleteButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.DeleteButton.Name = "DeleteButton";
+            this.DeleteButton.Size = new System.Drawing.Size(89, 27);
+            this.DeleteButton.TabIndex = 42;
+            this.DeleteButton.Text = "Borrar";
+            this.DeleteButton.UseVisualStyleBackColor = true;
+            // 
+            // IndicacionesLabel
+            // 
+            this.IndicacionesLabel.AutoSize = true;
+            this.IndicacionesLabel.Location = new System.Drawing.Point(524, 3);
+            this.IndicacionesLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.IndicacionesLabel.Name = "IndicacionesLabel";
+            this.IndicacionesLabel.Size = new System.Drawing.Size(73, 15);
+            this.IndicacionesLabel.TabIndex = 40;
+            this.IndicacionesLabel.Text = "Indicaciones";
+            // 
+            // IndicacionesTextBox
+            // 
+            this.IndicacionesTextBox.Location = new System.Drawing.Point(524, 22);
+            this.IndicacionesTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.IndicacionesTextBox.Multiline = true;
+            this.IndicacionesTextBox.Name = "IndicacionesTextBox";
+            this.IndicacionesTextBox.ReadOnly = true;
+            this.IndicacionesTextBox.Size = new System.Drawing.Size(320, 304);
+            this.IndicacionesTextBox.TabIndex = 41;
             // 
             // NewButton
             // 
-            this.NewButton.Location = new System.Drawing.Point(782, 3);
+            this.NewButton.Location = new System.Drawing.Point(28, 498);
             this.NewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.NewButton.Name = "NewButton";
             this.NewButton.Size = new System.Drawing.Size(89, 27);
             this.NewButton.TabIndex = 39;
             this.NewButton.Text = "Nuevo";
             this.NewButton.UseVisualStyleBackColor = true;
-            // 
-            // SaveButton2
-            // 
-            this.SaveButton2.Enabled = false;
-            this.SaveButton2.Location = new System.Drawing.Point(404, 498);
-            this.SaveButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SaveButton2.Name = "SaveButton2";
-            this.SaveButton2.Size = new System.Drawing.Size(89, 27);
-            this.SaveButton2.TabIndex = 8;
-            this.SaveButton2.Text = "Guardar";
-            this.SaveButton2.UseVisualStyleBackColor = true;
-            this.SaveButton2.Click += new System.EventHandler(this.SaveButton2_Click);
+            this.NewButton.Click += new System.EventHandler(this.NewButton_Click);
             // 
             // FichasDiariasLabel
             // 
@@ -413,7 +430,7 @@
             this.FichasDiariasListBox.Location = new System.Drawing.Point(14, 22);
             this.FichasDiariasListBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FichasDiariasListBox.Name = "FichasDiariasListBox";
-            this.FichasDiariasListBox.Size = new System.Drawing.Size(116, 499);
+            this.FichasDiariasListBox.Size = new System.Drawing.Size(116, 439);
             this.FichasDiariasListBox.TabIndex = 5;
             this.FichasDiariasListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -433,10 +450,10 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Dni});
-            this.dataGridView1.Location = new System.Drawing.Point(154, 66);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(701, 150);
+            this.dataGridView1.Size = new System.Drawing.Size(869, 528);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -529,16 +546,11 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox AntecFamiTextBox;
         private System.Windows.Forms.TextBox AntecPersTextBox;
-        private System.Windows.Forms.TextBox FirstNameTextBox;
         private System.Windows.Forms.Label NroAsociadoLabel;
-        private System.Windows.Forms.TextBox BirthDateTextBox;
         private System.Windows.Forms.Label ObraSocialLabel;
         private System.Windows.Forms.Label LastNameLabel;
         private System.Windows.Forms.Label FirstNameLabel;
         private System.Windows.Forms.Label BirthLabel;
-        private System.Windows.Forms.TextBox NroAsociadoTextBox;
-        private System.Windows.Forms.TextBox ObraSocialTextBox;
-        private System.Windows.Forms.TextBox LastNameTextBox;
         private System.Windows.Forms.TabPage HistoriaClinica;
         private System.Windows.Forms.Button SearchButton;
         private System.Windows.Forms.Label DniLabel;
@@ -546,7 +558,6 @@
         private System.Windows.Forms.ListBox FichasDiariasListBox;
         private System.Windows.Forms.Button EditButton;
         private System.Windows.Forms.Button SaveButton;
-        private System.Windows.Forms.Button SaveButton2;
         private System.Windows.Forms.Label FichasDiariasLabel;
         private System.Windows.Forms.Label MotivoLabel;
         private System.Windows.Forms.Label EnfermedadLabel;
@@ -555,10 +566,18 @@
         private System.Windows.Forms.Button NewButton;
         private System.Windows.Forms.TabPage SQLTab;
         private System.Windows.Forms.Button NewPacienteButton;
-        private System.Windows.Forms.TextBox PhoneTextBox;
         private System.Windows.Forms.Label PhoneLabel;
         private DataGridView dataGridView1;
         private DataGridViewTextBoxColumn Dni;
+        private TextBox BirthDateTextBox;
+        private TextBox ObraSocialTextBox;
+        private TextBox NroAsociadoTextBox;
+        private TextBox PhoneTextBox;
+        private TextBox FirstNameTextBox;
+        private TextBox LastNameTextBox;
+        private Label IndicacionesLabel;
+        private TextBox IndicacionesTextBox;
+        private Button DeleteButton;
     }
 }
 

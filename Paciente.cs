@@ -8,7 +8,7 @@ namespace AppParaMama
         string Dni = "";
         string FirstName = "";
         string LastName = "";
-        DateTime DOB;
+        DateTime DOB = DateTime.MinValue;
         string Phone = "";
         string ObraSocial = "";
         string NroSocio = "";
@@ -36,7 +36,14 @@ namespace AppParaMama
             Phone = Ph;
             ObraSocial = Os;
             NroSocio = Nro;
-            DOB = DateTime.Parse(Nac, myCIintl);
+            if (Nac == "00/00/0000" || Nac == "")
+            {
+                DOB = DateTime.MinValue;
+            }
+            else
+            {
+                DOB = DateTime.Parse(Nac, myCIintl);
+            }
             AntecFam = AntFm;
             AntecPers = AntPer;
         }

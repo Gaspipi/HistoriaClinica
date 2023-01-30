@@ -50,3 +50,6 @@ D:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\obj\Debug\net6.0-windows\refint\W
 D:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.pdb
 D:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.genruntimeconfig.cache
 D:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\obj\Debug\net6.0-windows\ref\WinFormsApp1.dll
+F:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.NewUser.resources
+D:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.NewUser.resources
+F:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.NewFicha.resources
