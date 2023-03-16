@@ -296,6 +296,7 @@
             this.Controls.Add(this.LastNameTextBox);
             this.Name = "NewUser";
             this.Text = "NewUser";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NewUser_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

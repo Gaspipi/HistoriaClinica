@@ -38,7 +38,6 @@
             this.NroAsociadoTextBox = new System.Windows.Forms.TextBox();
             this.NewPacienteButton = new System.Windows.Forms.Button();
             this.PhoneLabel = new System.Windows.Forms.Label();
-            this.SaveButton = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.AntecFamiTextBox = new System.Windows.Forms.TextBox();
@@ -96,7 +95,6 @@
             this.Paciente.Controls.Add(this.NroAsociadoTextBox);
             this.Paciente.Controls.Add(this.NewPacienteButton);
             this.Paciente.Controls.Add(this.PhoneLabel);
-            this.Paciente.Controls.Add(this.SaveButton);
             this.Paciente.Controls.Add(this.label8);
             this.Paciente.Controls.Add(this.label7);
             this.Paciente.Controls.Add(this.AntecFamiTextBox);
@@ -204,18 +202,6 @@
             this.PhoneLabel.Size = new System.Drawing.Size(21, 15);
             this.PhoneLabel.TabIndex = 38;
             this.PhoneLabel.Text = "Tel";
-            // 
-            // SaveButton
-            // 
-            this.SaveButton.Enabled = false;
-            this.SaveButton.Location = new System.Drawing.Point(404, 498);
-            this.SaveButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(89, 27);
-            this.SaveButton.TabIndex = 37;
-            this.SaveButton.Text = "Guardar";
-            this.SaveButton.UseVisualStyleBackColor = true;
-            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // label8
             // 
@@ -557,7 +543,6 @@
         private System.Windows.Forms.TextBox DniTextBox;
         private System.Windows.Forms.ListBox FichasDiariasListBox;
         private System.Windows.Forms.Button EditButton;
-        private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.Label FichasDiariasLabel;
         private System.Windows.Forms.Label MotivoLabel;
         private System.Windows.Forms.Label EnfermedadLabel;

@@ -1,4 +1,6 @@
-﻿namespace WinFormsApp1
+﻿using System.Globalization;
+
+namespace WinFormsApp1
 {
     public class FichaDiaria
     {
@@ -7,6 +9,14 @@
         string Motivo = "";
         string Indicaciones = "";
         DateTime Fecha;
+        public void CreaFichadiaria(string doc, string Enf, string Mot, string Fec, string Indic)
+        {
+            Dni = doc;
+            Enfermedad = Enf;
+            Motivo = Mot;
+            Fecha = DateTime.Parse(Fec);
+            Indicaciones = Indic;
+        }
         public void CreaFichadiaria(string doc, string Enf, string Mot, DateTime Fec, string Indic)
         {
             Dni = doc;
@@ -25,10 +35,17 @@
         public string DevEnfermedad() { 
             return Enfermedad; 
         }
-        public DateTime DevFecha()
+        public string DevFecha()
         {
-            return Fecha;
+            string date = Fecha.ToString();
+            return date;
         }
+        public string DevFecha2()
+        {
+            string date = Fecha.ToString();
+            return date;
+        }
+
         public string DevIndicaciones() { 
             return Indicaciones; 
         }

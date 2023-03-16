@@ -148,6 +148,7 @@
             this.Controls.Add(this.SaveButton);
             this.Name = "NewFicha";
             this.Text = "NewFicha";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NewFicha_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

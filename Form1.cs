@@ -82,7 +82,6 @@ namespace AppParaMama
 
         private void Search_Click(object sender, EventArgs e)
         {
-            
             if (DniTextBox.Text.Length < 8)
             {
                 MessageBox.Show("El campo DNI debe tener 8 digitos", "Error - Dni invalido", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -91,25 +90,23 @@ namespace AppParaMama
             {
                 ListadoFichas();
             }
-            int cant = FichasDiariasListBox.Items.Count;
-            if (cant < 1)
+            if (FichasDiariasListBox.Items.Count == 0)
             {
+                MotivoTextBox.Text = string.Empty;
+                EnfermedadTextBox.Text = string.Empty;
+                IndicacionesTextBox.Text = string.Empty;
                 EditButton.Enabled = false;
-            }
-            else
-            {
-                EditButton.Enabled = true;
             }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CultureInfo myCIintl = new("es-ES", false);
+            
             string date = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
             if (FichasDiariasListBox.Items.Count > 0 && date != null)
             {
-                DateTime RealDate = DateTime.Parse(date, myCIintl);
-                BuscarFicha(RealDate);
+                
+                BuscarFicha(date);
             }
 
         }
@@ -123,18 +120,25 @@ namespace AppParaMama
         {
             if (TabControl.SelectedIndex == 0)
             {
-             
+                Paciente pac = new Paciente();
+                pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text);
+                var nuevo = new NewUser();
+                nuevo.Show();
+                nuevo.Datos = Datos;
+                nuevo.CargarData(pac);
+
             }
             if (TabControl.SelectedIndex == 1)
             {
-                CultureInfo myCIintl = new("es-ES", false);
+               
                 string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
 
                 FichaDiaria fd = new();
-                DateTime date = DateTime.Parse(fecha, myCIintl);
-                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);//ARREGLAR
+                
+                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
                 NewFicha fic = new();
                 fic.ShowData(fd);
+                fic.Setapp(this);
                 fic.Datos = Datos;
                 fic.Show();
 
@@ -147,7 +151,7 @@ namespace AppParaMama
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void DniTextBox_TextChanged(object sender, EventArgs e)
@@ -172,12 +176,14 @@ namespace AppParaMama
         private void NewPacienteButton_Click(object sender, EventArgs e)
         {
             var nuevo = new NewUser();
+            nuevo.Setapp(this);
             nuevo.Show();
             nuevo.Datos = Datos;
+
         }
         #region
         public L_Historias Datos = new();
-        private void BuscarFicha(DateTime date)
+        private void BuscarFicha(string date)
         {
             FichaDiaria fd = new();
             fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);
@@ -186,7 +192,7 @@ namespace AppParaMama
             EnfermedadTextBox.Text = newfd.DevEnfermedad();
             IndicacionesTextBox.Text = newfd.DevIndicaciones();
         }
-        private void ListadoFichas()
+        public void ListadoFichas()
         {
             dataGridView1.DataSource = Datos.DevTabla(DniTextBox.Text);
             FichasDiariasListBox.DataSource = Datos.DevListadoFichas(DniTextBox.Text);
@@ -198,6 +204,7 @@ namespace AppParaMama
                 if (dialogResult == DialogResult.Yes)
                 {
                     var nuevo = new NewUser();
+                    nuevo.Setapp(this);
                     nuevo.Show();
                     nuevo.ShowDni(DniTextBox.Text);
                     nuevo.Datos = Datos;
@@ -219,10 +226,6 @@ namespace AppParaMama
             NroAsociadoTextBox.Text = Pac.DevNroSocio();
             AntecFamiTextBox.Text = Pac.DevAntecFam();
             AntecPersTextBox.Text = Pac.DevAntecPers();
-        }
-        private void CrearPaciente(Paciente Pac)
-        {
-            Datos.SetPaciente(Pac);
         }
         #endregion
 
@@ -280,13 +283,18 @@ namespace AppParaMama
 
         private void NewButton_Click(object sender, EventArgs e)
         {
+            
+           
+            string fechaG = DateTime.Now.ToString();
             var nuevo = new NewFicha();
+            nuevo.Setapp(this);
             nuevo.Show();
             FichaDiaria fichaDiaria = new FichaDiaria();
-            fichaDiaria.CreaFichadiaria(DniTextBox.Text, "", "", DateTime.Now, "");
+            fichaDiaria.CreaFichadiaria(DniTextBox.Text, "", "", fechaG, "");
             nuevo.ShowData(fichaDiaria);
             nuevo.Datos = Datos;
         }
+
 
         private void HistoriaClinica_Click(object sender, EventArgs e)
         {

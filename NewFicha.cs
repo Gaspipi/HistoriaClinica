@@ -1,9 +1,11 @@
-﻿namespace WinFormsApp1
+﻿using AppParaMama;
+
+namespace WinFormsApp1
 {
     public partial class NewFicha : Form
     {
-        DateTime date;
-
+        string date;
+        AppClinica AppCli;
         public NewFicha()
         {
             InitializeComponent();
@@ -57,10 +59,24 @@
                 this.Close();
             }
         }
-
+        public void Setapp(AppClinica app)
+        {
+            AppCli = app;
+        }
+        public AppClinica Devapp()
+        {
+            return AppCli;
+        }
         private void CancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void NewFicha_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+            AppCli = Devapp();
+            AppCli.ListadoFichas();
         }
     }
 }

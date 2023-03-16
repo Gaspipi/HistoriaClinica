@@ -4,7 +4,7 @@ namespace WinFormsApp1
 {
     public partial class NewUser : Form
     {
-
+        AppClinica AppCli;
         public NewUser()
         {
             InitializeComponent();
@@ -160,7 +160,28 @@ namespace WinFormsApp1
 
         #region
         public L_Historias Datos = null;
+        public void Setapp(AppClinica app)
+        {
+            AppCli = app;
+        }
+        public AppClinica Devapp()
+        {
+            return AppCli;
+        }
 
+        public void CargarData(Paciente pac)
+        {
+            FirstNameTextBox.Text = pac.DevFirstName();
+            LastNameTextBox.Text = pac.DevLastName();
+            BirthDateTextBox.Text = pac.DevDOB();
+            DniTextBox.Text = pac.DevDni();
+            PhoneTextBox.Text = pac.DevPhone();
+            ObraSocialTextBox.Text = pac.DevObraSocial();
+            NroAsociadoTextBox.Text = pac.DevNroSocio();
+            AntecPersTextBox.Text = pac.DevAntecPers();
+            AntecFamiTextBox.Text = pac.DevAntecFam();
+
+        }
         #endregion
         public void ShowDni(string Dni)
         {
@@ -184,6 +205,13 @@ namespace WinFormsApp1
         private void CancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void NewUser_FormClosed(object sender, FormClosedEventArgs e)
+        {
+           
+            AppCli = Devapp();
+            AppCli.ListadoFichas();
         }
     }
 }

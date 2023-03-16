@@ -1,6 +1,7 @@
 ﻿using AppParaMama;
 using System.Data;
 using System.Data.Odbc;
+using System.Globalization;
 
 namespace WinFormsApp1
 {
@@ -60,7 +61,7 @@ namespace WinFormsApp1
                     DateList = DateList.OrderBy(dt => dt.Date).ToList();
                     foreach (DateTime dt in DateList)
                     {
-                        string st = dt.ToString("dd/MM/yyyy HH:mm:ss");
+                        string st = dt.ToString();
                         List.Add(st);
                     }
 
@@ -222,7 +223,8 @@ namespace WinFormsApp1
         }
         public void SetFichaDiaria(FichaDiaria Fd)
         {
-            string fecha = Fd.DevFecha().ToString();
+
+            string fecha = Fd.DevFecha2();
             try
             {
                 string SqlQuery = $"INSERT INTO FichasDiarias (Motivo, Enfermedad, Dni, Indicaciones, FechaHora) VALUES ('{Fd.DevMotivo()}','{Fd.DevEnfermedad()}','{Fd.DevDni()}','{Fd.DevIndicaciones()}',#{fecha}#);";
@@ -247,12 +249,12 @@ namespace WinFormsApp1
         public FichaDiaria DevFichaDiaria(FichaDiaria FicDia)
         {
             FichaDiaria fd = new();
-            string fecha = FicDia.DevFecha().ToString();
+            string fecha = FicDia.DevFecha2();
             OdbcDataReader Reader;
             try
             {
                 SqlCon = Connection.GetInstancia().CreateConnection();
-                string SqlQuery = $"SELECT * FROM FichasDiarias WHERE FechaHora = #{fecha}# AND Dni = '{FicDia.DevDni()}';"; //FECHA NO FUNCIONA
+                string SqlQuery = $"SELECT * FROM FichasDiarias WHERE Dni = '{FicDia.DevDni()}' AND FechaHora = #{fecha}#;";
                 OdbcCommand cmd = new(SqlQuery, SqlCon);
                 if (SqlCon.State == ConnectionState.Closed)
                 {
@@ -265,12 +267,11 @@ namespace WinFormsApp1
                     if (Reader.HasRows)
                     {
                         Reader.Read();
-
                         fd.CreaFichadiaria((string)Reader[2], (string)Reader[1], (string)Reader[0], (DateTime)Reader[4], (string)Reader[3]);
                     }
                     else
                     {
-                        MessageBox.Show("No se encontro");
+                        MessageBox.Show($"No se encontro {FicDia.DevDni()}, {FicDia.DevFecha()}");
                     }
 
                 }
