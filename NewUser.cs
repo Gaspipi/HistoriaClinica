@@ -10,6 +10,10 @@ namespace WinFormsApp1
             InitializeComponent();
         }
 
+        public void Edit()
+        {
+            DniTextBox.Enabled = false;
+        }
         private void AntecFamiTextBox_TextChanged(object sender, EventArgs e)
         {
 
@@ -211,7 +215,11 @@ namespace WinFormsApp1
         {
            
             AppCli = Devapp();
-            AppCli.ListadoFichas();
+            if (AppCli != null)
+            {
+                AppCli.ListadoFichas();
+
+            }
         }
     }
 }

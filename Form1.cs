@@ -90,22 +90,34 @@ namespace AppParaMama
             {
                 ListadoFichas();
             }
-            if (FichasDiariasListBox.Items.Count == 0)
+            if (TabControl.SelectedIndex == 0)
             {
-                MotivoTextBox.Text = string.Empty;
-                EnfermedadTextBox.Text = string.Empty;
-                IndicacionesTextBox.Text = string.Empty;
-                EditButton.Enabled = false;
+                if (FirstNameTextBox.Text.Length == 0)
+                {
+                    EditButton.Enabled = false;
+                }
+                else { EditButton.Enabled = true; }
             }
+            if (TabControl.SelectedIndex == 1)
+            {
+                if (FichasDiariasListBox.Items.Count == 0)
+                {
+                    MotivoTextBox.Text = string.Empty;
+                    EnfermedadTextBox.Text = string.Empty;
+                    IndicacionesTextBox.Text = string.Empty;
+                    EditButton.Enabled = false;
+                }
+            }
+
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
             string date = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
             if (FichasDiariasListBox.Items.Count > 0 && date != null)
             {
-                
+
                 BuscarFicha(date);
             }
 
@@ -125,16 +137,17 @@ namespace AppParaMama
                 var nuevo = new NewUser();
                 nuevo.Show();
                 nuevo.Datos = Datos;
+                nuevo.Edit();
                 nuevo.CargarData(pac);
 
             }
             if (TabControl.SelectedIndex == 1)
             {
-               
+
                 string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
 
                 FichaDiaria fd = new();
-                
+
                 fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
                 NewFicha fic = new();
                 fic.ShowData(fd);
@@ -283,8 +296,8 @@ namespace AppParaMama
 
         private void NewButton_Click(object sender, EventArgs e)
         {
-            
-           
+
+
             string fechaG = DateTime.Now.ToString();
             var nuevo = new NewFicha();
             nuevo.Setapp(this);
