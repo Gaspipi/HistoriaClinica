@@ -221,30 +221,62 @@ namespace WinFormsApp1
             }
 
         }
+        
         public void SetFichaDiaria(FichaDiaria Fd)
         {
-
-            string fecha = Fd.DevFecha2();
-            try
+            FichaDiaria ficha = DevFichaDiaria(Fd);
+            if (ficha != null)
             {
-                string SqlQuery = $"INSERT INTO FichasDiarias (Motivo, Enfermedad, Dni, Indicaciones, FechaHora) VALUES ('{Fd.DevMotivo()}','{Fd.DevEnfermedad()}','{Fd.DevDni()}','{Fd.DevIndicaciones()}',#{fecha}#);";
-                OdbcCommand cmd = new(SqlQuery, SqlCon);
-                if (SqlCon.State == ConnectionState.Closed)
+                
+                    try
+                    {   
+                        string SqlQuery = $"UPDATE FichasDiarias SET Motivo = '{Fd.DevMotivo()}', Enfermedad = '{Fd.DevEnfermedad()}', Dni = '{Fd.DevDni()}', Indicaciones = '{Fd.DevIndicaciones()}', FechaHora = #{Fd.DevFecha2()}# WHERE Dni = '{Fd.DevDni()}' AND FechaHora = #{Fd.DevFecha2()}#;";
+                        OdbcCommand cmd = new(SqlQuery, SqlCon);
+                        if (SqlCon.State == ConnectionState.Closed)
+                        {
+                            SqlCon.Open();
+                        }
+
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                    finally
+                    {
+                        if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
+
+                    }
+                
+            }
+            else
+            {
+
+                try
                 {
-                    SqlCon.Open();
+                    string SqlQuery = $"INSERT INTO FichasDiarias (Motivo, Enfermedad, Dni, Indicaciones, FechaHora) VALUES ('{Fd.DevMotivo()}','{Fd.DevEnfermedad()}','{Fd.DevDni()}','{Fd.DevIndicaciones()}',#{DateTime.Now}#);";
+                    OdbcCommand cmd = new(SqlQuery, SqlCon);
+                    if (SqlCon.State == ConnectionState.Closed)
+                    {
+                        SqlCon.Open();
+                    }
+                    cmd.ExecuteNonQuery();
+                    
                 }
-                cmd.ExecuteNonQuery();
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
+
+                }
+
 
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
 
-            }
         }
         public FichaDiaria DevFichaDiaria(FichaDiaria FicDia)
         {
@@ -267,11 +299,11 @@ namespace WinFormsApp1
                     if (Reader.HasRows)
                     {
                         Reader.Read();
-                        fd.CreaFichadiaria((string)Reader[2], (string)Reader[1], (string)Reader[0], (DateTime)Reader[4], (string)Reader[3]);
+                        fd.CreaFichadiaria((string)Reader[2], (string)Reader[1], (string)Reader[0], fecha, (string)Reader[3]);
                     }
                     else
                     {
-                        MessageBox.Show($"No se encontro {FicDia.DevDni()}, {FicDia.DevFecha()}");
+                        fd = null;
                     }
 
                 }
@@ -286,6 +318,37 @@ namespace WinFormsApp1
             }
 
             return fd;
+        }
+        public void DelFicha(FichaDiaria FicDia)
+        {
+            FichaDiaria fd = new();
+            string fecha = FicDia.DevFecha2();
+            OdbcDataReader Reader;
+            try
+            {
+                SqlCon = Connection.GetInstancia().CreateConnection();
+                string SqlQuery = $"DELETE * FROM FichasDiarias WHERE Dni = '{FicDia.DevDni()}' AND FechaHora = #{fecha}#;";
+                OdbcCommand cmd = new(SqlQuery, SqlCon);
+                if (SqlCon.State == ConnectionState.Closed)
+                {
+                    SqlCon.Open();
+                }
+                if (SqlCon.State == ConnectionState.Open)
+                {
+                    Reader = cmd.ExecuteReader();
+
+                   
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
+            }
         }
     }
 }

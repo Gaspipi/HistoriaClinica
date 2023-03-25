@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using WinFormsApp1;
+﻿using WinFormsApp1;
 
 namespace AppParaMama
 {
@@ -9,6 +8,12 @@ namespace AppParaMama
         public AppClinica()
         {
             InitializeComponent();
+            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historias.accdb"))
+            {
+                string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historias.accdb";
+                MessageBox.Show("No existe el archivo de almacenamiento, procediendo a crearlo", "No existe el fichero", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                File.Copy("Historias.accdb", dir);
+            }
         }
         private void dni_TextChanged(object sender, EventArgs e)
         {
@@ -82,6 +87,7 @@ namespace AppParaMama
 
         private void Search_Click(object sender, EventArgs e)
         {
+
             if (DniTextBox.Text.Length < 8)
             {
                 MessageBox.Show("El campo DNI debe tener 8 digitos", "Error - Dni invalido", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -106,6 +112,10 @@ namespace AppParaMama
                     EnfermedadTextBox.Text = string.Empty;
                     IndicacionesTextBox.Text = string.Empty;
                     EditButton.Enabled = false;
+                }
+                else
+                {
+                    EditButton.Enabled = true;
                 }
             }
 
@@ -145,7 +155,7 @@ namespace AppParaMama
             {
 
                 string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
-
+                MessageBox.Show($"{fecha}", "Error - Indicaciones invalidas", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FichaDiaria fd = new();
 
                 fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
@@ -207,7 +217,6 @@ namespace AppParaMama
         }
         public void ListadoFichas()
         {
-            dataGridView1.DataSource = Datos.DevTabla(DniTextBox.Text);
             FichasDiariasListBox.DataSource = Datos.DevListadoFichas(DniTextBox.Text);
             Paciente Pac = new();
             Pac = Datos.DevDatosPaciente(DniTextBox.Text);
@@ -311,6 +320,21 @@ namespace AppParaMama
 
         private void HistoriaClinica_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void DeleteButton_Click(object sender, EventArgs e)
+        {
+            string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
+            DialogResult resp = MessageBox.Show($"Esta seguro de que desea Borrar permanentemente la ficha: {fecha}?", "Advertencia", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (resp == DialogResult.Yes)
+            {
+                FichaDiaria fd = new();
+
+                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
+                Datos.DelFicha(fd);
+                ListadoFichas();
+            }
 
         }
     }

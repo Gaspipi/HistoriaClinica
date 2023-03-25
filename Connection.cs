@@ -6,7 +6,7 @@ namespace WinFormsApp1
     {
         private static Connection Con = null;
         private readonly string ConnectionString = "Driver={Microsoft Access Driver (*.mdb, *.accdb)}; Dbq=" + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historias.accdb; Uid = Admin; Pwd =; ";
-
+        
         public OdbcConnection CreateConnection()
         {
             OdbcConnection Cadena = new();

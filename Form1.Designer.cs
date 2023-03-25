@@ -58,9 +58,6 @@
             EnfermedadTextBox = new TextBox();
             MotivoTextBox = new TextBox();
             FichasDiariasListBox = new ListBox();
-            SQLTab = new TabPage();
-            dataGridView1 = new DataGridView();
-            Dni = new DataGridViewTextBoxColumn();
             SearchButton = new Button();
             DniLabel = new Label();
             DniTextBox = new TextBox();
@@ -68,15 +65,12 @@
             TabControl.SuspendLayout();
             Paciente.SuspendLayout();
             HistoriaClinica.SuspendLayout();
-            SQLTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // TabControl
             // 
             TabControl.Controls.Add(Paciente);
             TabControl.Controls.Add(HistoriaClinica);
-            TabControl.Controls.Add(SQLTab);
             TabControl.Location = new Point(14, 55);
             TabControl.Margin = new Padding(4, 3, 4, 3);
             TabControl.Name = "TabControl";
@@ -327,6 +321,7 @@
             DeleteButton.TabIndex = 42;
             DeleteButton.Text = "Borrar";
             DeleteButton.UseVisualStyleBackColor = true;
+            DeleteButton.Click += DeleteButton_Click;
             // 
             // IndicacionesLabel
             // 
@@ -420,33 +415,6 @@
             FichasDiariasListBox.TabIndex = 5;
             FichasDiariasListBox.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
-            // SQLTab
-            // 
-            SQLTab.Controls.Add(dataGridView1);
-            SQLTab.Location = new Point(4, 24);
-            SQLTab.Margin = new Padding(4, 3, 4, 3);
-            SQLTab.Name = "SQLTab";
-            SQLTab.Size = new Size(879, 534);
-            SQLTab.TabIndex = 2;
-            SQLTab.Text = "SQL";
-            SQLTab.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Dni });
-            dataGridView1.Location = new Point(3, 3);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(869, 528);
-            dataGridView1.TabIndex = 0;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
-            // 
-            // Dni
-            // 
-            Dni.HeaderText = "Column1";
-            Dni.Name = "Dni";
-            // 
             // SearchButton
             // 
             SearchButton.Location = new Point(422, 23);
@@ -517,8 +485,6 @@
             Paciente.PerformLayout();
             HistoriaClinica.ResumeLayout(false);
             HistoriaClinica.PerformLayout();
-            SQLTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -548,11 +514,8 @@
         private System.Windows.Forms.TextBox EnfermedadTextBox;
         private System.Windows.Forms.TextBox MotivoTextBox;
         private System.Windows.Forms.Button NewButton;
-        private System.Windows.Forms.TabPage SQLTab;
         private System.Windows.Forms.Button NewPacienteButton;
         private System.Windows.Forms.Label PhoneLabel;
-        private DataGridView dataGridView1;
-        private DataGridViewTextBoxColumn Dni;
         private TextBox BirthDateTextBox;
         private TextBox ObraSocialTextBox;
         private TextBox NroAsociadoTextBox;
