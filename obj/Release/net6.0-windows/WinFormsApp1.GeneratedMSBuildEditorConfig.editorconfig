@@ -1,6 +1,6 @@
 is_global = true
 build_property.ApplicationManifest = 
-build_property.StartupObject = 
+build_property.StartupObject = AppParaMama.Program
 build_property.ApplicationDefaultFont = 
 build_property.ApplicationHighDpiMode = 
 build_property.ApplicationUseCompatibleTextRendering = 
@@ -14,4 +14,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = WinFormsApp1
-build_property.ProjectDir = D:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\
+build_property.ProjectDir = F:\OneDrive\Documentos\Cursos\NET\WinFormsApp1\

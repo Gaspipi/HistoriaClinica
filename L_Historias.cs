@@ -99,8 +99,8 @@ namespace WinFormsApp1
                     if (Reader.HasRows)
                     {
                         Reader.Read();
-                        object[] p = new object[] { "", "", "", "", "", "", "", "", "", "" };
-                        for (int i = 1; i < 10; i++)
+                        object[] p = new object[] { "", "", "", "", "", "", "", "", "", "", ""};
+                        for (int i = 1; i < 11; i++)
                         {
                             if (i != 6)
                             {
@@ -143,7 +143,8 @@ namespace WinFormsApp1
                             string Ph = (string)p[7];
                             string AntFm = (string)p[8];
                             string AntPers = (string)p[9];
-                            Pac.CreaPaciente(doc, Fn, Ln, Os, Nro, Date, Ph, AntFm, AntPers);
+                            string Med = (string)p[10];
+                            Pac.CreaPaciente(doc, Fn, Ln, Os, Nro, Date, Ph, AntFm, AntPers, Med);
                         }
                     }
                     else
@@ -172,7 +173,7 @@ namespace WinFormsApp1
                 {
                     try
                     {
-                        string SqlQuery = $"UPDATE Pacientes SET Dni = '{Pac.DevDni()}',Nombre = '{Pac.DevFirstName()}',Apellido = '{Pac.DevLastName()}',ObraSocial = '{Pac.DevObraSocial()}',NroSocio = '{Pac.DevNroSocio()}',FechaNac = '{Pac.DevDateTime()}',Telefono = '{Pac.DevPhone()}',AntecFam = '{Pac.DevAntecFam()}',AntecPers = '{Pac.DevAntecPers()}' WHERE Dni = '{Pac.DevDni()}'";
+                        string SqlQuery = $"UPDATE Pacientes SET Dni = '{Pac.DevDni()}',Nombre = '{Pac.DevFirstName()}',Apellido = '{Pac.DevLastName()}',ObraSocial = '{Pac.DevObraSocial()}',NroSocio = '{Pac.DevNroSocio()}',FechaNac = '{Pac.DevDateTime()}',Telefono = '{Pac.DevPhone()}',AntecFam = '{Pac.DevAntecFam()}',AntecPers = '{Pac.DevAntecPers()}', Medicacion = '{Pac.DevMed()}' WHERE Dni = '{Pac.DevDni()}'";
                         OdbcCommand cmd = new(SqlQuery, SqlCon);
                         if (SqlCon.State == ConnectionState.Closed)
                         {
@@ -197,8 +198,8 @@ namespace WinFormsApp1
 
                 try
                 {
-                    string SqlQuery = $"INSERT INTO Pacientes (Dni,Nombre,Apellido,ObraSocial,NroSocio,FechaNac,Telefono,AntecFam,AntecPers) " +
-                        $"VALUES ('{Pac.DevDni()}','{Pac.DevFirstName()}','{Pac.DevLastName()}','{Pac.DevObraSocial()}','{Pac.DevNroSocio()}','{Pac.DevDateTime()}','{Pac.DevPhone()}','{Pac.DevAntecFam()}','{Pac.DevAntecPers()}');";
+                    string SqlQuery = $"INSERT INTO Pacientes (Dni,Nombre,Apellido,ObraSocial,NroSocio,FechaNac,Telefono,AntecFam,AntecPers,Medicacion) " +
+                        $"VALUES ('{Pac.DevDni()}','{Pac.DevFirstName()}','{Pac.DevLastName()}','{Pac.DevObraSocial()}','{Pac.DevNroSocio()}','{Pac.DevDateTime()}','{Pac.DevPhone()}','{Pac.DevAntecFam()}','{Pac.DevAntecPers()}', '{Pac.DevMed()}');";
                     OdbcCommand cmd = new(SqlQuery, SqlCon);
                     if (SqlCon.State == ConnectionState.Closed)
                     {

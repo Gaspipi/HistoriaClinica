@@ -14,8 +14,9 @@ namespace AppParaMama
         string NroSocio = "";
         string AntecFam = "";
         string AntecPers = "";
+        string Medicacion = "";
 
-        public void CreaPaciente(string doc, string Fn, string Ln, string Os, string Nro, DateTime Nac, string Ph, string AntFm, string AntPer)
+        public void CreaPaciente(string doc, string Fn, string Ln, string Os, string Nro, DateTime Nac, string Ph, string AntFm, string AntPer, string Med)
         {
             Dni = doc;
             FirstName = Fn;
@@ -26,8 +27,9 @@ namespace AppParaMama
             DOB = Nac;
             AntecFam = AntFm;
             AntecPers = AntPer;
+            Medicacion = Med;
         }
-        public void CreaPaciente(string doc, string Fn, string Ln, string Os, string Nro, string Nac, string Ph, string AntFm, string AntPer)
+        public void CreaPaciente(string doc, string Fn, string Ln, string Os, string Nro, string Nac, string Ph, string AntFm, string AntPer, string Med)
         {
             CultureInfo myCIintl = new("es-ES", false);
             Dni = doc;
@@ -46,10 +48,15 @@ namespace AppParaMama
             }
             AntecFam = AntFm;
             AntecPers = AntPer;
+            Medicacion = Med;
         }
         public string DevDni()
         {
             return Dni;
+        }
+        public string DevMed()
+        {
+            return Medicacion;
         }
         public string DevFirstName()
         {

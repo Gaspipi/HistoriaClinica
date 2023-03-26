@@ -209,9 +209,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\OneDrive\\Documentos\\Cursos\\NET\\WinFormsApp1\\WinFormsApp1.csproj",
-      "projectName": "WinFormsApp1",
-      "projectPath": "F:\\OneDrive\\Documentos\\Cursos\\NET\\WinFormsApp1\\WinFormsApp1.csproj",
+      "projectUniqueName": "F:\\OneDrive\\Documentos\\Cursos\\NET\\WinFormsApp1\\HistoriaClinica.csproj",
+      "projectName": "HistoriaClinica",
+      "projectPath": "F:\\OneDrive\\Documentos\\Cursos\\NET\\WinFormsApp1\\HistoriaClinica.csproj",
       "packagesPath": "C:\\Users\\ferre\\.nuget\\packages\\",
       "outputPath": "F:\\OneDrive\\Documentos\\Cursos\\NET\\WinFormsApp1\\obj\\",
       "projectStyle": "PackageReference",

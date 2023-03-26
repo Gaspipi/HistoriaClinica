@@ -155,7 +155,8 @@ namespace WinFormsApp1
                     PhoneTextBox.ReadOnly = true;
                     AntecFamiTextBox.ReadOnly = true;
                     AntecPersTextBox.ReadOnly = true;
-                    Pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text);
+                    Medicacion_TextBox.ReadOnly = true;
+                    Pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
                     Datos.SetPaciente(Pac);
                     this.Close();
                 }
@@ -213,7 +214,7 @@ namespace WinFormsApp1
 
         private void NewUser_FormClosed(object sender, FormClosedEventArgs e)
         {
-           
+
             AppCli = Devapp();
             if (AppCli != null)
             {

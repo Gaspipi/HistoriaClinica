@@ -28,130 +28,131 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SaveButton = new System.Windows.Forms.Button();
-            this.CancelButton = new System.Windows.Forms.Button();
-            this.DniTextBox = new System.Windows.Forms.TextBox();
-            this.EnfermedadTextBox = new System.Windows.Forms.TextBox();
-            this.MotivoTextBox = new System.Windows.Forms.TextBox();
-            this.DniLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.IndicacionesTextBox = new System.Windows.Forms.TextBox();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewFicha));
+            SaveButton = new Button();
+            CancelButton = new Button();
+            DniTextBox = new TextBox();
+            EnfermedadTextBox = new TextBox();
+            MotivoTextBox = new TextBox();
+            DniLabel = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            IndicacionesTextBox = new TextBox();
+            SuspendLayout();
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(264, 284);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(75, 23);
-            this.SaveButton.TabIndex = 11;
-            this.SaveButton.Text = "Guardar";
-            this.SaveButton.UseVisualStyleBackColor = true;
-            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            SaveButton.Location = new Point(264, 284);
+            SaveButton.Name = "SaveButton";
+            SaveButton.Size = new Size(75, 23);
+            SaveButton.TabIndex = 11;
+            SaveButton.Text = "Guardar";
+            SaveButton.UseVisualStyleBackColor = true;
+            SaveButton.Click += SaveButton_Click;
             // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point(12, 284);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 12;
-            this.CancelButton.Text = "Cancelar";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+            CancelButton.Location = new Point(12, 284);
+            CancelButton.Name = "CancelButton";
+            CancelButton.Size = new Size(75, 23);
+            CancelButton.TabIndex = 12;
+            CancelButton.Text = "Cancelar";
+            CancelButton.UseVisualStyleBackColor = true;
+            CancelButton.Click += CancelButton_Click;
             // 
             // DniTextBox
             // 
-            this.DniTextBox.Location = new System.Drawing.Point(12, 27);
-            this.DniTextBox.MaxLength = 8;
-            this.DniTextBox.Name = "DniTextBox";
-            this.DniTextBox.ReadOnly = true;
-            this.DniTextBox.Size = new System.Drawing.Size(100, 23);
-            this.DniTextBox.TabIndex = 2;
-            this.DniTextBox.TextChanged += new System.EventHandler(this.DniTextBox_TextChanged);
+            DniTextBox.Location = new Point(12, 27);
+            DniTextBox.MaxLength = 8;
+            DniTextBox.Name = "DniTextBox";
+            DniTextBox.ReadOnly = true;
+            DniTextBox.Size = new Size(100, 23);
+            DniTextBox.TabIndex = 2;
+            DniTextBox.TextChanged += DniTextBox_TextChanged;
             // 
             // EnfermedadTextBox
             // 
-            this.EnfermedadTextBox.Location = new System.Drawing.Point(217, 86);
-            this.EnfermedadTextBox.Multiline = true;
-            this.EnfermedadTextBox.Name = "EnfermedadTextBox";
-            this.EnfermedadTextBox.Size = new System.Drawing.Size(180, 125);
-            this.EnfermedadTextBox.TabIndex = 5;
-            this.EnfermedadTextBox.TextChanged += new System.EventHandler(this.EnfermedadTextBox_TextChanged);
+            EnfermedadTextBox.Location = new Point(217, 86);
+            EnfermedadTextBox.Multiline = true;
+            EnfermedadTextBox.Name = "EnfermedadTextBox";
+            EnfermedadTextBox.Size = new Size(180, 125);
+            EnfermedadTextBox.TabIndex = 5;
+            EnfermedadTextBox.TextChanged += EnfermedadTextBox_TextChanged;
             // 
             // MotivoTextBox
             // 
-            this.MotivoTextBox.Location = new System.Drawing.Point(12, 86);
-            this.MotivoTextBox.Multiline = true;
-            this.MotivoTextBox.Name = "MotivoTextBox";
-            this.MotivoTextBox.Size = new System.Drawing.Size(180, 125);
-            this.MotivoTextBox.TabIndex = 4;
+            MotivoTextBox.Location = new Point(12, 86);
+            MotivoTextBox.Multiline = true;
+            MotivoTextBox.Name = "MotivoTextBox";
+            MotivoTextBox.Size = new Size(180, 125);
+            MotivoTextBox.TabIndex = 4;
             // 
             // DniLabel
             // 
-            this.DniLabel.AutoSize = true;
-            this.DniLabel.Location = new System.Drawing.Point(12, 9);
-            this.DniLabel.Name = "DniLabel";
-            this.DniLabel.Size = new System.Drawing.Size(27, 15);
-            this.DniLabel.TabIndex = 5;
-            this.DniLabel.Text = "DNI";
+            DniLabel.AutoSize = true;
+            DniLabel.Location = new Point(12, 9);
+            DniLabel.Name = "DniLabel";
+            DniLabel.Size = new Size(27, 15);
+            DniLabel.TabIndex = 5;
+            DniLabel.Text = "DNI";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(217, 68);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 15);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Enfermedad";
+            label2.AutoSize = true;
+            label2.Location = new Point(217, 68);
+            label2.Name = "label2";
+            label2.Size = new Size(106, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Enfermedad actual";
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 15);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Motivo";
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 68);
+            label3.Name = "label3";
+            label3.Size = new Size(45, 15);
+            label3.TabIndex = 7;
+            label3.Text = "Motivo";
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(421, 68);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(73, 15);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Indicaciones";
+            label4.AutoSize = true;
+            label4.Location = new Point(421, 68);
+            label4.Name = "label4";
+            label4.Size = new Size(73, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Indicaciones";
             // 
             // IndicacionesTextBox
             // 
-            this.IndicacionesTextBox.Location = new System.Drawing.Point(421, 86);
-            this.IndicacionesTextBox.Multiline = true;
-            this.IndicacionesTextBox.Name = "IndicacionesTextBox";
-            this.IndicacionesTextBox.Size = new System.Drawing.Size(180, 125);
-            this.IndicacionesTextBox.TabIndex = 6;
+            IndicacionesTextBox.Location = new Point(421, 86);
+            IndicacionesTextBox.Multiline = true;
+            IndicacionesTextBox.Name = "IndicacionesTextBox";
+            IndicacionesTextBox.Size = new Size(180, 125);
+            IndicacionesTextBox.TabIndex = 6;
             // 
             // NewFicha
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(661, 333);
-            this.Controls.Add(this.IndicacionesTextBox);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.DniLabel);
-            this.Controls.Add(this.MotivoTextBox);
-            this.Controls.Add(this.EnfermedadTextBox);
-            this.Controls.Add(this.DniTextBox);
-            this.Controls.Add(this.CancelButton);
-            this.Controls.Add(this.SaveButton);
-            this.Name = "NewFicha";
-            this.Text = "NewFicha";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NewFicha_FormClosed);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(661, 333);
+            Controls.Add(IndicacionesTextBox);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(DniLabel);
+            Controls.Add(MotivoTextBox);
+            Controls.Add(EnfermedadTextBox);
+            Controls.Add(DniTextBox);
+            Controls.Add(CancelButton);
+            Controls.Add(SaveButton);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Name = "NewFicha";
+            Text = "Ficha diaria";
+            FormClosed += NewFicha_FormClosed;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

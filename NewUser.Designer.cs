@@ -28,278 +28,303 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.PhoneTextBox = new System.Windows.Forms.TextBox();
-            this.PhoneLabel = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.AntecFamiTextBox = new System.Windows.Forms.TextBox();
-            this.AntecPersTextBox = new System.Windows.Forms.TextBox();
-            this.FirstNameTextBox = new System.Windows.Forms.TextBox();
-            this.NroAsociadoLabel = new System.Windows.Forms.Label();
-            this.BirthDateTextBox = new System.Windows.Forms.TextBox();
-            this.ObraSocialLabel = new System.Windows.Forms.Label();
-            this.LastNameLabel = new System.Windows.Forms.Label();
-            this.FirstNameLabel = new System.Windows.Forms.Label();
-            this.BirthLabel = new System.Windows.Forms.Label();
-            this.NroAsociadoTextBox = new System.Windows.Forms.TextBox();
-            this.ObraSocialTextBox = new System.Windows.Forms.TextBox();
-            this.LastNameTextBox = new System.Windows.Forms.TextBox();
-            this.SaveButton = new System.Windows.Forms.Button();
-            this.CancelButton = new System.Windows.Forms.Button();
-            this.DniLabel = new System.Windows.Forms.Label();
-            this.DniTextBox = new System.Windows.Forms.TextBox();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewUser));
+            PhoneTextBox = new TextBox();
+            PhoneLabel = new Label();
+            label8 = new Label();
+            label7 = new Label();
+            AntecFamiTextBox = new TextBox();
+            AntecPersTextBox = new TextBox();
+            FirstNameTextBox = new TextBox();
+            NroAsociadoLabel = new Label();
+            BirthDateTextBox = new TextBox();
+            ObraSocialLabel = new Label();
+            LastNameLabel = new Label();
+            FirstNameLabel = new Label();
+            BirthLabel = new Label();
+            NroAsociadoTextBox = new TextBox();
+            ObraSocialTextBox = new TextBox();
+            LastNameTextBox = new TextBox();
+            SaveButton = new Button();
+            CancelButton = new Button();
+            DniLabel = new Label();
+            DniTextBox = new TextBox();
+            Medicacion_Label = new Label();
+            Medicacion_TextBox = new TextBox();
+            SuspendLayout();
             // 
             // PhoneTextBox
             // 
-            this.PhoneTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.PhoneTextBox.Location = new System.Drawing.Point(244, 125);
-            this.PhoneTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.PhoneTextBox.MaxLength = 50;
-            this.PhoneTextBox.Name = "PhoneTextBox";
-            this.PhoneTextBox.Size = new System.Drawing.Size(187, 23);
-            this.PhoneTextBox.TabIndex = 43;
-            this.PhoneTextBox.TextChanged += new System.EventHandler(this.PhoneTextBox_TextChanged);
+            PhoneTextBox.BackColor = SystemColors.Window;
+            PhoneTextBox.Location = new Point(244, 125);
+            PhoneTextBox.Margin = new Padding(4, 3, 4, 3);
+            PhoneTextBox.MaxLength = 50;
+            PhoneTextBox.Name = "PhoneTextBox";
+            PhoneTextBox.Size = new Size(187, 23);
+            PhoneTextBox.TabIndex = 43;
+            PhoneTextBox.TextChanged += PhoneTextBox_TextChanged;
             // 
             // PhoneLabel
             // 
-            this.PhoneLabel.AutoSize = true;
-            this.PhoneLabel.Location = new System.Drawing.Point(241, 107);
-            this.PhoneLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.PhoneLabel.Name = "PhoneLabel";
-            this.PhoneLabel.Size = new System.Drawing.Size(21, 15);
-            this.PhoneLabel.TabIndex = 55;
-            this.PhoneLabel.Text = "Tel";
-            this.PhoneLabel.Click += new System.EventHandler(this.PhoneLabel_Click);
+            PhoneLabel.AutoSize = true;
+            PhoneLabel.Location = new Point(241, 107);
+            PhoneLabel.Margin = new Padding(4, 0, 4, 0);
+            PhoneLabel.Name = "PhoneLabel";
+            PhoneLabel.Size = new Size(21, 15);
+            PhoneLabel.TabIndex = 55;
+            PhoneLabel.Text = "Tel";
+            PhoneLabel.Click += PhoneLabel_Click;
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(491, 255);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(135, 15);
-            this.label8.TabIndex = 54;
-            this.label8.Text = "Antecedentes Familiares";
-            this.label8.Click += new System.EventHandler(this.label8_Click);
+            label8.AutoSize = true;
+            label8.Location = new Point(491, 220);
+            label8.Margin = new Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new Size(135, 15);
+            label8.TabIndex = 54;
+            label8.Text = "Antecedentes Familiares";
+            label8.Click += label8_Click;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(491, 10);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(138, 15);
-            this.label7.TabIndex = 53;
-            this.label7.Text = "Antecedentes Personales";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
+            label7.AutoSize = true;
+            label7.Location = new Point(491, 10);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(138, 15);
+            label7.TabIndex = 53;
+            label7.Text = "Antecedentes Personales";
+            label7.Click += label7_Click;
             // 
             // AntecFamiTextBox
             // 
-            this.AntecFamiTextBox.Location = new System.Drawing.Point(495, 273);
-            this.AntecFamiTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.AntecFamiTextBox.Multiline = true;
-            this.AntecFamiTextBox.Name = "AntecFamiTextBox";
-            this.AntecFamiTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.AntecFamiTextBox.Size = new System.Drawing.Size(292, 143);
-            this.AntecFamiTextBox.TabIndex = 47;
-            this.AntecFamiTextBox.TextChanged += new System.EventHandler(this.AntecFamiTextBox_TextChanged);
+            AntecFamiTextBox.Location = new Point(495, 238);
+            AntecFamiTextBox.Margin = new Padding(4, 3, 4, 3);
+            AntecFamiTextBox.Multiline = true;
+            AntecFamiTextBox.Name = "AntecFamiTextBox";
+            AntecFamiTextBox.ScrollBars = ScrollBars.Vertical;
+            AntecFamiTextBox.Size = new Size(292, 143);
+            AntecFamiTextBox.TabIndex = 47;
+            AntecFamiTextBox.TextChanged += AntecFamiTextBox_TextChanged;
             // 
             // AntecPersTextBox
             // 
-            this.AntecPersTextBox.Location = new System.Drawing.Point(495, 30);
-            this.AntecPersTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.AntecPersTextBox.Multiline = true;
-            this.AntecPersTextBox.Name = "AntecPersTextBox";
-            this.AntecPersTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.AntecPersTextBox.Size = new System.Drawing.Size(292, 143);
-            this.AntecPersTextBox.TabIndex = 46;
-            this.AntecPersTextBox.TextChanged += new System.EventHandler(this.AntecPersTextBox_TextChanged);
+            AntecPersTextBox.Location = new Point(495, 30);
+            AntecPersTextBox.Margin = new Padding(4, 3, 4, 3);
+            AntecPersTextBox.Multiline = true;
+            AntecPersTextBox.Name = "AntecPersTextBox";
+            AntecPersTextBox.ScrollBars = ScrollBars.Vertical;
+            AntecPersTextBox.Size = new Size(292, 143);
+            AntecPersTextBox.TabIndex = 46;
+            AntecPersTextBox.TextChanged += AntecPersTextBox_TextChanged;
             // 
             // FirstNameTextBox
             // 
-            this.FirstNameTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.FirstNameTextBox.Location = new System.Drawing.Point(21, 74);
-            this.FirstNameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.FirstNameTextBox.MaxLength = 50;
-            this.FirstNameTextBox.Name = "FirstNameTextBox";
-            this.FirstNameTextBox.Size = new System.Drawing.Size(187, 23);
-            this.FirstNameTextBox.TabIndex = 40;
-            this.FirstNameTextBox.TextChanged += new System.EventHandler(this.FirstNameTextBox_TextChanged);
+            FirstNameTextBox.BackColor = SystemColors.Window;
+            FirstNameTextBox.Location = new Point(21, 74);
+            FirstNameTextBox.Margin = new Padding(4, 3, 4, 3);
+            FirstNameTextBox.MaxLength = 50;
+            FirstNameTextBox.Name = "FirstNameTextBox";
+            FirstNameTextBox.Size = new Size(187, 23);
+            FirstNameTextBox.TabIndex = 40;
+            FirstNameTextBox.TextChanged += FirstNameTextBox_TextChanged;
             // 
             // NroAsociadoLabel
             // 
-            this.NroAsociadoLabel.AutoSize = true;
-            this.NroAsociadoLabel.Location = new System.Drawing.Point(241, 166);
-            this.NroAsociadoLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.NroAsociadoLabel.Name = "NroAsociadoLabel";
-            this.NroAsociadoLabel.Size = new System.Drawing.Size(79, 15);
-            this.NroAsociadoLabel.TabIndex = 52;
-            this.NroAsociadoLabel.Text = "Nro Asociado";
-            this.NroAsociadoLabel.Click += new System.EventHandler(this.NroAsociadoLabel_Click);
+            NroAsociadoLabel.AutoSize = true;
+            NroAsociadoLabel.Location = new Point(241, 166);
+            NroAsociadoLabel.Margin = new Padding(4, 0, 4, 0);
+            NroAsociadoLabel.Name = "NroAsociadoLabel";
+            NroAsociadoLabel.Size = new Size(79, 15);
+            NroAsociadoLabel.TabIndex = 52;
+            NroAsociadoLabel.Text = "Nro Asociado";
+            NroAsociadoLabel.Click += NroAsociadoLabel_Click;
             // 
             // BirthDateTextBox
             // 
-            this.BirthDateTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.BirthDateTextBox.Location = new System.Drawing.Point(21, 125);
-            this.BirthDateTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.BirthDateTextBox.MaxLength = 10;
-            this.BirthDateTextBox.Name = "BirthDateTextBox";
-            this.BirthDateTextBox.Size = new System.Drawing.Size(116, 23);
-            this.BirthDateTextBox.TabIndex = 42;
-            this.BirthDateTextBox.Text = "00/00/0000";
-            this.BirthDateTextBox.TextChanged += new System.EventHandler(this.BirthDateTextBox_TextChanged);
+            BirthDateTextBox.BackColor = SystemColors.Window;
+            BirthDateTextBox.Location = new Point(21, 125);
+            BirthDateTextBox.Margin = new Padding(4, 3, 4, 3);
+            BirthDateTextBox.MaxLength = 10;
+            BirthDateTextBox.Name = "BirthDateTextBox";
+            BirthDateTextBox.PlaceholderText = "dd/mm/aaaa";
+            BirthDateTextBox.Size = new Size(116, 23);
+            BirthDateTextBox.TabIndex = 42;
+            BirthDateTextBox.TextChanged += BirthDateTextBox_TextChanged;
             // 
             // ObraSocialLabel
             // 
-            this.ObraSocialLabel.AutoSize = true;
-            this.ObraSocialLabel.Location = new System.Drawing.Point(18, 166);
-            this.ObraSocialLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.ObraSocialLabel.Name = "ObraSocialLabel";
-            this.ObraSocialLabel.Size = new System.Drawing.Size(67, 15);
-            this.ObraSocialLabel.TabIndex = 51;
-            this.ObraSocialLabel.Text = "Obra Social";
-            this.ObraSocialLabel.Click += new System.EventHandler(this.ObraSocialLabel_Click);
+            ObraSocialLabel.AutoSize = true;
+            ObraSocialLabel.Location = new Point(18, 166);
+            ObraSocialLabel.Margin = new Padding(4, 0, 4, 0);
+            ObraSocialLabel.Name = "ObraSocialLabel";
+            ObraSocialLabel.Size = new Size(67, 15);
+            ObraSocialLabel.TabIndex = 51;
+            ObraSocialLabel.Text = "Obra Social";
+            ObraSocialLabel.Click += ObraSocialLabel_Click;
             // 
             // LastNameLabel
             // 
-            this.LastNameLabel.AutoSize = true;
-            this.LastNameLabel.Location = new System.Drawing.Point(241, 55);
-            this.LastNameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.LastNameLabel.Name = "LastNameLabel";
-            this.LastNameLabel.Size = new System.Drawing.Size(51, 15);
-            this.LastNameLabel.TabIndex = 50;
-            this.LastNameLabel.Text = "Apellido";
-            this.LastNameLabel.Click += new System.EventHandler(this.LastNameLabel_Click);
+            LastNameLabel.AutoSize = true;
+            LastNameLabel.Location = new Point(241, 55);
+            LastNameLabel.Margin = new Padding(4, 0, 4, 0);
+            LastNameLabel.Name = "LastNameLabel";
+            LastNameLabel.Size = new Size(51, 15);
+            LastNameLabel.TabIndex = 50;
+            LastNameLabel.Text = "Apellido";
+            LastNameLabel.Click += LastNameLabel_Click;
             // 
             // FirstNameLabel
             // 
-            this.FirstNameLabel.AutoSize = true;
-            this.FirstNameLabel.Location = new System.Drawing.Point(18, 55);
-            this.FirstNameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.FirstNameLabel.Name = "FirstNameLabel";
-            this.FirstNameLabel.Size = new System.Drawing.Size(51, 15);
-            this.FirstNameLabel.TabIndex = 49;
-            this.FirstNameLabel.Text = "Nombre";
-            this.FirstNameLabel.Click += new System.EventHandler(this.FirstNameLabel_Click);
+            FirstNameLabel.AutoSize = true;
+            FirstNameLabel.Location = new Point(18, 55);
+            FirstNameLabel.Margin = new Padding(4, 0, 4, 0);
+            FirstNameLabel.Name = "FirstNameLabel";
+            FirstNameLabel.Size = new Size(51, 15);
+            FirstNameLabel.TabIndex = 49;
+            FirstNameLabel.Text = "Nombre";
+            FirstNameLabel.Click += FirstNameLabel_Click;
             // 
             // BirthLabel
             // 
-            this.BirthLabel.AutoSize = true;
-            this.BirthLabel.Location = new System.Drawing.Point(18, 107);
-            this.BirthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.BirthLabel.Name = "BirthLabel";
-            this.BirthLabel.Size = new System.Drawing.Size(69, 15);
-            this.BirthLabel.TabIndex = 48;
-            this.BirthLabel.Text = "Nacimiento";
-            this.BirthLabel.Click += new System.EventHandler(this.BirthLabel_Click);
+            BirthLabel.AutoSize = true;
+            BirthLabel.Location = new Point(18, 107);
+            BirthLabel.Margin = new Padding(4, 0, 4, 0);
+            BirthLabel.Name = "BirthLabel";
+            BirthLabel.Size = new Size(69, 15);
+            BirthLabel.TabIndex = 48;
+            BirthLabel.Text = "Nacimiento";
+            BirthLabel.Click += BirthLabel_Click;
             // 
             // NroAsociadoTextBox
             // 
-            this.NroAsociadoTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.NroAsociadoTextBox.Location = new System.Drawing.Point(244, 184);
-            this.NroAsociadoTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.NroAsociadoTextBox.MaxLength = 50;
-            this.NroAsociadoTextBox.Name = "NroAsociadoTextBox";
-            this.NroAsociadoTextBox.Size = new System.Drawing.Size(187, 23);
-            this.NroAsociadoTextBox.TabIndex = 45;
-            this.NroAsociadoTextBox.TextChanged += new System.EventHandler(this.NroAsociadoTextBox_TextChanged);
+            NroAsociadoTextBox.BackColor = SystemColors.Window;
+            NroAsociadoTextBox.Location = new Point(244, 184);
+            NroAsociadoTextBox.Margin = new Padding(4, 3, 4, 3);
+            NroAsociadoTextBox.MaxLength = 50;
+            NroAsociadoTextBox.Name = "NroAsociadoTextBox";
+            NroAsociadoTextBox.Size = new Size(187, 23);
+            NroAsociadoTextBox.TabIndex = 45;
+            NroAsociadoTextBox.TextChanged += NroAsociadoTextBox_TextChanged;
             // 
             // ObraSocialTextBox
             // 
-            this.ObraSocialTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.ObraSocialTextBox.Location = new System.Drawing.Point(21, 184);
-            this.ObraSocialTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ObraSocialTextBox.MaxLength = 50;
-            this.ObraSocialTextBox.Name = "ObraSocialTextBox";
-            this.ObraSocialTextBox.Size = new System.Drawing.Size(187, 23);
-            this.ObraSocialTextBox.TabIndex = 44;
-            this.ObraSocialTextBox.TextChanged += new System.EventHandler(this.ObraSocialTextBox_TextChanged);
+            ObraSocialTextBox.BackColor = SystemColors.Window;
+            ObraSocialTextBox.Location = new Point(21, 184);
+            ObraSocialTextBox.Margin = new Padding(4, 3, 4, 3);
+            ObraSocialTextBox.MaxLength = 50;
+            ObraSocialTextBox.Name = "ObraSocialTextBox";
+            ObraSocialTextBox.Size = new Size(187, 23);
+            ObraSocialTextBox.TabIndex = 44;
+            ObraSocialTextBox.TextChanged += ObraSocialTextBox_TextChanged;
             // 
             // LastNameTextBox
             // 
-            this.LastNameTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.LastNameTextBox.Location = new System.Drawing.Point(244, 74);
-            this.LastNameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.LastNameTextBox.MaxLength = 50;
-            this.LastNameTextBox.Name = "LastNameTextBox";
-            this.LastNameTextBox.Size = new System.Drawing.Size(187, 23);
-            this.LastNameTextBox.TabIndex = 41;
-            this.LastNameTextBox.TextChanged += new System.EventHandler(this.LastNameTextBox_TextChanged);
+            LastNameTextBox.BackColor = SystemColors.Window;
+            LastNameTextBox.Location = new Point(244, 74);
+            LastNameTextBox.Margin = new Padding(4, 3, 4, 3);
+            LastNameTextBox.MaxLength = 50;
+            LastNameTextBox.Name = "LastNameTextBox";
+            LastNameTextBox.Size = new Size(187, 23);
+            LastNameTextBox.TabIndex = 41;
+            LastNameTextBox.TextChanged += LastNameTextBox_TextChanged;
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(358, 415);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(75, 23);
-            this.SaveButton.TabIndex = 56;
-            this.SaveButton.Text = "Guardar";
-            this.SaveButton.UseVisualStyleBackColor = true;
-            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            SaveButton.Location = new Point(358, 415);
+            SaveButton.Name = "SaveButton";
+            SaveButton.Size = new Size(75, 23);
+            SaveButton.TabIndex = 56;
+            SaveButton.Text = "Guardar";
+            SaveButton.UseVisualStyleBackColor = true;
+            SaveButton.Click += SaveButton_Click;
             // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point(23, 415);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 57;
-            this.CancelButton.Text = "Cancelar";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+            CancelButton.Location = new Point(23, 415);
+            CancelButton.Name = "CancelButton";
+            CancelButton.Size = new Size(75, 23);
+            CancelButton.TabIndex = 57;
+            CancelButton.Text = "Cancelar";
+            CancelButton.UseVisualStyleBackColor = true;
+            CancelButton.Click += CancelButton_Click;
             // 
             // DniLabel
             // 
-            this.DniLabel.AutoSize = true;
-            this.DniLabel.Location = new System.Drawing.Point(18, 10);
-            this.DniLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.DniLabel.Name = "DniLabel";
-            this.DniLabel.Size = new System.Drawing.Size(27, 15);
-            this.DniLabel.TabIndex = 59;
-            this.DniLabel.Text = "DNI";
-            this.DniLabel.Click += new System.EventHandler(this.label1_Click);
+            DniLabel.AutoSize = true;
+            DniLabel.Location = new Point(18, 10);
+            DniLabel.Margin = new Padding(4, 0, 4, 0);
+            DniLabel.Name = "DniLabel";
+            DniLabel.Size = new Size(27, 15);
+            DniLabel.TabIndex = 59;
+            DniLabel.Text = "DNI";
+            DniLabel.Click += label1_Click;
             // 
             // DniTextBox
             // 
-            this.DniTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.DniTextBox.Location = new System.Drawing.Point(21, 29);
-            this.DniTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.DniTextBox.MaxLength = 8;
-            this.DniTextBox.Name = "DniTextBox";
-            this.DniTextBox.Size = new System.Drawing.Size(187, 23);
-            this.DniTextBox.TabIndex = 58;
-            this.DniTextBox.TextChanged += new System.EventHandler(this.DniTextBox_TextChanged);
+            DniTextBox.BackColor = SystemColors.Window;
+            DniTextBox.Location = new Point(21, 29);
+            DniTextBox.Margin = new Padding(4, 3, 4, 3);
+            DniTextBox.MaxLength = 8;
+            DniTextBox.Name = "DniTextBox";
+            DniTextBox.Size = new Size(187, 23);
+            DniTextBox.TabIndex = 58;
+            DniTextBox.TextChanged += DniTextBox_TextChanged;
+            // 
+            // Medicacion_Label
+            // 
+            Medicacion_Label.AutoSize = true;
+            Medicacion_Label.Location = new Point(21, 220);
+            Medicacion_Label.Margin = new Padding(4, 0, 4, 0);
+            Medicacion_Label.Name = "Medicacion_Label";
+            Medicacion_Label.Size = new Size(69, 15);
+            Medicacion_Label.TabIndex = 61;
+            Medicacion_Label.Text = "Medicacion";
+            // 
+            // Medicacion_TextBox
+            // 
+            Medicacion_TextBox.Location = new Point(18, 238);
+            Medicacion_TextBox.Margin = new Padding(4, 3, 4, 3);
+            Medicacion_TextBox.Multiline = true;
+            Medicacion_TextBox.Name = "Medicacion_TextBox";
+            Medicacion_TextBox.ScrollBars = ScrollBars.Vertical;
+            Medicacion_TextBox.Size = new Size(292, 143);
+            Medicacion_TextBox.TabIndex = 62;
             // 
             // NewUser
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.DniLabel);
-            this.Controls.Add(this.DniTextBox);
-            this.Controls.Add(this.CancelButton);
-            this.Controls.Add(this.SaveButton);
-            this.Controls.Add(this.PhoneTextBox);
-            this.Controls.Add(this.PhoneLabel);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.AntecFamiTextBox);
-            this.Controls.Add(this.AntecPersTextBox);
-            this.Controls.Add(this.FirstNameTextBox);
-            this.Controls.Add(this.NroAsociadoLabel);
-            this.Controls.Add(this.BirthDateTextBox);
-            this.Controls.Add(this.ObraSocialLabel);
-            this.Controls.Add(this.LastNameLabel);
-            this.Controls.Add(this.FirstNameLabel);
-            this.Controls.Add(this.BirthLabel);
-            this.Controls.Add(this.NroAsociadoTextBox);
-            this.Controls.Add(this.ObraSocialTextBox);
-            this.Controls.Add(this.LastNameTextBox);
-            this.Name = "NewUser";
-            this.Text = "NewUser";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NewUser_FormClosed);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(Medicacion_TextBox);
+            Controls.Add(Medicacion_Label);
+            Controls.Add(DniLabel);
+            Controls.Add(DniTextBox);
+            Controls.Add(CancelButton);
+            Controls.Add(SaveButton);
+            Controls.Add(PhoneTextBox);
+            Controls.Add(PhoneLabel);
+            Controls.Add(label8);
+            Controls.Add(label7);
+            Controls.Add(AntecFamiTextBox);
+            Controls.Add(AntecPersTextBox);
+            Controls.Add(FirstNameTextBox);
+            Controls.Add(NroAsociadoLabel);
+            Controls.Add(BirthDateTextBox);
+            Controls.Add(ObraSocialLabel);
+            Controls.Add(LastNameLabel);
+            Controls.Add(FirstNameLabel);
+            Controls.Add(BirthLabel);
+            Controls.Add(NroAsociadoTextBox);
+            Controls.Add(ObraSocialTextBox);
+            Controls.Add(LastNameTextBox);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Name = "NewUser";
+            Text = "Paciente";
+            FormClosed += NewUser_FormClosed;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -323,5 +348,7 @@
         private Button CancelButton;
         private Label DniLabel;
         private TextBox DniTextBox;
+        private Label Medicacion_Label;
+        private TextBox Medicacion_TextBox;
     }
 }
