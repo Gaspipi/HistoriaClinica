@@ -294,8 +294,10 @@
             // 
             // NewUser
             // 
+            AcceptButton = SaveButton;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = CancelButton;
             ClientSize = new Size(800, 450);
             Controls.Add(Medicacion_TextBox);
             Controls.Add(Medicacion_Label);
@@ -321,6 +323,7 @@
             Controls.Add(LastNameTextBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "NewUser";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Paciente";
             FormClosed += NewUser_FormClosed;
             ResumeLayout(false);

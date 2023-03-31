@@ -84,7 +84,7 @@
             // 
             // Paciente
             // 
-            Paciente.BackColor = SystemColors.Menu;
+            Paciente.BackColor = Color.White;
             Paciente.Controls.Add(Medicacion_Label);
             Paciente.Controls.Add(Medicacion_TextBox);
             Paciente.Controls.Add(FirstNameTextBox);
@@ -319,6 +319,7 @@
             // 
             // HistoriaClinica
             // 
+            HistoriaClinica.BackColor = Color.White;
             HistoriaClinica.Controls.Add(DeleteButton);
             HistoriaClinica.Controls.Add(IndicacionesLabel);
             HistoriaClinica.Controls.Add(IndicacionesTextBox);
@@ -336,7 +337,6 @@
             HistoriaClinica.Size = new Size(879, 534);
             HistoriaClinica.TabIndex = 1;
             HistoriaClinica.Text = "Historia Clinica";
-            HistoriaClinica.UseVisualStyleBackColor = true;
             HistoriaClinica.Click += HistoriaClinica_Click;
             // 
             // DeleteButton
@@ -491,9 +491,11 @@
             // 
             // AppClinica
             // 
+            AcceptButton = SearchButton;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
+            BackColor = SystemColors.Window;
             ClientSize = new Size(915, 647);
             Controls.Add(EditButton);
             Controls.Add(SearchButton);

@@ -161,6 +161,7 @@ namespace AppParaMama
                 Paciente pac = new Paciente();
                 pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
                 var nuevo = new NewUser();
+                nuevo.Setapp(this);
                 nuevo.Show();
                 nuevo.Datos = Datos;
                 nuevo.Edit();
@@ -232,13 +233,14 @@ namespace AppParaMama
         public void ListadoFichas()
         {
             FichasDiariasListBox.DataSource = Datos.DevListadoFichas(DniTextBox.Text);
+            FichasDiariasListBox.SelectedIndex = FichasDiariasListBox.Items.Count - 1;
             Paciente Pac = Datos.DevDatosPaciente(DniTextBox.Text);
             if (Pac == null)
             {
                 DialogResult dialogResult = MessageBox.Show("No existe el paciente especificado, desea crear uno nuevo?", "No existe el paciente", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    var nuevo = new NewUser();
+                    NewUser nuevo = new();
                     nuevo.Setapp(this);
                     nuevo.Show();
                     nuevo.ShowDni(DniTextBox.Text);

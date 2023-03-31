@@ -158,7 +158,7 @@ namespace WinFormsApp1
                     Medicacion_TextBox.ReadOnly = true;
                     Pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
                     Datos.SetPaciente(Pac);
-                    this.Close();
+                    Close();
                 }
             }
         }
@@ -185,6 +185,7 @@ namespace WinFormsApp1
             NroAsociadoTextBox.Text = pac.DevNroSocio();
             AntecPersTextBox.Text = pac.DevAntecPers();
             AntecFamiTextBox.Text = pac.DevAntecFam();
+            Medicacion_TextBox.Text = pac.DevMed();
 
         }
         #endregion
@@ -214,13 +215,18 @@ namespace WinFormsApp1
 
         private void NewUser_FormClosed(object sender, FormClosedEventArgs e)
         {
+            AppClinica app = Devapp();
+            app.ListadoFichas();
+        }
 
-            AppCli = Devapp();
-            if (AppCli != null)
-            {
-                AppCli.ListadoFichas();
+        private void NewUser_Load(object sender, EventArgs e)
+        {
 
-            }
+        }
+
+        private void NewUser_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
         }
     }
 }

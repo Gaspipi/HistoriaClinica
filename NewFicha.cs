@@ -74,9 +74,13 @@ namespace WinFormsApp1
 
         private void NewFicha_FormClosed(object sender, FormClosedEventArgs e)
         {
+            AppClinica app = Devapp();
+            app.ListadoFichas();
+        }
 
-            AppCli = Devapp();
-            AppCli.ListadoFichas();
+        private void NewFicha_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
