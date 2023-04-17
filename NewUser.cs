@@ -4,7 +4,14 @@ namespace WinFormsApp1
 {
     public partial class NewUser : Form
     {
-        AppClinica AppCli;
+
+        private AppClinica _appCli;
+
+        public AppClinica AppCli
+        {
+            get { return _appCli; }
+            set { _appCli = value; }
+        }
         public NewUser()
         {
             InitializeComponent();
@@ -13,50 +20,6 @@ namespace WinFormsApp1
         public void Edit()
         {
             DniTextBox.Enabled = false;
-        }
-        private void AntecFamiTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PhoneTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PhoneLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AntecPersTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void FirstNameTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void NroAsociadoLabel_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void BirthDateTextBox_TextChanged(object sender, EventArgs e)
@@ -91,45 +54,6 @@ namespace WinFormsApp1
             }
         }
 
-        private void ObraSocialLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void LastNameLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void FirstNameLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BirthLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void NroAsociadoTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ObraSocialTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void LastNameTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
@@ -158,6 +82,8 @@ namespace WinFormsApp1
                     Medicacion_TextBox.ReadOnly = true;
                     Pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
                     Datos.SetPaciente(Pac);
+                    AppClinica app = Devapp();
+                    app.ListadoFichas();
                     Close();
                 }
             }
@@ -208,25 +134,14 @@ namespace WinFormsApp1
             }
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void CancelarButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            DialogResult resp = MessageBox.Show($"Esta seguro de que desea Cancelar?", "Cancelar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (resp == DialogResult.Yes)
+            {
+                Close();
+            }
         }
 
-        private void NewUser_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            AppClinica app = Devapp();
-            app.ListadoFichas();
-        }
-
-        private void NewUser_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void NewUser_FormClosing(object sender, FormClosingEventArgs e)
-        {
-
-        }
     }
 }

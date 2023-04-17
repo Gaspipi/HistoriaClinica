@@ -2,6 +2,22 @@
   "version": 3,
   "targets": {
     "net6.0-windows7.0": {
+      "ReaLTaiizor/3.7.8.6": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0-windows7.0/ReaLTaiizor.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0-windows7.0/ReaLTaiizor.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WindowsForms"
+        ]
+      },
       "System.Data.Odbc/7.0.0": {
         "type": "package",
         "dependencies": {
@@ -83,6 +99,29 @@
     }
   },
   "libraries": {
+    "ReaLTaiizor/3.7.8.6": {
+      "sha512": "b7vfciDcXqoIWjYrr760TyyEZSadlAgkaglLFPrRbzHNla7WqaojmC8VzLt/soaD2yGd/56LN0spedW7JcxMFw==",
+      "type": "package",
+      "path": "realtaiizor/3.7.8.6",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "Taiizor.png",
+        "lib/net48/ReaLTaiizor.dll",
+        "lib/net48/ReaLTaiizor.xml",
+        "lib/net5.0-windows7.0/ReaLTaiizor.dll",
+        "lib/net5.0-windows7.0/ReaLTaiizor.xml",
+        "lib/net6.0-windows7.0/ReaLTaiizor.dll",
+        "lib/net6.0-windows7.0/ReaLTaiizor.xml",
+        "lib/net7.0-windows7.0/ReaLTaiizor.dll",
+        "lib/net7.0-windows7.0/ReaLTaiizor.xml",
+        "lib/netcoreapp3.1/ReaLTaiizor.dll",
+        "lib/netcoreapp3.1/ReaLTaiizor.xml",
+        "realtaiizor.3.7.8.6.nupkg.sha512",
+        "realtaiizor.nuspec"
+      ]
+    },
     "System.Data.Odbc/7.0.0": {
       "sha512": "siwu7NoCsfHa9bfw2a2wSeTt2c/rhk3X8I28nJln1dlxdW3KqhRp0aW87yH1XkCo9h8zO1qcIfdTHO7YvvWLEA==",
       "type": "package",
@@ -199,6 +238,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0-windows7.0": [
+      "ReaLTaiizor >= 3.7.8.6",
       "System.Data.Odbc >= 7.0.0"
     ]
   },
@@ -241,6 +281,10 @@
       "net6.0-windows7.0": {
         "targetAlias": "net6.0-windows",
         "dependencies": {
+          "ReaLTaiizor": {
+            "target": "Package",
+            "version": "[3.7.8.6, )"
+          },
           "System.Data.Odbc": {
             "target": "Package",
             "version": "[7.0.0, )"
@@ -265,7 +309,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
       }
     }
   }

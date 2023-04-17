@@ -14,77 +14,9 @@ namespace AppParaMama
                 MessageBox.Show("No existe el archivo de almacenamiento, procediendo a crearlo", "No existe el fichero", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 File.Copy("Historias.accdb", dir);
             }
-
-
-        }
-        private void dni_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AppClinica_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BirthDate_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tabPage1_Click(object sender, EventArgs e)
-        {
-
+            AutoFill = Datos.DevDniCollection();
+            sugerenciasAutocompletado.AddRange(AutoFill);
+            DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
         }
 
         private void Search_Click(object sender, EventArgs e)
@@ -149,11 +81,6 @@ namespace AppParaMama
 
         }
 
-        private void DniLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void EditButton_Click(object sender, EventArgs e)
         {
             if (TabControl.SelectedIndex == 0)
@@ -170,26 +97,20 @@ namespace AppParaMama
             }
             if (TabControl.SelectedIndex == 1)
             {
-
                 string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
-                FichaDiaria fd = new();
-                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
-                NewFicha fic = new();
-                fic.ShowData(fd);
-                fic.Setapp(this);
-                fic.Datos = Datos;
-                fic.Show();
+                if (!string.IsNullOrEmpty(fecha))
+                {
+                    FichaDiaria fd = new();
+                    fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
+                    NewFicha fic = new();
+                    fic.ShowData(fd);
+                    fic.Setapp(this);
+                    fic.Datos = Datos;
+                    fic.Show();
+                }
+
 
             }
-        }
-
-        private void SaveButton2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void SaveButton_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void DniTextBox_TextChanged(object sender, EventArgs e)
@@ -201,16 +122,11 @@ namespace AppParaMama
                     MessageBox.Show("El campo DNI debe tener 8 digitos numericos", "Error - Dni invalido", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     DniTextBox.Text = DniTextBox.Text.Remove(DniTextBox.Text.Length - 1);
                     DniTextBox.Select(DniTextBox.Text.Length, 0);
-
                     break;
                 }
             }
         }
 
-        private void label7_Click_1(object sender, EventArgs e)
-        {
-
-        }
         private void NewPacienteButton_Click(object sender, EventArgs e)
         {
             var nuevo = new NewUser();
@@ -220,7 +136,15 @@ namespace AppParaMama
 
         }
         #region
-        public L_Historias Datos = new();
+        string[] AutoFill;
+        AutoCompleteStringCollection sugerenciasAutocompletado = new AutoCompleteStringCollection();
+        private L_Historias _datos = new L_Historias();
+
+        public L_Historias Datos
+        {
+            get { return _datos; }
+            set { _datos = value; }
+        }
         private void BuscarFicha(string date)
         {
             FichaDiaria fd = new();
@@ -232,6 +156,9 @@ namespace AppParaMama
         }
         public void ListadoFichas()
         {
+            AutoFill = Datos.DevDniCollection();
+            sugerenciasAutocompletado.AddRange(AutoFill);
+            DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
             FichasDiariasListBox.DataSource = Datos.DevListadoFichas(DniTextBox.Text);
             FichasDiariasListBox.SelectedIndex = FichasDiariasListBox.Items.Count - 1;
             Paciente Pac = Datos.DevDatosPaciente(DniTextBox.Text);
@@ -267,21 +194,6 @@ namespace AppParaMama
         }
         #endregion
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void NroAsociadoTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BirthDateTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void BirthDateTextBox_TextChanged_1(object sender, EventArgs e)
         {
             for (int i = 0; i < BirthDateTextBox.Text.Length; i++)
@@ -297,6 +209,11 @@ namespace AppParaMama
                         break;
                     }
                 }
+            }
+            if (BirthDateTextBox.Text.Length == 2 || BirthDateTextBox.Text.Length == 5)
+            {
+                BirthDateTextBox.Text.Append('/');
+                BirthDateTextBox.Select(BirthDateTextBox.Text.Length, 0);
             }
             if (BirthDateTextBox.Text.Length > 2 && BirthDateTextBox.Text[2] != '/')
             {
@@ -314,16 +231,11 @@ namespace AppParaMama
             }
         }
 
-        private void PhoneTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void NewButton_Click(object sender, EventArgs e)
         {
 
 
-            string fechaG = DateTime.Now.ToString();
+            string fechaG = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
             var nuevo = new NewFicha();
             nuevo.Setapp(this);
             nuevo.Show();
@@ -331,12 +243,6 @@ namespace AppParaMama
             fichaDiaria.CreaFichadiaria(DniTextBox.Text, "", "", fechaG, "");
             nuevo.ShowData(fichaDiaria);
             nuevo.Datos = Datos;
-        }
-
-
-        private void HistoriaClinica_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)

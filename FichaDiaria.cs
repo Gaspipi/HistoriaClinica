@@ -4,51 +4,80 @@ namespace WinFormsApp1
 {
     public class FichaDiaria
     {
-        string Dni = "";
-        string Enfermedad = "";
-        string Motivo = "";
-        string Indicaciones = "";
-        DateTime Fecha;
-        public void CreaFichadiaria(string doc, string Enf, string Mot, string Fec, string Indic)
+
+        private string _dni = "";
+        private string _enfermedad = "";
+        private string _motivo = "";
+        private string _indicaciones = "";
+        private DateTime _fecha;
+        
+        public string Dni
         {
-            Dni = doc;
-            Enfermedad = Enf;
-            Motivo = Mot;
-            Fecha = DateTime.Parse(Fec);
-            Indicaciones = Indic;
+            get { return _dni; }
+            set { _dni = value; }
         }
-        public void CreaFichadiaria(string doc, string Enf, string Mot, DateTime Fec, string Indic)
+
+        public string Enfermedad
+        {
+            get { return _enfermedad; }
+            set { _enfermedad = value; }
+        }
+
+        public string Motivo
+        {
+            get { return _motivo; }
+            set { _motivo = value; }
+        }
+
+        public string Indicaciones
+        {
+            get { return _indicaciones; }
+            set { _indicaciones = value; }
+        }
+
+        public DateTime Fecha
+        {
+            get { return _fecha; }
+            set { _fecha = value; }
+        }
+
+        public void CreaFichadiaria(string doc, string enf, string mot, string fec, string indic)
         {
             Dni = doc;
-            Enfermedad = Enf;
-            Motivo = Mot;
-            Fecha = Fec;
-            Indicaciones = Indic;
+            Enfermedad = $@"{enf}";
+            Motivo = $@"{mot}";
+            Fecha = DateTime.Parse(fec);
+            Indicaciones = $@"{indic}";
+        }
+        public void CreaFichadiaria(string doc, string enf, string mot, DateTime fec, string indic)
+        {
+            Dni = doc;
+            Enfermedad = $@"{enf}";
+            Motivo = $@"{mot}";
+            Fecha = fec;
+            Indicaciones = $@"{indic}";
         }
         public string DevDni()
         {
             return Dni;
         }
-        public string DevMotivo() { 
-            return Motivo; 
+        public string DevMotivo()
+        {
+            return Motivo;
         }
-        public string DevEnfermedad() { 
-            return Enfermedad; 
+        public string DevEnfermedad()
+        {
+            return Enfermedad;
         }
         public string DevFecha()
         {
-            string date = Fecha.ToString();
+            string date = Fecha.ToString("dd/MM/yyyy HH:mm:ss");
             return date;
         }
-        public string DevFecha2()
+
+        public string DevIndicaciones()
         {
-            string date = Fecha.ToString();
-            return date;
+            return Indicaciones;
         }
-
-        public string DevIndicaciones() { 
-            return Indicaciones; 
-        }
-
     }
 }

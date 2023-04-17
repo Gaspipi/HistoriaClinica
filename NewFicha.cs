@@ -4,8 +4,20 @@ namespace WinFormsApp1
 {
     public partial class NewFicha : Form
     {
-        string date;
-        AppClinica AppCli;
+        private string _date;
+        private AppClinica _appCli;
+
+        public string Date
+        {
+            get { return _date; }
+            set { _date = value; }
+        }
+
+        public AppClinica AppCli
+        {
+            get { return _appCli; }
+            set { _appCli = value; }
+        }
         public NewFicha()
         {
             InitializeComponent();
@@ -24,17 +36,7 @@ namespace WinFormsApp1
             MotivoTextBox.Text = Data.DevMotivo();
             IndicacionesTextBox.Text = Data.DevIndicaciones();
             EnfermedadTextBox.Text = Data.DevEnfermedad();
-            date = Data.DevFecha();
-        }
-
-        private void DniTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void EnfermedadTextBox_TextChanged(object sender, EventArgs e)
-        {
-
+            Date = Data.DevFecha();
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -54,9 +56,9 @@ namespace WinFormsApp1
             }
             if (IndicacionesTextBox.Text.Length > 0 && MotivoTextBox.Text.Length > 0 && EnfermedadTextBox.Text.Length > 0)
             {
-                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);
+                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
                 Datos.SetFichaDiaria(fd);
-                this.Close();
+                Close();
             }
         }
         public void Setapp(AppClinica app)
@@ -67,20 +69,19 @@ namespace WinFormsApp1
         {
             return AppCli;
         }
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void CancelarButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            DialogResult resp = MessageBox.Show($"Esta seguro de que desea Cancelar?", "Cancelar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (resp == DialogResult.Yes)
+            {
+                Close();
+            }
         }
 
         private void NewFicha_FormClosed(object sender, FormClosedEventArgs e)
         {
             AppClinica app = Devapp();
             app.ListadoFichas();
-        }
-
-        private void NewFicha_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

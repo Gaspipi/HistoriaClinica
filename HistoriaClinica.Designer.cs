@@ -111,7 +111,6 @@
             Paciente.Size = new Size(879, 534);
             Paciente.TabIndex = 0;
             Paciente.Text = "Paciente";
-            Paciente.Click += tabPage1_Click;
             // 
             // Medicacion_Label
             // 
@@ -132,7 +131,7 @@
             Medicacion_TextBox.ReadOnly = true;
             Medicacion_TextBox.ScrollBars = ScrollBars.Vertical;
             Medicacion_TextBox.Size = new Size(382, 184);
-            Medicacion_TextBox.TabIndex = 39;
+            Medicacion_TextBox.TabIndex = 14;
             // 
             // FirstNameTextBox
             // 
@@ -166,7 +165,6 @@
             PhoneTextBox.ScrollBars = ScrollBars.Vertical;
             PhoneTextBox.Size = new Size(187, 23);
             PhoneTextBox.TabIndex = 10;
-            PhoneTextBox.TextChanged += PhoneTextBox_TextChanged;
             // 
             // BirthDateTextBox
             // 
@@ -208,7 +206,7 @@
             NewPacienteButton.Margin = new Padding(4, 3, 4, 3);
             NewPacienteButton.Name = "NewPacienteButton";
             NewPacienteButton.Size = new Size(89, 27);
-            NewPacienteButton.TabIndex = 37;
+            NewPacienteButton.TabIndex = 5;
             NewPacienteButton.Text = "Nuevo";
             NewPacienteButton.TextImageRelation = TextImageRelation.ImageAboveText;
             NewPacienteButton.UseVisualStyleBackColor = true;
@@ -243,7 +241,6 @@
             label7.Size = new Size(138, 15);
             label7.TabIndex = 35;
             label7.Text = "Antecedentes Personales";
-            label7.Click += label7_Click_1;
             // 
             // AntecFamiTextBox
             // 
@@ -254,7 +251,7 @@
             AntecFamiTextBox.ReadOnly = true;
             AntecFamiTextBox.ScrollBars = ScrollBars.Vertical;
             AntecFamiTextBox.Size = new Size(382, 184);
-            AntecFamiTextBox.TabIndex = 14;
+            AntecFamiTextBox.TabIndex = 15;
             // 
             // AntecPersTextBox
             // 
@@ -337,7 +334,6 @@
             HistoriaClinica.Size = new Size(879, 534);
             HistoriaClinica.TabIndex = 1;
             HistoriaClinica.Text = "Historia Clinica";
-            HistoriaClinica.Click += HistoriaClinica_Click;
             // 
             // DeleteButton
             // 
@@ -463,17 +459,18 @@
             DniLabel.Size = new Size(27, 15);
             DniLabel.TabIndex = 34;
             DniLabel.Text = "DNI";
-            DniLabel.Click += DniLabel_Click;
             // 
             // DniTextBox
             // 
+            DniTextBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            DniTextBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
             DniTextBox.Location = new Point(33, 25);
             DniTextBox.Margin = new Padding(4, 3, 4, 3);
             DniTextBox.MaxLength = 8;
             DniTextBox.Name = "DniTextBox";
+            DniTextBox.PlaceholderText = "12345678";
             DniTextBox.Size = new Size(116, 23);
             DniTextBox.TabIndex = 1;
-            DniTextBox.Text = "00000000";
             DniTextBox.TextChanged += DniTextBox_TextChanged;
             // 
             // EditButton
@@ -496,7 +493,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             BackColor = SystemColors.Window;
-            ClientSize = new Size(915, 647);
+            ClientSize = new Size(915, 621);
             Controls.Add(EditButton);
             Controls.Add(SearchButton);
             Controls.Add(DniLabel);
@@ -504,12 +501,11 @@
             Controls.Add(TabControl);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4, 3, 4, 3);
-            MinimumSize = new Size(931, 686);
+            MinimumSize = new Size(931, 660);
             Name = "AppClinica";
             RightToLeft = RightToLeft.No;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Historia Clinica";
-            Load += AppClinica_Load;
             TabControl.ResumeLayout(false);
             Paciente.ResumeLayout(false);
             Paciente.PerformLayout();

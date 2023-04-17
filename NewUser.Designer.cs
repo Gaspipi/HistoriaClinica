@@ -46,7 +46,7 @@
             ObraSocialTextBox = new TextBox();
             LastNameTextBox = new TextBox();
             SaveButton = new Button();
-            CancelButton = new Button();
+            CancelarButton = new Button();
             DniLabel = new Label();
             DniTextBox = new TextBox();
             Medicacion_Label = new Label();
@@ -62,7 +62,6 @@
             PhoneTextBox.Name = "PhoneTextBox";
             PhoneTextBox.Size = new Size(187, 23);
             PhoneTextBox.TabIndex = 43;
-            PhoneTextBox.TextChanged += PhoneTextBox_TextChanged;
             // 
             // PhoneLabel
             // 
@@ -73,7 +72,6 @@
             PhoneLabel.Size = new Size(21, 15);
             PhoneLabel.TabIndex = 55;
             PhoneLabel.Text = "Tel";
-            PhoneLabel.Click += PhoneLabel_Click;
             // 
             // label8
             // 
@@ -84,7 +82,6 @@
             label8.Size = new Size(135, 15);
             label8.TabIndex = 54;
             label8.Text = "Antecedentes Familiares";
-            label8.Click += label8_Click;
             // 
             // label7
             // 
@@ -95,7 +92,6 @@
             label7.Size = new Size(138, 15);
             label7.TabIndex = 53;
             label7.Text = "Antecedentes Personales";
-            label7.Click += label7_Click;
             // 
             // AntecFamiTextBox
             // 
@@ -106,7 +102,6 @@
             AntecFamiTextBox.ScrollBars = ScrollBars.Vertical;
             AntecFamiTextBox.Size = new Size(292, 143);
             AntecFamiTextBox.TabIndex = 47;
-            AntecFamiTextBox.TextChanged += AntecFamiTextBox_TextChanged;
             // 
             // AntecPersTextBox
             // 
@@ -117,7 +112,6 @@
             AntecPersTextBox.ScrollBars = ScrollBars.Vertical;
             AntecPersTextBox.Size = new Size(292, 143);
             AntecPersTextBox.TabIndex = 46;
-            AntecPersTextBox.TextChanged += AntecPersTextBox_TextChanged;
             // 
             // FirstNameTextBox
             // 
@@ -128,7 +122,6 @@
             FirstNameTextBox.Name = "FirstNameTextBox";
             FirstNameTextBox.Size = new Size(187, 23);
             FirstNameTextBox.TabIndex = 40;
-            FirstNameTextBox.TextChanged += FirstNameTextBox_TextChanged;
             // 
             // NroAsociadoLabel
             // 
@@ -139,7 +132,6 @@
             NroAsociadoLabel.Size = new Size(79, 15);
             NroAsociadoLabel.TabIndex = 52;
             NroAsociadoLabel.Text = "Nro Asociado";
-            NroAsociadoLabel.Click += NroAsociadoLabel_Click;
             // 
             // BirthDateTextBox
             // 
@@ -162,7 +154,6 @@
             ObraSocialLabel.Size = new Size(67, 15);
             ObraSocialLabel.TabIndex = 51;
             ObraSocialLabel.Text = "Obra Social";
-            ObraSocialLabel.Click += ObraSocialLabel_Click;
             // 
             // LastNameLabel
             // 
@@ -173,7 +164,6 @@
             LastNameLabel.Size = new Size(51, 15);
             LastNameLabel.TabIndex = 50;
             LastNameLabel.Text = "Apellido";
-            LastNameLabel.Click += LastNameLabel_Click;
             // 
             // FirstNameLabel
             // 
@@ -184,7 +174,6 @@
             FirstNameLabel.Size = new Size(51, 15);
             FirstNameLabel.TabIndex = 49;
             FirstNameLabel.Text = "Nombre";
-            FirstNameLabel.Click += FirstNameLabel_Click;
             // 
             // BirthLabel
             // 
@@ -195,7 +184,6 @@
             BirthLabel.Size = new Size(69, 15);
             BirthLabel.TabIndex = 48;
             BirthLabel.Text = "Nacimiento";
-            BirthLabel.Click += BirthLabel_Click;
             // 
             // NroAsociadoTextBox
             // 
@@ -206,7 +194,6 @@
             NroAsociadoTextBox.Name = "NroAsociadoTextBox";
             NroAsociadoTextBox.Size = new Size(187, 23);
             NroAsociadoTextBox.TabIndex = 45;
-            NroAsociadoTextBox.TextChanged += NroAsociadoTextBox_TextChanged;
             // 
             // ObraSocialTextBox
             // 
@@ -217,7 +204,6 @@
             ObraSocialTextBox.Name = "ObraSocialTextBox";
             ObraSocialTextBox.Size = new Size(187, 23);
             ObraSocialTextBox.TabIndex = 44;
-            ObraSocialTextBox.TextChanged += ObraSocialTextBox_TextChanged;
             // 
             // LastNameTextBox
             // 
@@ -228,7 +214,6 @@
             LastNameTextBox.Name = "LastNameTextBox";
             LastNameTextBox.Size = new Size(187, 23);
             LastNameTextBox.TabIndex = 41;
-            LastNameTextBox.TextChanged += LastNameTextBox_TextChanged;
             // 
             // SaveButton
             // 
@@ -240,15 +225,15 @@
             SaveButton.UseVisualStyleBackColor = true;
             SaveButton.Click += SaveButton_Click;
             // 
-            // CancelButton
+            // CancelarButton
             // 
-            CancelButton.Location = new Point(23, 415);
-            CancelButton.Name = "CancelButton";
-            CancelButton.Size = new Size(75, 23);
-            CancelButton.TabIndex = 57;
-            CancelButton.Text = "Cancelar";
-            CancelButton.UseVisualStyleBackColor = true;
-            CancelButton.Click += CancelButton_Click;
+            CancelarButton.Location = new Point(23, 415);
+            CancelarButton.Name = "CancelarButton";
+            CancelarButton.Size = new Size(75, 23);
+            CancelarButton.TabIndex = 57;
+            CancelarButton.Text = "Cancelar";
+            CancelarButton.UseVisualStyleBackColor = true;
+            CancelarButton.Click += CancelarButton_Click;
             // 
             // DniLabel
             // 
@@ -259,7 +244,6 @@
             DniLabel.Size = new Size(27, 15);
             DniLabel.TabIndex = 59;
             DniLabel.Text = "DNI";
-            DniLabel.Click += label1_Click;
             // 
             // DniTextBox
             // 
@@ -297,13 +281,12 @@
             AcceptButton = SaveButton;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            CancelButton = CancelButton;
             ClientSize = new Size(800, 450);
             Controls.Add(Medicacion_TextBox);
             Controls.Add(Medicacion_Label);
             Controls.Add(DniLabel);
             Controls.Add(DniTextBox);
-            Controls.Add(CancelButton);
+            Controls.Add(CancelarButton);
             Controls.Add(SaveButton);
             Controls.Add(PhoneTextBox);
             Controls.Add(PhoneLabel);
@@ -325,7 +308,6 @@
             Name = "NewUser";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Paciente";
-            FormClosed += NewUser_FormClosed;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -348,7 +330,7 @@
         private TextBox ObraSocialTextBox;
         private TextBox LastNameTextBox;
         private Button SaveButton;
-        private Button CancelButton;
+        private Button CancelarButton;
         private Label DniLabel;
         private TextBox DniTextBox;
         private Label Medicacion_Label;

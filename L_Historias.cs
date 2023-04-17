@@ -29,7 +29,44 @@ namespace WinFormsApp1
             }
             catch (Exception ex)
             {
-                throw ex;
+
+                MessageBox.Show(ex.Message);
+                throw;
+
+            }
+            finally
+            {
+                if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
+            }
+
+        }
+        public string[] DevDniCollection()
+        {
+            OdbcDataReader Reader;
+            OdbcConnection SqlCon = new();
+            List<string> List = new();
+            try
+            {
+                SqlCon = Connection.GetInstancia().CreateConnection();
+                string SqlQuery = $"SELECT Dni FROM Pacientes;";
+                OdbcCommand cmd = new(SqlQuery, SqlCon);
+                SqlCon.Open();
+                if (SqlCon.State == ConnectionState.Open)
+                {
+                    Reader = cmd.ExecuteReader();
+                    while (Reader.Read())
+                    {
+                        string dni = (string)Reader[0];
+                        List.Add(dni);
+                    }
+                    return List.ToArray();
+                }
+                else return List.ToArray();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
             }
             finally
             {
@@ -73,7 +110,8 @@ namespace WinFormsApp1
             }
             catch (Exception ex)
             {
-                throw ex;
+                MessageBox.Show(ex.Message);
+                throw;
             }
             finally
             {
@@ -156,7 +194,8 @@ namespace WinFormsApp1
             }
             catch (Exception ex)
             {
-                throw ex;
+                MessageBox.Show(ex.Message);
+                throw;
             }
             finally
             {
@@ -184,7 +223,8 @@ namespace WinFormsApp1
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                        MessageBox.Show(ex.Message);
+                        throw;
                     }
                     finally
                     {
@@ -210,7 +250,8 @@ namespace WinFormsApp1
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    MessageBox.Show(ex.Message);
+                    throw;
                 }
                 finally
                 {
@@ -231,7 +272,7 @@ namespace WinFormsApp1
                 
                     try
                     {   
-                        string SqlQuery = $"UPDATE FichasDiarias SET Motivo = '{Fd.DevMotivo()}', Enfermedad = '{Fd.DevEnfermedad()}', Dni = '{Fd.DevDni()}', Indicaciones = '{Fd.DevIndicaciones()}', FechaHora = #{Fd.DevFecha2()}# WHERE Dni = '{Fd.DevDni()}' AND FechaHora = #{Fd.DevFecha2()}#;";
+                        string SqlQuery = $"UPDATE FichasDiarias SET Motivo = '{Fd.DevMotivo()}', Enfermedad = '{Fd.DevEnfermedad()}', Dni = '{Fd.DevDni()}', Indicaciones = '{Fd.DevIndicaciones()}', FechaHora = #{Fd.DevFecha()}# WHERE Dni = '{Fd.DevDni()}' AND FechaHora = #{Fd.DevFecha()}#;";
                         OdbcCommand cmd = new(SqlQuery, SqlCon);
                         if (SqlCon.State == ConnectionState.Closed)
                         {
@@ -242,8 +283,9 @@ namespace WinFormsApp1
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
-                    }
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
                     finally
                     {
                         if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
@@ -256,7 +298,8 @@ namespace WinFormsApp1
 
                 try
                 {
-                    string SqlQuery = $"INSERT INTO FichasDiarias (Motivo, Enfermedad, Dni, Indicaciones, FechaHora) VALUES ('{Fd.DevMotivo()}','{Fd.DevEnfermedad()}','{Fd.DevDni()}','{Fd.DevIndicaciones()}',#{DateTime.Now}#);";
+                    string fecha = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                    string SqlQuery = $"INSERT INTO FichasDiarias (Motivo, Enfermedad, Dni, Indicaciones, FechaHora) VALUES ('{Fd.DevMotivo()}','{Fd.DevEnfermedad()}','{Fd.DevDni()}','{Fd.DevIndicaciones()}',#{fecha}#);";
                     OdbcCommand cmd = new(SqlQuery, SqlCon);
                     if (SqlCon.State == ConnectionState.Closed)
                     {
@@ -267,7 +310,8 @@ namespace WinFormsApp1
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    MessageBox.Show(ex.Message);
+                    throw;
                 }
                 finally
                 {
@@ -282,12 +326,13 @@ namespace WinFormsApp1
         public FichaDiaria DevFichaDiaria(FichaDiaria FicDia)
         {
             FichaDiaria fd = new();
-            string fecha = FicDia.DevFecha2();
+            string dni = FicDia.DevDni();
+            string fecha = FicDia.DevFecha();
             OdbcDataReader Reader;
             try
             {
                 SqlCon = Connection.GetInstancia().CreateConnection();
-                string SqlQuery = $"SELECT * FROM FichasDiarias WHERE Dni = '{FicDia.DevDni()}' AND FechaHora = #{fecha}#;";
+                string SqlQuery = $"SELECT * FROM FichasDiarias WHERE Dni = '{dni}' AND FechaHora = #{fecha}#;";
                 OdbcCommand cmd = new(SqlQuery, SqlCon);
                 if (SqlCon.State == ConnectionState.Closed)
                 {
@@ -296,34 +341,32 @@ namespace WinFormsApp1
                 if (SqlCon.State == ConnectionState.Open)
                 {
                     Reader = cmd.ExecuteReader();
-
                     if (Reader.HasRows)
                     {
                         Reader.Read();
-                        fd.CreaFichadiaria((string)Reader[2], (string)Reader[1], (string)Reader[0], fecha, (string)Reader[3]);
+                        fd.CreaFichadiaria((string)Reader[2], (string)Reader[1], (string)Reader[0], (DateTime)Reader[4], (string)Reader[3]);
                     }
                     else
                     {
                         fd = null;
                     }
-
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                MessageBox.Show(ex.Message);
+                throw;
             }
             finally
             {
                 if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
             }
-
             return fd;
         }
         public void DelFicha(FichaDiaria FicDia)
         {
             FichaDiaria fd = new();
-            string fecha = FicDia.DevFecha2();
+            string fecha = FicDia.DevFecha();
             OdbcDataReader Reader;
             try
             {
@@ -337,14 +380,12 @@ namespace WinFormsApp1
                 if (SqlCon.State == ConnectionState.Open)
                 {
                     Reader = cmd.ExecuteReader();
-
-                   
-
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                MessageBox.Show(ex.Message);
+                throw;
             }
             finally
             {

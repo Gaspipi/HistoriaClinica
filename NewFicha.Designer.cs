@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewFicha));
             SaveButton = new Button();
-            CancelButton = new Button();
+            CancelarButton = new Button();
             DniTextBox = new TextBox();
             EnfermedadTextBox = new TextBox();
             MotivoTextBox = new TextBox();
@@ -51,15 +51,15 @@
             SaveButton.UseVisualStyleBackColor = true;
             SaveButton.Click += SaveButton_Click;
             // 
-            // CancelButton
+            // CancelarButton
             // 
-            CancelButton.Location = new Point(35, 292);
-            CancelButton.Name = "CancelButton";
-            CancelButton.Size = new Size(75, 23);
-            CancelButton.TabIndex = 12;
-            CancelButton.Text = "Cancelar";
-            CancelButton.UseVisualStyleBackColor = true;
-            CancelButton.Click += CancelButton_Click;
+            CancelarButton.Location = new Point(35, 292);
+            CancelarButton.Name = "CancelarButton";
+            CancelarButton.Size = new Size(75, 23);
+            CancelarButton.TabIndex = 12;
+            CancelarButton.Text = "Cancelar";
+            CancelarButton.UseVisualStyleBackColor = true;
+            CancelarButton.Click += CancelarButton_Click;
             // 
             // DniTextBox
             // 
@@ -69,7 +69,6 @@
             DniTextBox.ReadOnly = true;
             DniTextBox.Size = new Size(100, 23);
             DniTextBox.TabIndex = 2;
-            DniTextBox.TextChanged += DniTextBox_TextChanged;
             // 
             // EnfermedadTextBox
             // 
@@ -78,7 +77,6 @@
             EnfermedadTextBox.Name = "EnfermedadTextBox";
             EnfermedadTextBox.Size = new Size(180, 182);
             EnfermedadTextBox.TabIndex = 5;
-            EnfermedadTextBox.TextChanged += EnfermedadTextBox_TextChanged;
             // 
             // MotivoTextBox
             // 
@@ -138,7 +136,6 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            CancelButton = CancelButton;
             ClientSize = new Size(661, 333);
             Controls.Add(IndicacionesTextBox);
             Controls.Add(label4);
@@ -148,7 +145,7 @@
             Controls.Add(MotivoTextBox);
             Controls.Add(EnfermedadTextBox);
             Controls.Add(DniTextBox);
-            Controls.Add(CancelButton);
+            Controls.Add(CancelarButton);
             Controls.Add(SaveButton);
             HelpButton = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -156,7 +153,6 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "Ficha diaria";
             FormClosed += NewFicha_FormClosed;
-            Load += NewFicha_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -164,7 +160,7 @@
         #endregion
 
         private Button SaveButton;
-        private Button CancelButton;
+        private Button CancelarButton;
         private TextBox DniTextBox;
         private TextBox EnfermedadTextBox;
         private TextBox MotivoTextBox;
