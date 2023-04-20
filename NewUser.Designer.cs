@@ -278,9 +278,9 @@
             // 
             // NewUser
             // 
-            AcceptButton = SaveButton;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = CancelarButton;
             ClientSize = new Size(800, 450);
             Controls.Add(Medicacion_TextBox);
             Controls.Add(Medicacion_Label);

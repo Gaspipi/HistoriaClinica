@@ -29,16 +29,13 @@ namespace WinFormsApp1
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show(ex.Message);
                 throw;
-
             }
             finally
             {
                 if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
             }
-
         }
         public string[] DevDniCollection()
         {
@@ -72,7 +69,6 @@ namespace WinFormsApp1
             {
                 if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
             }
-
         }
         public IList<string> DevListadoFichas(string Dni)
         {
@@ -101,9 +97,6 @@ namespace WinFormsApp1
                         string st = dt.ToString();
                         List.Add(st);
                     }
-
-
-
                     return List;
                 }
                 else return List;
@@ -150,8 +143,6 @@ namespace WinFormsApp1
                                 {
                                     p[i] = "N/A";
                                 }
-
-
                             }
                             if (i == 6)
                             {
@@ -163,7 +154,6 @@ namespace WinFormsApp1
                                 {
                                     p[i] = DateTime.MinValue;
                                 }
-
                             }
                         }
                         if (Reader[0] == DBNull.Value)
@@ -201,7 +191,6 @@ namespace WinFormsApp1
             {
                 if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
             }
-
         }
         public void SetPaciente(Paciente Pac)
         {
@@ -235,7 +224,6 @@ namespace WinFormsApp1
             }
             else
             {
-
                 try
                 {
                     string SqlQuery = $"INSERT INTO Pacientes (Dni,Nombre,Apellido,ObraSocial,NroSocio,FechaNac,Telefono,AntecFam,AntecPers,Medicacion) " +
@@ -246,7 +234,6 @@ namespace WinFormsApp1
                         SqlCon.Open();
                     }
                     cmd.ExecuteNonQuery();
-
                 }
                 catch (Exception ex)
                 {
@@ -256,12 +243,8 @@ namespace WinFormsApp1
                 finally
                 {
                     if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
-
                 }
-
-
             }
-
         }
         
         public void SetFichaDiaria(FichaDiaria Fd)
@@ -269,7 +252,6 @@ namespace WinFormsApp1
             FichaDiaria ficha = DevFichaDiaria(Fd);
             if (ficha != null)
             {
-                
                     try
                     {   
                         string SqlQuery = $"UPDATE FichasDiarias SET Motivo = '{Fd.DevMotivo()}', Enfermedad = '{Fd.DevEnfermedad()}', Dni = '{Fd.DevDni()}', Indicaciones = '{Fd.DevIndicaciones()}', FechaHora = #{Fd.DevFecha()}# WHERE Dni = '{Fd.DevDni()}' AND FechaHora = #{Fd.DevFecha()}#;";
@@ -291,11 +273,9 @@ namespace WinFormsApp1
                         if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
 
                     }
-                
             }
             else
             {
-
                 try
                 {
                     string fecha = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
@@ -305,8 +285,7 @@ namespace WinFormsApp1
                     {
                         SqlCon.Open();
                     }
-                    cmd.ExecuteNonQuery();
-                    
+                    cmd.ExecuteNonQuery();   
                 }
                 catch (Exception ex)
                 {
@@ -316,12 +295,8 @@ namespace WinFormsApp1
                 finally
                 {
                     if (SqlCon.State == ConnectionState.Open) SqlCon.Close();
-
                 }
-
-
             }
-
         }
         public FichaDiaria DevFichaDiaria(FichaDiaria FicDia)
         {

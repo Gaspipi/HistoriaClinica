@@ -36,7 +36,6 @@ namespace AppParaMama
                 ListadoFichas();
             }
             EditEnabled();
-
         }
 
         public void EditEnabled()
@@ -67,7 +66,6 @@ namespace AppParaMama
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
             string date = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
             if (FichasDiariasListBox.Items.Count > 0 && date != null)
             {
@@ -78,7 +76,6 @@ namespace AppParaMama
             {
                 EditButton.Enabled = false;
             }
-
         }
 
         private void EditButton_Click(object sender, EventArgs e)
@@ -93,7 +90,6 @@ namespace AppParaMama
                 nuevo.Datos = Datos;
                 nuevo.Edit();
                 nuevo.CargarData(pac);
-
             }
             if (TabControl.SelectedIndex == 1)
             {
@@ -108,8 +104,6 @@ namespace AppParaMama
                     fic.Datos = Datos;
                     fic.Show();
                 }
-
-
             }
         }
 
@@ -133,12 +127,11 @@ namespace AppParaMama
             nuevo.Setapp(this);
             nuevo.Show();
             nuevo.Datos = Datos;
-
         }
         #region
         string[] AutoFill;
         AutoCompleteStringCollection sugerenciasAutocompletado = new AutoCompleteStringCollection();
-        private L_Historias _datos = new L_Historias();
+        private L_Historias _datos = new();
 
         public L_Historias Datos
         {
@@ -233,8 +226,6 @@ namespace AppParaMama
 
         private void NewButton_Click(object sender, EventArgs e)
         {
-
-
             string fechaG = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
             var nuevo = new NewFicha();
             nuevo.Setapp(this);
@@ -252,12 +243,10 @@ namespace AppParaMama
             if (resp == DialogResult.Yes)
             {
                 FichaDiaria fd = new();
-
                 fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
                 Datos.DelFicha(fd);
                 ListadoFichas();
             }
-
         }
 
         private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
