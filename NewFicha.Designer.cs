@@ -132,10 +132,10 @@
             // 
             // NewFicha
             // 
-            AcceptButton = SaveButton;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            CancelButton = CancelarButton;
             ClientSize = new Size(661, 333);
             Controls.Add(IndicacionesTextBox);
             Controls.Add(label4);
