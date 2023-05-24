@@ -1,6 +1,7 @@
-﻿using WinFormsApp1;
+﻿using HistoriaClinica.Models;
+using HistoriaClinica;
 
-namespace AppParaMama
+namespace HistoriaClinica
 {
 
     public partial class AppClinica : Form
@@ -8,11 +9,11 @@ namespace AppParaMama
         public AppClinica()
         {
             InitializeComponent();
-            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historias.accdb"))
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historia.db";
+            if (!File.Exists(dir))
             {
-                string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historias.accdb";
                 MessageBox.Show("No existe el archivo de almacenamiento, procediendo a crearlo", "No existe el fichero", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                File.Copy("Historias.accdb", dir);
+                File.Copy("Historia.db", dir);
             }
             AutoFill = Datos.DevDniCollection();
             sugerenciasAutocompletado.AddRange(AutoFill);
@@ -66,7 +67,7 @@ namespace AppParaMama
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string date = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
+            string? date = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
             if (FichasDiariasListBox.Items.Count > 0 && date != null)
             {
                 EditButton.Enabled = true;
@@ -82,8 +83,7 @@ namespace AppParaMama
         {
             if (TabControl.SelectedIndex == 0)
             {
-                Paciente pac = new Paciente();
-                pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
+                Paciente pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
                 var nuevo = new NewUser();
                 nuevo.Setapp(this);
                 nuevo.Show();
@@ -93,11 +93,10 @@ namespace AppParaMama
             }
             if (TabControl.SelectedIndex == 1)
             {
-                string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
+                string? fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
                 if (!string.IsNullOrEmpty(fecha))
                 {
-                    FichaDiaria fd = new();
-                    fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
+                    FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
                     NewFicha fic = new();
                     fic.ShowData(fd);
                     fic.Setapp(this);
@@ -140,12 +139,11 @@ namespace AppParaMama
         }
         private void BuscarFicha(string date)
         {
-            FichaDiaria fd = new();
-            fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);
-            FichaDiaria newfd = Datos.DevFichaDiaria(fd);
-            MotivoTextBox.Text = newfd.DevMotivo();
-            EnfermedadTextBox.Text = newfd.DevEnfermedad();
-            IndicacionesTextBox.Text = newfd.DevIndicaciones();
+            FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);
+            FichaDiaria? newfd = Datos.DevFichaDiaria(fd);
+            MotivoTextBox.Text = newfd.Motivo;
+            EnfermedadTextBox.Text = newfd.Enfermedad;
+            IndicacionesTextBox.Text = newfd.Indicaciones;
         }
         public void ListadoFichas()
         {
@@ -154,7 +152,7 @@ namespace AppParaMama
             DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
             FichasDiariasListBox.DataSource = Datos.DevListadoFichas(DniTextBox.Text);
             FichasDiariasListBox.SelectedIndex = FichasDiariasListBox.Items.Count - 1;
-            Paciente Pac = Datos.DevDatosPaciente(DniTextBox.Text);
+            Paciente? Pac = Datos.DevDatosPaciente(DniTextBox.Text);
             if (Pac == null)
             {
                 DialogResult dialogResult = MessageBox.Show("No existe el paciente especificado, desea crear uno nuevo?", "No existe el paciente", MessageBoxButtons.YesNo);
@@ -175,15 +173,15 @@ namespace AppParaMama
         }
         private void VolcarDatos(Paciente Pac)
         {
-            FirstNameTextBox.Text = Pac.DevFirstName();
-            LastNameTextBox.Text = Pac.DevLastName();
+            FirstNameTextBox.Text = Pac.FirstName;
+            LastNameTextBox.Text = Pac.LastName;
             BirthDateTextBox.Text = Pac.DevDOB();
-            PhoneTextBox.Text = Pac.DevPhone();
-            ObraSocialTextBox.Text = Pac.DevObraSocial();
-            NroAsociadoTextBox.Text = Pac.DevNroSocio();
-            AntecFamiTextBox.Text = Pac.DevAntecFam();
-            AntecPersTextBox.Text = Pac.DevAntecPers();
-            Medicacion_TextBox.Text = Pac.DevMed();
+            PhoneTextBox.Text = Pac.Phone;
+            ObraSocialTextBox.Text = Pac.ObraSocial;
+            NroAsociadoTextBox.Text = Pac.NroSocio;
+            AntecFamiTextBox.Text = Pac.AntecFam;
+            AntecPersTextBox.Text = Pac.AntecPers;
+            Medicacion_TextBox.Text = Pac.Medicacion;
         }
         #endregion
 
@@ -230,20 +228,18 @@ namespace AppParaMama
             var nuevo = new NewFicha();
             nuevo.Setapp(this);
             nuevo.Show();
-            FichaDiaria fichaDiaria = new FichaDiaria();
-            fichaDiaria.CreaFichadiaria(DniTextBox.Text, "", "", fechaG, "");
+            FichaDiaria fichaDiaria = new(DniTextBox.Text, "", "", fechaG, "");
             nuevo.ShowData(fichaDiaria);
             nuevo.Datos = Datos;
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
+            string? fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
             DialogResult resp = MessageBox.Show($"Esta seguro de que desea Borrar permanentemente la ficha: {fecha}?", "Advertencia", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (resp == DialogResult.Yes)
             {
-                FichaDiaria fd = new();
-                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
+                FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
                 Datos.DelFicha(fd);
                 ListadoFichas();
             }

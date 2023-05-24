@@ -1,6 +1,7 @@
-﻿using AppParaMama;
+﻿using HistoriaClinica;
+using HistoriaClinica.Models;
 
-namespace WinFormsApp1
+namespace HistoriaClinica
 {
     public partial class NewUser : Form
     {
@@ -80,7 +81,7 @@ namespace WinFormsApp1
                     AntecFamiTextBox.ReadOnly = true;
                     AntecPersTextBox.ReadOnly = true;
                     Medicacion_TextBox.ReadOnly = true;
-                    Pac.CreaPaciente(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
+                    Pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
                     Datos.SetPaciente(Pac);
                     AppClinica app = Devapp();
                     app.ListadoFichas();
@@ -102,16 +103,16 @@ namespace WinFormsApp1
 
         public void CargarData(Paciente pac)
         {
-            FirstNameTextBox.Text = pac.DevFirstName();
-            LastNameTextBox.Text = pac.DevLastName();
+            FirstNameTextBox.Text = pac.FirstName;
+            LastNameTextBox.Text = pac.LastName;
             BirthDateTextBox.Text = pac.DevDOB();
-            DniTextBox.Text = pac.DevDni();
-            PhoneTextBox.Text = pac.DevPhone();
-            ObraSocialTextBox.Text = pac.DevObraSocial();
-            NroAsociadoTextBox.Text = pac.DevNroSocio();
-            AntecPersTextBox.Text = pac.DevAntecPers();
-            AntecFamiTextBox.Text = pac.DevAntecFam();
-            Medicacion_TextBox.Text = pac.DevMed();
+            DniTextBox.Text = pac.Dni;
+            PhoneTextBox.Text = pac.Phone;
+            ObraSocialTextBox.Text = pac.ObraSocial;
+            NroAsociadoTextBox.Text = pac.NroSocio;
+            AntecPersTextBox.Text = pac.AntecPers;
+            AntecFamiTextBox.Text = pac.AntecFam;
+            Medicacion_TextBox.Text = pac.Medicacion;
 
         }
         #endregion

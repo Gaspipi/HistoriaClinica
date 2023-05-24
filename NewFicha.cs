@@ -1,6 +1,7 @@
-﻿using AppParaMama;
+﻿using HistoriaClinica;
+using HistoriaClinica.Models;
 
-namespace WinFormsApp1
+namespace HistoriaClinica
 {
     public partial class NewFicha : Form
     {
@@ -24,7 +25,7 @@ namespace WinFormsApp1
         }
         #region
 
-        public L_Historias Datos = null;
+        public L_Historias Datos;
 
 
 
@@ -32,11 +33,11 @@ namespace WinFormsApp1
 
         public void ShowData(FichaDiaria Data)
         {
-            DniTextBox.Text = Data.DevDni();
-            MotivoTextBox.Text = Data.DevMotivo();
-            IndicacionesTextBox.Text = Data.DevIndicaciones();
-            EnfermedadTextBox.Text = Data.DevEnfermedad();
-            Date = Data.DevFecha();
+            DniTextBox.Text = Data.Dni;
+            MotivoTextBox.Text = Data.Motivo;
+            IndicacionesTextBox.Text = Data.Indicaciones;
+            EnfermedadTextBox.Text = Data.Enfermedad;
+            Date = Data.GetFecha();
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -56,7 +57,7 @@ namespace WinFormsApp1
             }
             if (IndicacionesTextBox.Text.Length > 0 && MotivoTextBox.Text.Length > 0 && EnfermedadTextBox.Text.Length > 0)
             {
-                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
+                fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
                 Datos.SetFichaDiaria(fd);
                 Close();
             }

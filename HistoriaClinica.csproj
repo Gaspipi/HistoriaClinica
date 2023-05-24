@@ -6,8 +6,9 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <StartupObject>AppParaMama.Program</StartupObject>
+    <StartupObject>HistoriaClinica.Program</StartupObject>
     <ApplicationIcon>6464.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,14 +16,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReaLTaiizor" Version="3.7.8.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Data.Odbc" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Historias.accdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Models\Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

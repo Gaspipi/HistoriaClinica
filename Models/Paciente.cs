@@ -1,20 +1,29 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
-namespace AppParaMama
+namespace HistoriaClinica
 {
     public class Paciente
     {
-
-        private string _dni = "";
-        private string _firstName = "";
-        private string _lastName = "";
+        [Required]
+        private int _id { get; set; }
+        [Key, Required]
+        private string _dni { get; set; }
+        private string _firstName { get; set; }
+        private string _lastName { get; set; }
         private DateTime _dob = DateTime.MinValue;
-        private string _phone = "";
-        private string _obraSocial = "";
-        private string _nroSocio = "";
-        private string _antecFam = "";
-        private string _antecPers = "";
-        private string _medicacion = "";
+        private string _phone { get; set; }
+        private string _obraSocial { get; set; }
+        private string _nroSocio { get; set; }
+        private string _antecFam { get; set; }
+        private string _antecPers { get; set; }
+        private string _medicacion { get; set; }
+
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
 
         public string Dni
         {
@@ -76,7 +85,9 @@ namespace AppParaMama
             set { _medicacion = value; }
         }
 
-        public void CreaPaciente(string doc, string fn, string ln, string os, string nro, DateTime nac, string ph, string antFm, string antPer, string med)
+        public Paciente() { }
+
+        public Paciente(string doc, string fn, string ln, string os, string nro, DateTime nac, string ph, string antFm, string antPer, string med)
         {
             Dni = doc;
             FirstName = fn;
@@ -89,7 +100,7 @@ namespace AppParaMama
             AntecPers = antPer;
             Medicacion = med;
         }
-        public void CreaPaciente(string doc, string fn, string ln, string os, string nro, string nac, string ph, string antFm, string antPer, string med)
+        public Paciente(string doc, string fn, string ln, string os, string nro, string nac, string ph, string antFm, string antPer, string med)
         {
             CultureInfo myCIintl = new("es-ES", false);
             Dni = doc;
@@ -110,51 +121,11 @@ namespace AppParaMama
             AntecPers = antPer;
             Medicacion = med;
         }
-        public string DevDni()
-        {
-            return Dni;
-        }
-        public string DevMed()
-        {
-            return Medicacion;
-        }
-        public string DevFirstName()
-        {
-            return FirstName;
-        }
-        public string DevLastName()
-        {
-            return LastName;
-        }
-        public string DevPhone()
-        {
-            return Phone;
-        }
-        public string DevObraSocial()
-        {
-            return ObraSocial;
-        }
-        public string DevNroSocio()
-        {
-            return NroSocio;
-        }
+
         public string DevDOB()
         {
             string Date = DOB.Date.ToString("dd/MM/yyyy");
             return Date;
         }
-        public DateTime DevDateTime()
-        {
-            return DOB;
-        }
-        public string DevAntecFam()
-        {
-            return AntecFam;
-        }
-        public string DevAntecPers()
-        {
-            return AntecPers;
-        }
     }
-
 }

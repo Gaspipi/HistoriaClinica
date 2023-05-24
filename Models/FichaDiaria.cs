@@ -1,16 +1,24 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WinFormsApp1
+namespace HistoriaClinica.Models
 {
     public class FichaDiaria
     {
+        private int _id { get; set; }
+        [ForeignKey("Dni"), StringLength(8)]
+        private string _dni { get; set; }
+        private string _enfermedad { get; set; }
+        private string _motivo { get; set; }
+        private string _indicaciones { get; set; }
+        private DateTime _fecha { get; set; }
 
-        private string _dni = "";
-        private string _enfermedad = "";
-        private string _motivo = "";
-        private string _indicaciones = "";
-        private DateTime _fecha;
-        
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+
         public string Dni
         {
             get { return _dni; }
@@ -40,8 +48,9 @@ namespace WinFormsApp1
             get { return _fecha; }
             set { _fecha = value; }
         }
+        public FichaDiaria() { }
 
-        public void CreaFichadiaria(string doc, string enf, string mot, string fec, string indic)
+        public FichaDiaria(string doc, string enf, string mot, string fec, string indic)
         {
             Dni = doc;
             Enfermedad = $@"{enf}";
@@ -49,7 +58,8 @@ namespace WinFormsApp1
             Fecha = DateTime.Parse(fec);
             Indicaciones = $@"{indic}";
         }
-        public void CreaFichadiaria(string doc, string enf, string mot, DateTime fec, string indic)
+
+        public FichaDiaria(string doc, string enf, string mot, DateTime fec, string indic)
         {
             Dni = doc;
             Enfermedad = $@"{enf}";
@@ -57,27 +67,11 @@ namespace WinFormsApp1
             Fecha = fec;
             Indicaciones = $@"{indic}";
         }
-        public string DevDni()
-        {
-            return Dni;
-        }
-        public string DevMotivo()
-        {
-            return Motivo;
-        }
-        public string DevEnfermedad()
-        {
-            return Enfermedad;
-        }
-        public string DevFecha()
+
+        public string GetFecha()
         {
             string date = Fecha.ToString("dd/MM/yyyy HH:mm:ss");
             return date;
-        }
-
-        public string DevIndicaciones()
-        {
-            return Indicaciones;
         }
     }
 }

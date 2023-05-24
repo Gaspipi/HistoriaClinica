@@ -1,4 +1,4 @@
-﻿namespace AppParaMama
+﻿namespace HistoriaClinica
 {
     partial class AppClinica
     {

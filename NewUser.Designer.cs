@@ -1,4 +1,4 @@
-﻿namespace WinFormsApp1
+﻿namespace HistoriaClinica
 {
     partial class NewUser
     {
@@ -253,7 +253,7 @@
             DniTextBox.MaxLength = 8;
             DniTextBox.Name = "DniTextBox";
             DniTextBox.Size = new Size(187, 23);
-            DniTextBox.TabIndex = 58;
+            DniTextBox.TabIndex = 39;
             DniTextBox.TextChanged += DniTextBox_TextChanged;
             // 
             // Medicacion_Label
@@ -274,7 +274,7 @@
             Medicacion_TextBox.Name = "Medicacion_TextBox";
             Medicacion_TextBox.ScrollBars = ScrollBars.Vertical;
             Medicacion_TextBox.Size = new Size(292, 143);
-            Medicacion_TextBox.TabIndex = 62;
+            Medicacion_TextBox.TabIndex = 48;
             // 
             // NewUser
             // 
