@@ -1,18 +1,11 @@
 ﻿using HistoriaClinica.Contexts;
 using HistoriaClinica.Models;
 using System.Data;
-using System.Data.Odbc;
-using System.Net;
 
 namespace HistoriaClinica
 {
     public class L_Historias
-    {
-        OdbcConnection SqlCon = new();
-        public void StartConnection()
-        {
-            SqlCon = Connection.GetInstancia().CreateConnection();
-        }
+    {        
         public string[] DevDniCollection()
         {
             string[] pacientes;
