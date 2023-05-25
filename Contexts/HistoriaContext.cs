@@ -6,7 +6,7 @@ namespace HistoriaClinica.Contexts
 {
     internal class HistoriaContext : DbContext
     {
-        static string dbase = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historia.db";
+        readonly string dbase = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historia.db";
         public DbSet<Paciente> Pacientes { get; set; }
         public DbSet<FichaDiaria> FichasDiarias { get; set; }
 
@@ -27,6 +27,8 @@ namespace HistoriaClinica.Contexts
             {
                 entity.HasKey(e => e.Id);
             });
+            modelBuilder.Entity<FichaDiaria>().ToTable("FichasDiarias");
+            
             base.OnModelCreating(modelBuilder);
         }
     }

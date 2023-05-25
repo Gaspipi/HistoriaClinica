@@ -1,5 +1,4 @@
 ﻿using HistoriaClinica.Models;
-using HistoriaClinica;
 
 namespace HistoriaClinica
 {
@@ -15,7 +14,7 @@ namespace HistoriaClinica
                 MessageBox.Show("No existe el archivo de almacenamiento, procediendo a crearlo", "No existe el fichero", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 File.Copy("Historia.db", dir);
             }
-            AutoFill = Datos.DevDniCollection();
+            AutoFill = CRUD_Historias.ReadDniCollection();
             sugerenciasAutocompletado.AddRange(AutoFill);
             DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
         }
@@ -129,10 +128,10 @@ namespace HistoriaClinica
         }
         #region
         string[] AutoFill;
-        AutoCompleteStringCollection sugerenciasAutocompletado = new AutoCompleteStringCollection();
-        private L_Historias _datos = new();
+        AutoCompleteStringCollection sugerenciasAutocompletado = new();
+        private CRUD_Historias _datos = new();
 
-        public L_Historias Datos
+        public CRUD_Historias Datos
         {
             get { return _datos; }
             set { _datos = value; }
@@ -140,19 +139,23 @@ namespace HistoriaClinica
         private void BuscarFicha(string date)
         {
             FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);
-            FichaDiaria? newfd = Datos.DevFichaDiaria(fd);
+            FichaDiaria newfd = CRUD_Historias.ReadFichaDiaria(fd);
             MotivoTextBox.Text = newfd.Motivo;
             EnfermedadTextBox.Text = newfd.Enfermedad;
             IndicacionesTextBox.Text = newfd.Indicaciones;
         }
         public void ListadoFichas()
         {
-            AutoFill = Datos.DevDniCollection();
+            AutoFill = CRUD_Historias.ReadDniCollection();
             sugerenciasAutocompletado.AddRange(AutoFill);
             DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
-            FichasDiariasListBox.DataSource = Datos.DevListadoFichas(DniTextBox.Text);
+            List<FichaDiaria> listaFichas = CRUD_Historias.ReadListadoFichas(DniTextBox.Text);
+            List<string> listaFechas = new();
+            string fecha;
+            foreach (FichaDiaria fd in listaFichas) { fecha = fd.GetFecha(); listaFechas.Add(fecha); }
+            FichasDiariasListBox.DataSource = listaFechas;
             FichasDiariasListBox.SelectedIndex = FichasDiariasListBox.Items.Count - 1;
-            Paciente? Pac = Datos.DevDatosPaciente(DniTextBox.Text);
+            Paciente? Pac = CRUD_Historias.ReadDatosPaciente(DniTextBox.Text);
             if (Pac == null)
             {
                 DialogResult dialogResult = MessageBox.Show("No existe el paciente especificado, desea crear uno nuevo?", "No existe el paciente", MessageBoxButtons.YesNo);
@@ -169,7 +172,6 @@ namespace HistoriaClinica
             {
                 VolcarDatos(Pac);
             }
-
         }
         private void VolcarDatos(Paciente Pac)
         {
@@ -235,12 +237,13 @@ namespace HistoriaClinica
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            string? fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
+            string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
             DialogResult resp = MessageBox.Show($"Esta seguro de que desea Borrar permanentemente la ficha: {fecha}?", "Advertencia", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (resp == DialogResult.Yes)
             {
                 FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
-                Datos.DelFicha(fd);
+                fd = CRUD_Historias.ReadFichaDiaria(fd);
+                CRUD_Historias.DeleteFicha(fd);
                 ListadoFichas();
             }
         }

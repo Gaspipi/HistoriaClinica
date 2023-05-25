@@ -1,5 +1,4 @@
-﻿using HistoriaClinica;
-using HistoriaClinica.Models;
+﻿using HistoriaClinica.Models;
 
 namespace HistoriaClinica
 {
@@ -25,7 +24,7 @@ namespace HistoriaClinica
         }
         #region
 
-        public L_Historias Datos;
+        public CRUD_Historias Datos;
 
 
 
@@ -42,7 +41,7 @@ namespace HistoriaClinica
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            FichaDiaria fd = new();
+
             if (MotivoTextBox.Text.Length < 1)
             {
                 MessageBox.Show("El campo Motivo debe ser llenado", "Error - Motivo invalido", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -57,8 +56,8 @@ namespace HistoriaClinica
             }
             if (IndicacionesTextBox.Text.Length > 0 && MotivoTextBox.Text.Length > 0 && EnfermedadTextBox.Text.Length > 0)
             {
-                fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
-                Datos.SetFichaDiaria(fd);
+                FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
+                CRUD_Historias.CreateFichaDiaria(fd);
                 Close();
             }
         }

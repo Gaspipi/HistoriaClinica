@@ -58,7 +58,7 @@ namespace HistoriaClinica
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            Paciente Pac = new();
+            
             if (DniTextBox.Text.Length < 8)
             {
                 MessageBox.Show("El campo DNI debe tener 8 digitos", "Error - Dni invalido", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -81,8 +81,8 @@ namespace HistoriaClinica
                     AntecFamiTextBox.ReadOnly = true;
                     AntecPersTextBox.ReadOnly = true;
                     Medicacion_TextBox.ReadOnly = true;
-                    Pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
-                    Datos.SetPaciente(Pac);
+                    Paciente Pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
+                    CRUD_Historias.CreatePaciente(Pac);
                     AppClinica app = Devapp();
                     app.ListadoFichas();
                     Close();
@@ -91,7 +91,7 @@ namespace HistoriaClinica
         }
 
         #region
-        public L_Historias Datos = null;
+        public CRUD_Historias Datos = null;
         public void Setapp(AppClinica app)
         {
             AppCli = app;

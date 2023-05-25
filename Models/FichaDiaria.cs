@@ -5,49 +5,15 @@ namespace HistoriaClinica.Models
 {
     public class FichaDiaria
     {
-        private int _id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         [ForeignKey("Dni"), StringLength(8)]
-        private string _dni { get; set; }
-        private string _enfermedad { get; set; }
-        private string _motivo { get; set; }
-        private string _indicaciones { get; set; }
-        private DateTime _fecha { get; set; }
+        public string Dni { get; set; }
+        public string Enfermedad { get; set; }
+        public string Motivo { get; set; }
+        public string Indicaciones { get; set; }
+        public DateTime Fecha { get; set; }
 
-        public int Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
-        public string Dni
-        {
-            get { return _dni; }
-            set { _dni = value; }
-        }
-
-        public string Enfermedad
-        {
-            get { return _enfermedad; }
-            set { _enfermedad = value; }
-        }
-
-        public string Motivo
-        {
-            get { return _motivo; }
-            set { _motivo = value; }
-        }
-
-        public string Indicaciones
-        {
-            get { return _indicaciones; }
-            set { _indicaciones = value; }
-        }
-
-        public DateTime Fecha
-        {
-            get { return _fecha; }
-            set { _fecha = value; }
-        }
         public FichaDiaria() { }
 
         public FichaDiaria(string doc, string enf, string mot, string fec, string indic)
