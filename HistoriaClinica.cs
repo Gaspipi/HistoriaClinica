@@ -8,15 +8,15 @@ namespace HistoriaClinica
         public AppClinica()
         {
             InitializeComponent();
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historia.db";
-            if (!File.Exists(dir))
-            {
-                MessageBox.Show("No existe el archivo de almacenamiento, procediendo a crearlo", "No existe el fichero", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                File.Copy("Historia.db", dir);
-            }
-            AutoFill = CRUD_Historias.ReadDniCollection();
-            sugerenciasAutocompletado.AddRange(AutoFill);
-            DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
+            //string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historia.db";
+            //if (!File.Exists(dir))
+            //{
+            //    MessageBox.Show("No existe el archivo de almacenamiento, procediendo a crearlo", "No existe el fichero", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //    File.Copy("Historia.db", dir);
+            //}
+            //AutoFill = CRUD_Historias.ReadDniCollection();
+            //sugerenciasAutocompletado.AddRange(AutoFill);
+            //DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
         }
 
         private void Search_Click(object sender, EventArgs e)
@@ -82,9 +82,8 @@ namespace HistoriaClinica
         {
             if (TabControl.SelectedIndex == 0)
             {
-                Paciente pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
-                var nuevo = new NewUser();
-                nuevo.Setapp(this);
+                Paciente pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, MedicacionTextBox.Text);
+                var nuevo = new NewUser(this);
                 nuevo.Show();
                 nuevo.Datos = Datos;
                 nuevo.Edit();
@@ -96,11 +95,9 @@ namespace HistoriaClinica
                 if (!string.IsNullOrEmpty(fecha))
                 {
                     FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
-                    NewFicha fic = new();
-                    fic.ShowData(fd);
-                    fic.Setapp(this);
-                    fic.Datos = Datos;
-                    fic.Show();
+                    NewFicha newFic = new(this, fecha);
+                    newFic.ShowData(fd);
+                    newFic.Show();
                 }
             }
         }
@@ -121,8 +118,7 @@ namespace HistoriaClinica
 
         private void NewPacienteButton_Click(object sender, EventArgs e)
         {
-            var nuevo = new NewUser();
-            nuevo.Setapp(this);
+            var nuevo = new NewUser(this);
             nuevo.Show();
             nuevo.Datos = Datos;
         }
@@ -139,10 +135,19 @@ namespace HistoriaClinica
         private void BuscarFicha(string date)
         {
             FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);
-            FichaDiaria newfd = CRUD_Historias.ReadFichaDiaria(fd);
-            MotivoTextBox.Text = newfd.Motivo;
-            EnfermedadTextBox.Text = newfd.Enfermedad;
-            IndicacionesTextBox.Text = newfd.Indicaciones;
+            FichaDiaria? newfd = CRUD_Historias.ReadFichaDiaria(fd);
+            if (newfd != null)
+            {
+                MotivoTextBox.Text = newfd.Motivo;
+                EnfermedadTextBox.Text = newfd.Enfermedad;
+                IndicacionesTextBox.Text = newfd.Indicaciones;
+            }
+            else
+            {
+                MotivoTextBox.Text = "";
+                EnfermedadTextBox.Text = "";
+                IndicacionesTextBox.Text = "";
+            }
         }
         public void ListadoFichas()
         {
@@ -161,8 +166,7 @@ namespace HistoriaClinica
                 DialogResult dialogResult = MessageBox.Show("No existe el paciente especificado, desea crear uno nuevo?", "No existe el paciente", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    NewUser nuevo = new();
-                    nuevo.Setapp(this);
+                    NewUser nuevo = new(this);
                     nuevo.Show();
                     nuevo.ShowDni(DniTextBox.Text);
                     nuevo.Datos = Datos;
@@ -183,7 +187,7 @@ namespace HistoriaClinica
             NroAsociadoTextBox.Text = Pac.NroSocio;
             AntecFamiTextBox.Text = Pac.AntecFam;
             AntecPersTextBox.Text = Pac.AntecPers;
-            Medicacion_TextBox.Text = Pac.Medicacion;
+            MedicacionTextBox.Text = Pac.Medicacion;
         }
         #endregion
 
@@ -227,23 +231,24 @@ namespace HistoriaClinica
         private void NewButton_Click(object sender, EventArgs e)
         {
             string fechaG = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            var nuevo = new NewFicha();
-            nuevo.Setapp(this);
+            var nuevo = new NewFicha(this, fechaG);
             nuevo.Show();
             FichaDiaria fichaDiaria = new(DniTextBox.Text, "", "", fechaG, "");
             nuevo.ShowData(fichaDiaria);
-            nuevo.Datos = Datos;
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            string fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
+            string? fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
             DialogResult resp = MessageBox.Show($"Esta seguro de que desea Borrar permanentemente la ficha: {fecha}?", "Advertencia", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (resp == DialogResult.Yes)
+            if (resp == DialogResult.Yes && fecha != null)
             {
-                FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
+                FichaDiaria? fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
                 fd = CRUD_Historias.ReadFichaDiaria(fd);
-                CRUD_Historias.DeleteFicha(fd);
+                if (fd != null)
+                {
+                    CRUD_Historias.DeleteFicha(fd);
+                }
                 ListadoFichas();
             }
         }

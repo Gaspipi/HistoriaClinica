@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewUser));
             PhoneTextBox = new TextBox();
             PhoneLabel = new Label();
-            label8 = new Label();
-            label7 = new Label();
+            AntecFamiLabel = new Label();
+            AntecPersLabel = new Label();
             AntecFamiTextBox = new TextBox();
             AntecPersTextBox = new TextBox();
             FirstNameTextBox = new TextBox();
@@ -49,8 +49,8 @@
             CancelarButton = new Button();
             DniLabel = new Label();
             DniTextBox = new TextBox();
-            Medicacion_Label = new Label();
-            Medicacion_TextBox = new TextBox();
+            MedicacionLabel = new Label();
+            MedicacionTextBox = new TextBox();
             SuspendLayout();
             // 
             // PhoneTextBox
@@ -73,25 +73,25 @@
             PhoneLabel.TabIndex = 55;
             PhoneLabel.Text = "Tel";
             // 
-            // label8
+            // AntecFamiLabel
             // 
-            label8.AutoSize = true;
-            label8.Location = new Point(491, 220);
-            label8.Margin = new Padding(4, 0, 4, 0);
-            label8.Name = "label8";
-            label8.Size = new Size(135, 15);
-            label8.TabIndex = 54;
-            label8.Text = "Antecedentes Familiares";
+            AntecFamiLabel.AutoSize = true;
+            AntecFamiLabel.Location = new Point(491, 220);
+            AntecFamiLabel.Margin = new Padding(4, 0, 4, 0);
+            AntecFamiLabel.Name = "AntecFamiLabel";
+            AntecFamiLabel.Size = new Size(135, 15);
+            AntecFamiLabel.TabIndex = 54;
+            AntecFamiLabel.Text = "Antecedentes Familiares";
             // 
-            // label7
+            // AntecPersLabel
             // 
-            label7.AutoSize = true;
-            label7.Location = new Point(491, 10);
-            label7.Margin = new Padding(4, 0, 4, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(138, 15);
-            label7.TabIndex = 53;
-            label7.Text = "Antecedentes Personales";
+            AntecPersLabel.AutoSize = true;
+            AntecPersLabel.Location = new Point(491, 10);
+            AntecPersLabel.Margin = new Padding(4, 0, 4, 0);
+            AntecPersLabel.Name = "AntecPersLabel";
+            AntecPersLabel.Size = new Size(138, 15);
+            AntecPersLabel.TabIndex = 53;
+            AntecPersLabel.Text = "Antecedentes Personales";
             // 
             // AntecFamiTextBox
             // 
@@ -256,25 +256,25 @@
             DniTextBox.TabIndex = 39;
             DniTextBox.TextChanged += DniTextBox_TextChanged;
             // 
-            // Medicacion_Label
+            // MedicacionLabel
             // 
-            Medicacion_Label.AutoSize = true;
-            Medicacion_Label.Location = new Point(21, 220);
-            Medicacion_Label.Margin = new Padding(4, 0, 4, 0);
-            Medicacion_Label.Name = "Medicacion_Label";
-            Medicacion_Label.Size = new Size(69, 15);
-            Medicacion_Label.TabIndex = 61;
-            Medicacion_Label.Text = "Medicacion";
+            MedicacionLabel.AutoSize = true;
+            MedicacionLabel.Location = new Point(21, 220);
+            MedicacionLabel.Margin = new Padding(4, 0, 4, 0);
+            MedicacionLabel.Name = "MedicacionLabel";
+            MedicacionLabel.Size = new Size(69, 15);
+            MedicacionLabel.TabIndex = 61;
+            MedicacionLabel.Text = "Medicacion";
             // 
-            // Medicacion_TextBox
+            // MedicacionTextBox
             // 
-            Medicacion_TextBox.Location = new Point(18, 238);
-            Medicacion_TextBox.Margin = new Padding(4, 3, 4, 3);
-            Medicacion_TextBox.Multiline = true;
-            Medicacion_TextBox.Name = "Medicacion_TextBox";
-            Medicacion_TextBox.ScrollBars = ScrollBars.Vertical;
-            Medicacion_TextBox.Size = new Size(292, 143);
-            Medicacion_TextBox.TabIndex = 48;
+            MedicacionTextBox.Location = new Point(18, 238);
+            MedicacionTextBox.Margin = new Padding(4, 3, 4, 3);
+            MedicacionTextBox.Multiline = true;
+            MedicacionTextBox.Name = "MedicacionTextBox";
+            MedicacionTextBox.ScrollBars = ScrollBars.Vertical;
+            MedicacionTextBox.Size = new Size(292, 143);
+            MedicacionTextBox.TabIndex = 48;
             // 
             // NewUser
             // 
@@ -282,16 +282,16 @@
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = CancelarButton;
             ClientSize = new Size(800, 450);
-            Controls.Add(Medicacion_TextBox);
-            Controls.Add(Medicacion_Label);
+            Controls.Add(MedicacionTextBox);
+            Controls.Add(MedicacionLabel);
             Controls.Add(DniLabel);
             Controls.Add(DniTextBox);
             Controls.Add(CancelarButton);
             Controls.Add(SaveButton);
             Controls.Add(PhoneTextBox);
             Controls.Add(PhoneLabel);
-            Controls.Add(label8);
-            Controls.Add(label7);
+            Controls.Add(AntecFamiLabel);
+            Controls.Add(AntecPersLabel);
             Controls.Add(AntecFamiTextBox);
             Controls.Add(AntecPersTextBox);
             Controls.Add(FirstNameTextBox);
@@ -315,8 +315,8 @@
         #endregion
         private TextBox PhoneTextBox;
         private Label PhoneLabel;
-        private Label label8;
-        private Label label7;
+        private Label AntecFamiLabel;
+        private Label AntecPersLabel;
         private TextBox AntecFamiTextBox;
         private TextBox AntecPersTextBox;
         private TextBox FirstNameTextBox;
@@ -333,7 +333,7 @@
         private Button CancelarButton;
         private Label DniLabel;
         private TextBox DniTextBox;
-        private Label Medicacion_Label;
-        private TextBox Medicacion_TextBox;
+        private Label MedicacionLabel;
+        private TextBox MedicacionTextBox;
     }
 }

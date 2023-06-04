@@ -20,8 +20,6 @@ namespace HistoriaClinica
         public string AntecPers { get; set; }
         public string Medicacion { get; set; }
 
-        public Paciente() { }
-
         public Paciente(string doc, string fn, string ln, string os, string nro, DateTime nac, string ph, string antFm, string antPer, string med)
         {
             Dni = doc;

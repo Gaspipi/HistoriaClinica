@@ -18,17 +18,12 @@ namespace HistoriaClinica
             get { return _appCli; }
             set { _appCli = value; }
         }
-        public NewFicha()
+        public NewFicha(AppClinica AppCli, string Date)
         {
             InitializeComponent();
+            _appCli = AppCli;
+            _date = Date;
         }
-        #region
-
-        public CRUD_Historias Datos;
-
-
-
-        #endregion
 
         public void ShowData(FichaDiaria Data)
         {
@@ -61,14 +56,6 @@ namespace HistoriaClinica
                 Close();
             }
         }
-        public void Setapp(AppClinica app)
-        {
-            AppCli = app;
-        }
-        public AppClinica Devapp()
-        {
-            return AppCli;
-        }
         private void CancelarButton_Click(object sender, EventArgs e)
         {
             DialogResult resp = MessageBox.Show($"Esta seguro de que desea Cancelar?", "Cancelar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -80,8 +67,7 @@ namespace HistoriaClinica
 
         private void NewFicha_FormClosed(object sender, FormClosedEventArgs e)
         {
-            AppClinica app = Devapp();
-            app.ListadoFichas();
+            AppCli.ListadoFichas();
         }
     }
 }

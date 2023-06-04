@@ -1,7 +1,4 @@
-﻿using HistoriaClinica;
-using HistoriaClinica.Models;
-
-namespace HistoriaClinica
+﻿namespace HistoriaClinica
 {
     public partial class NewUser : Form
     {
@@ -13,9 +10,10 @@ namespace HistoriaClinica
             get { return _appCli; }
             set { _appCli = value; }
         }
-        public NewUser()
+        public NewUser(AppClinica AppCli)
         {
             InitializeComponent();
+            _appCli = AppCli;
         }
 
         public void Edit()
@@ -58,7 +56,7 @@ namespace HistoriaClinica
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            
+
             if (DniTextBox.Text.Length < 8)
             {
                 MessageBox.Show("El campo DNI debe tener 8 digitos", "Error - Dni invalido", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -80,10 +78,10 @@ namespace HistoriaClinica
                     PhoneTextBox.ReadOnly = true;
                     AntecFamiTextBox.ReadOnly = true;
                     AntecPersTextBox.ReadOnly = true;
-                    Medicacion_TextBox.ReadOnly = true;
-                    Paciente Pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, Medicacion_TextBox.Text);
+                    MedicacionTextBox.ReadOnly = true;
+                    Paciente Pac = new(DniTextBox.Text, FirstNameTextBox.Text, LastNameTextBox.Text, ObraSocialTextBox.Text, NroAsociadoTextBox.Text, BirthDateTextBox.Text, PhoneTextBox.Text, AntecFamiTextBox.Text, AntecPersTextBox.Text, MedicacionTextBox.Text);
                     CRUD_Historias.CreatePaciente(Pac);
-                    AppClinica app = Devapp();
+                    AppClinica app = AppCli;
                     app.ListadoFichas();
                     Close();
                 }
@@ -91,15 +89,7 @@ namespace HistoriaClinica
         }
 
         #region
-        public CRUD_Historias Datos = null;
-        public void Setapp(AppClinica app)
-        {
-            AppCli = app;
-        }
-        public AppClinica Devapp()
-        {
-            return AppCli;
-        }
+        public CRUD_Historias? Datos = null;
 
         public void CargarData(Paciente pac)
         {
@@ -112,7 +102,7 @@ namespace HistoriaClinica
             NroAsociadoTextBox.Text = pac.NroSocio;
             AntecPersTextBox.Text = pac.AntecPers;
             AntecFamiTextBox.Text = pac.AntecFam;
-            Medicacion_TextBox.Text = pac.Medicacion;
+            MedicacionTextBox.Text = pac.Medicacion;
 
         }
         #endregion

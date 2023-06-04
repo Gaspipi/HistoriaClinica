@@ -28,6 +28,10 @@ namespace HistoriaClinica.Contexts
                 entity.HasKey(e => e.Id);
             });
             modelBuilder.Entity<FichaDiaria>().ToTable("FichasDiarias");
+            modelBuilder.Entity<FichaDiaria>(entity =>
+            {
+
+            });
             
             base.OnModelCreating(modelBuilder);
         }
