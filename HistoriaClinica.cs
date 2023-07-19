@@ -8,17 +8,10 @@ namespace HistoriaClinica
         public AppClinica()
         {
             InitializeComponent();
-            //string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Historia.db";
-            //if (!File.Exists(dir))
-            //{
-            //    MessageBox.Show("No existe el archivo de almacenamiento, procediendo a crearlo", "No existe el fichero", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //    File.Copy("Historia.db", dir);
-            //}
-            //AutoFill = CRUD_Historias.ReadDniCollection();
-            //sugerenciasAutocompletado.AddRange(AutoFill);
-            //DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
+            AutoFill = CRUD_Historias.ReadDniCollection();
+            sugerenciasAutocompletado.AddRange(AutoFill);
+            DniTextBox.AutoCompleteCustomSource = sugerenciasAutocompletado;
         }
-
         private void Search_Click(object sender, EventArgs e)
         {
             if (FichasDiariasListBox.Items.Count == 0)
@@ -37,7 +30,6 @@ namespace HistoriaClinica
             }
             EditEnabled();
         }
-
         public void EditEnabled()
         {
             if (TabControl.SelectedIndex == 0)
@@ -63,7 +55,6 @@ namespace HistoriaClinica
                 }
             }
         }
-
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             string? date = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
@@ -77,7 +68,6 @@ namespace HistoriaClinica
                 EditButton.Enabled = false;
             }
         }
-
         private void EditButton_Click(object sender, EventArgs e)
         {
             if (TabControl.SelectedIndex == 0)
@@ -101,7 +91,6 @@ namespace HistoriaClinica
                 }
             }
         }
-
         private void DniTextBox_TextChanged(object sender, EventArgs e)
         {
             for (int i = 0; i < DniTextBox.Text.Length; i++)
@@ -115,18 +104,15 @@ namespace HistoriaClinica
                 }
             }
         }
-
         private void NewPacienteButton_Click(object sender, EventArgs e)
         {
             var nuevo = new NewUser(this);
             nuevo.Show();
             nuevo.Datos = Datos;
         }
-        #region
         string[] AutoFill;
         AutoCompleteStringCollection sugerenciasAutocompletado = new();
         private CRUD_Historias _datos = new();
-
         public CRUD_Historias Datos
         {
             get { return _datos; }
@@ -135,7 +121,7 @@ namespace HistoriaClinica
         private void BuscarFicha(string date)
         {
             FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, date, IndicacionesTextBox.Text);
-            FichaDiaria? newfd = CRUD_Historias.ReadFichaDiaria(fd);
+            FichaDiaria? newfd = CRUD_Historias.SelectFichaDiaria(fd);
             if (newfd != null)
             {
                 MotivoTextBox.Text = newfd.Motivo;
@@ -160,7 +146,7 @@ namespace HistoriaClinica
             foreach (FichaDiaria fd in listaFichas) { fecha = fd.GetFecha(); listaFechas.Add(fecha); }
             FichasDiariasListBox.DataSource = listaFechas;
             FichasDiariasListBox.SelectedIndex = FichasDiariasListBox.Items.Count - 1;
-            Paciente? Pac = CRUD_Historias.ReadDatosPaciente(DniTextBox.Text);
+            Paciente? Pac = CRUD_Historias.SelectDatosPaciente(DniTextBox.Text);
             if (Pac == null)
             {
                 DialogResult dialogResult = MessageBox.Show("No existe el paciente especificado, desea crear uno nuevo?", "No existe el paciente", MessageBoxButtons.YesNo);
@@ -189,8 +175,6 @@ namespace HistoriaClinica
             AntecPersTextBox.Text = Pac.AntecPers;
             MedicacionTextBox.Text = Pac.Medicacion;
         }
-        #endregion
-
         private void BirthDateTextBox_TextChanged_1(object sender, EventArgs e)
         {
             for (int i = 0; i < BirthDateTextBox.Text.Length; i++)
@@ -217,17 +201,14 @@ namespace HistoriaClinica
                 BirthDateTextBox.Text = BirthDateTextBox.Text.Remove(BirthDateTextBox.Text.Length - 1);
                 BirthDateTextBox.Text += '/';
                 BirthDateTextBox.Select(BirthDateTextBox.Text.Length, 0);
-
             }
             if (BirthDateTextBox.Text.Length > 5 && BirthDateTextBox.Text[5] != '/')
             {
                 BirthDateTextBox.Text = BirthDateTextBox.Text.Remove(BirthDateTextBox.Text.Length - 1);
                 BirthDateTextBox.Text += '/';
                 BirthDateTextBox.Select(BirthDateTextBox.Text.Length, 0);
-
             }
         }
-
         private void NewButton_Click(object sender, EventArgs e)
         {
             string fechaG = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
@@ -236,7 +217,6 @@ namespace HistoriaClinica
             FichaDiaria fichaDiaria = new(DniTextBox.Text, "", "", fechaG, "");
             nuevo.ShowData(fichaDiaria);
         }
-
         private void DeleteButton_Click(object sender, EventArgs e)
         {
             string? fecha = FichasDiariasListBox.Items[FichasDiariasListBox.SelectedIndex].ToString();
@@ -244,15 +224,14 @@ namespace HistoriaClinica
             if (resp == DialogResult.Yes && fecha != null)
             {
                 FichaDiaria? fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, fecha, IndicacionesTextBox.Text);
-                fd = CRUD_Historias.ReadFichaDiaria(fd);
+                fd = CRUD_Historias.SelectFichaDiaria(fd);
                 if (fd != null)
                 {
-                    CRUD_Historias.DeleteFicha(fd);
+                    CRUD_Historias.DeleteFichaDiaria(fd);
                 }
                 ListadoFichas();
             }
         }
-
         private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             EditEnabled();

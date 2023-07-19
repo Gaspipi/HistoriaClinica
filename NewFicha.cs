@@ -52,7 +52,7 @@ namespace HistoriaClinica
             if (IndicacionesTextBox.Text.Length > 0 && MotivoTextBox.Text.Length > 0 && EnfermedadTextBox.Text.Length > 0)
             {
                 FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
-                CRUD_Historias.CreateFichaDiaria(fd);
+                CRUD_Historias.InsertFichaDiaria(fd);
                 Close();
             }
         }
