@@ -1,4 +1,4 @@
-﻿namespace WinFormsApp1
+﻿namespace HistoriaClinica
 {
     partial class NewFicha
     {
@@ -35,9 +35,9 @@
             EnfermedadTextBox = new TextBox();
             MotivoTextBox = new TextBox();
             DniLabel = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
+            EnfermedadLabel = new Label();
+            MotivoLabel = new Label();
+            IndicacionesLabel = new Label();
             IndicacionesTextBox = new TextBox();
             SuspendLayout();
             // 
@@ -95,32 +95,32 @@
             DniLabel.TabIndex = 5;
             DniLabel.Text = "DNI";
             // 
-            // label2
+            // EnfermedadLabel
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(243, 76);
-            label2.Name = "label2";
-            label2.Size = new Size(106, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Enfermedad actual";
+            EnfermedadLabel.AutoSize = true;
+            EnfermedadLabel.Location = new Point(243, 76);
+            EnfermedadLabel.Name = "EnfermedadLabel";
+            EnfermedadLabel.Size = new Size(106, 15);
+            EnfermedadLabel.TabIndex = 6;
+            EnfermedadLabel.Text = "Enfermedad actual";
             // 
-            // label3
+            // MotivoLabel
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(35, 76);
-            label3.Name = "label3";
-            label3.Size = new Size(45, 15);
-            label3.TabIndex = 7;
-            label3.Text = "Motivo";
+            MotivoLabel.AutoSize = true;
+            MotivoLabel.Location = new Point(35, 76);
+            MotivoLabel.Name = "MotivoLabel";
+            MotivoLabel.Size = new Size(45, 15);
+            MotivoLabel.TabIndex = 7;
+            MotivoLabel.Text = "Motivo";
             // 
-            // label4
+            // IndicacionesLabel
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(451, 76);
-            label4.Name = "label4";
-            label4.Size = new Size(73, 15);
-            label4.TabIndex = 8;
-            label4.Text = "Indicaciones";
+            IndicacionesLabel.AutoSize = true;
+            IndicacionesLabel.Location = new Point(451, 76);
+            IndicacionesLabel.Name = "IndicacionesLabel";
+            IndicacionesLabel.Size = new Size(73, 15);
+            IndicacionesLabel.TabIndex = 8;
+            IndicacionesLabel.Text = "Indicaciones";
             // 
             // IndicacionesTextBox
             // 
@@ -138,9 +138,9 @@
             CancelButton = CancelarButton;
             ClientSize = new Size(661, 333);
             Controls.Add(IndicacionesTextBox);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
+            Controls.Add(IndicacionesLabel);
+            Controls.Add(MotivoLabel);
+            Controls.Add(EnfermedadLabel);
             Controls.Add(DniLabel);
             Controls.Add(MotivoTextBox);
             Controls.Add(EnfermedadTextBox);
@@ -165,9 +165,9 @@
         private TextBox EnfermedadTextBox;
         private TextBox MotivoTextBox;
         private Label DniLabel;
-        private Label label2;
-        private Label label3;
-        private Label label4;
+        private Label EnfermedadLabel;
+        private Label MotivoLabel;
+        private Label IndicacionesLabel;
         private TextBox IndicacionesTextBox;
     }
 }

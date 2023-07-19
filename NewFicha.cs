@@ -1,6 +1,6 @@
-﻿using AppParaMama;
+﻿using HistoriaClinica.Models;
 
-namespace WinFormsApp1
+namespace HistoriaClinica
 {
     public partial class NewFicha : Form
     {
@@ -18,30 +18,25 @@ namespace WinFormsApp1
             get { return _appCli; }
             set { _appCli = value; }
         }
-        public NewFicha()
+        public NewFicha(AppClinica AppCli, string Date)
         {
             InitializeComponent();
+            _appCli = AppCli;
+            _date = Date;
         }
-        #region
-
-        public L_Historias Datos = null;
-
-
-
-        #endregion
 
         public void ShowData(FichaDiaria Data)
         {
-            DniTextBox.Text = Data.DevDni();
-            MotivoTextBox.Text = Data.DevMotivo();
-            IndicacionesTextBox.Text = Data.DevIndicaciones();
-            EnfermedadTextBox.Text = Data.DevEnfermedad();
-            Date = Data.DevFecha();
+            DniTextBox.Text = Data.Dni;
+            MotivoTextBox.Text = Data.Motivo;
+            IndicacionesTextBox.Text = Data.Indicaciones;
+            EnfermedadTextBox.Text = Data.Enfermedad;
+            Date = Data.GetFecha();
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            FichaDiaria fd = new();
+
             if (MotivoTextBox.Text.Length < 1)
             {
                 MessageBox.Show("El campo Motivo debe ser llenado", "Error - Motivo invalido", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -56,18 +51,10 @@ namespace WinFormsApp1
             }
             if (IndicacionesTextBox.Text.Length > 0 && MotivoTextBox.Text.Length > 0 && EnfermedadTextBox.Text.Length > 0)
             {
-                fd.CreaFichadiaria(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
-                Datos.SetFichaDiaria(fd);
+                FichaDiaria fd = new(DniTextBox.Text, EnfermedadTextBox.Text, MotivoTextBox.Text, Date, IndicacionesTextBox.Text);
+                CRUD_Historias.InsertFichaDiaria(fd);
                 Close();
             }
-        }
-        public void Setapp(AppClinica app)
-        {
-            AppCli = app;
-        }
-        public AppClinica Devapp()
-        {
-            return AppCli;
         }
         private void CancelarButton_Click(object sender, EventArgs e)
         {
@@ -80,8 +67,7 @@ namespace WinFormsApp1
 
         private void NewFicha_FormClosed(object sender, FormClosedEventArgs e)
         {
-            AppClinica app = Devapp();
-            app.ListadoFichas();
+            AppCli.ListadoFichas();
         }
     }
 }

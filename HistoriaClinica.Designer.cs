@@ -1,4 +1,4 @@
-﻿namespace AppParaMama
+﻿namespace HistoriaClinica
 {
     partial class AppClinica
     {
@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppClinica));
             TabControl = new TabControl();
             Paciente = new TabPage();
-            Medicacion_Label = new Label();
-            Medicacion_TextBox = new TextBox();
+            MedicacionLabel = new Label();
+            MedicacionTextBox = new TextBox();
             FirstNameTextBox = new TextBox();
             LastNameTextBox = new TextBox();
             PhoneTextBox = new TextBox();
@@ -41,8 +41,8 @@
             NroAsociadoTextBox = new TextBox();
             NewPacienteButton = new Button();
             PhoneLabel = new Label();
-            label8 = new Label();
-            label7 = new Label();
+            AntecFamiLabel = new Label();
+            AntecPersLabel = new Label();
             AntecFamiTextBox = new TextBox();
             AntecPersTextBox = new TextBox();
             NroAsociadoLabel = new Label();
@@ -85,8 +85,8 @@
             // Paciente
             // 
             Paciente.BackColor = Color.White;
-            Paciente.Controls.Add(Medicacion_Label);
-            Paciente.Controls.Add(Medicacion_TextBox);
+            Paciente.Controls.Add(MedicacionLabel);
+            Paciente.Controls.Add(MedicacionTextBox);
             Paciente.Controls.Add(FirstNameTextBox);
             Paciente.Controls.Add(LastNameTextBox);
             Paciente.Controls.Add(PhoneTextBox);
@@ -95,8 +95,8 @@
             Paciente.Controls.Add(NroAsociadoTextBox);
             Paciente.Controls.Add(NewPacienteButton);
             Paciente.Controls.Add(PhoneLabel);
-            Paciente.Controls.Add(label8);
-            Paciente.Controls.Add(label7);
+            Paciente.Controls.Add(AntecFamiLabel);
+            Paciente.Controls.Add(AntecPersLabel);
             Paciente.Controls.Add(AntecFamiTextBox);
             Paciente.Controls.Add(AntecPersTextBox);
             Paciente.Controls.Add(NroAsociadoLabel);
@@ -112,26 +112,26 @@
             Paciente.TabIndex = 0;
             Paciente.Text = "Paciente";
             // 
-            // Medicacion_Label
+            // MedicacionLabel
             // 
-            Medicacion_Label.AutoSize = true;
-            Medicacion_Label.Location = new Point(40, 253);
-            Medicacion_Label.Margin = new Padding(4, 0, 4, 0);
-            Medicacion_Label.Name = "Medicacion_Label";
-            Medicacion_Label.Size = new Size(69, 15);
-            Medicacion_Label.TabIndex = 40;
-            Medicacion_Label.Text = "Medicacion";
+            MedicacionLabel.AutoSize = true;
+            MedicacionLabel.Location = new Point(40, 253);
+            MedicacionLabel.Margin = new Padding(4, 0, 4, 0);
+            MedicacionLabel.Name = "MedicacionLabel";
+            MedicacionLabel.Size = new Size(69, 15);
+            MedicacionLabel.TabIndex = 40;
+            MedicacionLabel.Text = "Medicacion";
             // 
-            // Medicacion_TextBox
+            // MedicacionTextBox
             // 
-            Medicacion_TextBox.Location = new Point(44, 271);
-            Medicacion_TextBox.Margin = new Padding(4, 3, 4, 3);
-            Medicacion_TextBox.Multiline = true;
-            Medicacion_TextBox.Name = "Medicacion_TextBox";
-            Medicacion_TextBox.ReadOnly = true;
-            Medicacion_TextBox.ScrollBars = ScrollBars.Vertical;
-            Medicacion_TextBox.Size = new Size(382, 184);
-            Medicacion_TextBox.TabIndex = 14;
+            MedicacionTextBox.Location = new Point(44, 271);
+            MedicacionTextBox.Margin = new Padding(4, 3, 4, 3);
+            MedicacionTextBox.Multiline = true;
+            MedicacionTextBox.Name = "MedicacionTextBox";
+            MedicacionTextBox.ReadOnly = true;
+            MedicacionTextBox.ScrollBars = ScrollBars.Vertical;
+            MedicacionTextBox.Size = new Size(382, 184);
+            MedicacionTextBox.TabIndex = 14;
             // 
             // FirstNameTextBox
             // 
@@ -222,25 +222,25 @@
             PhoneLabel.TabIndex = 38;
             PhoneLabel.Text = "Tel";
             // 
-            // label8
+            // AntecFamiLabel
             // 
-            label8.AutoSize = true;
-            label8.Location = new Point(484, 253);
-            label8.Margin = new Padding(4, 0, 4, 0);
-            label8.Name = "label8";
-            label8.Size = new Size(135, 15);
-            label8.TabIndex = 36;
-            label8.Text = "Antecedentes Familiares";
+            AntecFamiLabel.AutoSize = true;
+            AntecFamiLabel.Location = new Point(484, 253);
+            AntecFamiLabel.Margin = new Padding(4, 0, 4, 0);
+            AntecFamiLabel.Name = "AntecFamiLabel";
+            AntecFamiLabel.Size = new Size(135, 15);
+            AntecFamiLabel.TabIndex = 36;
+            AntecFamiLabel.Text = "Antecedentes Familiares";
             // 
-            // label7
+            // AntecPersLabel
             // 
-            label7.AutoSize = true;
-            label7.Location = new Point(484, 8);
-            label7.Margin = new Padding(4, 0, 4, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(138, 15);
-            label7.TabIndex = 35;
-            label7.Text = "Antecedentes Personales";
+            AntecPersLabel.AutoSize = true;
+            AntecPersLabel.Location = new Point(484, 8);
+            AntecPersLabel.Margin = new Padding(4, 0, 4, 0);
+            AntecPersLabel.Name = "AntecPersLabel";
+            AntecPersLabel.Size = new Size(138, 15);
+            AntecPersLabel.TabIndex = 35;
+            AntecPersLabel.Text = "Antecedentes Personales";
             // 
             // AntecFamiTextBox
             // 
@@ -517,31 +517,31 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl TabControl;
-        private System.Windows.Forms.TabPage Paciente;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox AntecFamiTextBox;
-        private System.Windows.Forms.TextBox AntecPersTextBox;
-        private System.Windows.Forms.Label NroAsociadoLabel;
-        private System.Windows.Forms.Label ObraSocialLabel;
-        private System.Windows.Forms.Label LastNameLabel;
-        private System.Windows.Forms.Label FirstNameLabel;
-        private System.Windows.Forms.Label BirthLabel;
-        private System.Windows.Forms.TabPage HistoriaClinica;
-        private System.Windows.Forms.Button SearchButton;
-        private System.Windows.Forms.Label DniLabel;
-        private System.Windows.Forms.TextBox DniTextBox;
-        private System.Windows.Forms.ListBox FichasDiariasListBox;
-        private System.Windows.Forms.Button EditButton;
-        private System.Windows.Forms.Label FichasDiariasLabel;
-        private System.Windows.Forms.Label MotivoLabel;
-        private System.Windows.Forms.Label EnfermedadLabel;
-        private System.Windows.Forms.TextBox EnfermedadTextBox;
-        private System.Windows.Forms.TextBox MotivoTextBox;
-        private System.Windows.Forms.Button NewButton;
-        private System.Windows.Forms.Button NewPacienteButton;
-        private System.Windows.Forms.Label PhoneLabel;
+        private TabControl TabControl;
+        private TabPage Paciente;
+        private Label AntecFamiLabel;
+        private Label AntecPersLabel;
+        private TextBox AntecFamiTextBox;
+        private TextBox AntecPersTextBox;
+        private Label NroAsociadoLabel;
+        private Label ObraSocialLabel;
+        private Label LastNameLabel;
+        private Label FirstNameLabel;
+        private Label BirthLabel;
+        private TabPage HistoriaClinica;
+        private Button SearchButton;
+        private Label DniLabel;
+        private TextBox DniTextBox;
+        private ListBox FichasDiariasListBox;
+        private Button EditButton;
+        private Label FichasDiariasLabel;
+        private Label MotivoLabel;
+        private Label EnfermedadLabel;
+        private TextBox EnfermedadTextBox;
+        private TextBox MotivoTextBox;
+        private Button NewButton;
+        private Button NewPacienteButton;
+        private Label PhoneLabel;
         private TextBox BirthDateTextBox;
         private TextBox ObraSocialTextBox;
         private TextBox NroAsociadoTextBox;
@@ -551,8 +551,8 @@
         private Label IndicacionesLabel;
         private TextBox IndicacionesTextBox;
         private Button DeleteButton;
-        private Label Medicacion_Label;
-        private TextBox Medicacion_TextBox;
+        private Label MedicacionLabel;
+        private TextBox MedicacionTextBox;
     }
 }
 
