@@ -35,7 +35,7 @@ Siga los siguientes pasos para configurar el proyecto en su entorno de desarroll
 
 Si desea contribuir a este proyecto, siga estos pasos:
 
-1.  Fork este repositorio.
+1.  Forkee este repositorio.
 2.  Cree una rama para su nueva funcionalidad (`git checkout -b feature/nueva-funcionalidad`).
 3.  Realice los cambios y realice confirmaciones con mensajes descriptivos.
 4.  Envíe un pull request a la rama principal del repositorio.
