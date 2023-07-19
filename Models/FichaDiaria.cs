@@ -7,8 +7,9 @@ namespace HistoriaClinica.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [ForeignKey("Dni"), StringLength(8), Required]
+        [StringLength(8), Required]
         public string Dni { get; set; }
+        public Paciente Paciente { get; set; }
         public string? Enfermedad { get; set; }
         public string? Motivo { get; set; }
         public string? Indicaciones { get; set; }

@@ -7,7 +7,7 @@
         public NewUser(AppClinica AppCli)
         {
             InitializeComponent();
-            AppCli = AppCli;
+            this.AppCli = AppCli;
         }
         public void Edit()
         {

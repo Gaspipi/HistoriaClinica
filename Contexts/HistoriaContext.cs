@@ -29,9 +29,9 @@ namespace HistoriaClinica.Contexts
             modelBuilder.Entity<Paciente>().ToTable("Pacientes");
             modelBuilder.Entity<Paciente>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever(); // Generación de valores de Id desactivada
-                entity.HasKey(e => e.Dni); // Clave primaria de la entidad Paciente
-                entity.Property(e => e.DOB).IsRequired(); // Propiedad DOB requerida
+                entity.HasKey(p => p.Dni); // Clave primaria de la entidad Paciente
+                entity.Property(p => p.DOB).IsRequired(); // Propiedad DOB requerida
+                entity.HasMany(p => p.FichasDiarias).WithOne(f => f.Paciente).HasForeignKey(f => f.Dni);
             });
 
             // Tabla FichasDiarias

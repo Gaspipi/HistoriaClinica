@@ -4,25 +4,14 @@ namespace HistoriaClinica
 {
     public partial class NewFicha : Form
     {
-        private string _date;
-        private AppClinica _appCli;
+        public string Date { get; set; }
+        public AppClinica AppCli { get; set; }
 
-        public string Date
-        {
-            get { return _date; }
-            set { _date = value; }
-        }
-
-        public AppClinica AppCli
-        {
-            get { return _appCli; }
-            set { _appCli = value; }
-        }
         public NewFicha(AppClinica AppCli, string Date)
         {
             InitializeComponent();
-            _appCli = AppCli;
-            _date = Date;
+            this.AppCli = AppCli;
+            this.Date = Date;
         }
 
         public void ShowData(FichaDiaria Data)

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HistoriaClinica.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
@@ -6,19 +7,18 @@ namespace HistoriaClinica
 {
     public class Paciente
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         [Key, Required]
         public string Dni { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
         public DateTime DOB { get; set; }
-        public string Phone { get; set; }
-        public string ObraSocial { get; set; }
-        public string NroSocio { get; set; }
-        public string AntecFam { get; set; }
-        public string AntecPers { get; set; }
-        public string Medicacion { get; set; }
+        public string Phone { get; set; } = string.Empty;
+        public string ObraSocial { get; set; } = string.Empty;
+        public string NroSocio { get; set; } = string.Empty;
+        public string AntecFam { get; set; } = string.Empty;
+        public string AntecPers { get; set; } = string.Empty;
+        public string Medicacion { get; set; } = string.Empty;
+        public List<FichaDiaria> FichasDiarias { get; set; }
 
         private Paciente(string dni)
         {
