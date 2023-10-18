@@ -48,4 +48,4 @@ Este proyecto se distribuye bajo la licencia [MIT](/LICENSE).
 
 ## Contacto
 
-Si tiene alguna pregunta o sugerencia relacionada con este proyecto, puede ponerse en contacto conmigo a través de mi [Discord](https://discord.com/users/Gaspipi#2014).
+Si tiene alguna pregunta o sugerencia relacionada con este proyecto, puede ponerse en contacto conmigo a través de mi [LinkedIn](https://www.linkedin.com/in/gaspar-ferreyra/).
