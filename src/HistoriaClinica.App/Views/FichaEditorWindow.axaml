@@ -1,0 +1,149 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HistoriaClinica.App.ViewModels"
+        xmlns:icons="using:HistoriaClinica.App.Icons"
+        xmlns:automation="using:Avalonia.Automation"
+        xmlns:layout="using:HistoriaClinica.App.Layout"
+        x:Class="HistoriaClinica.App.Views.FichaEditorWindow"
+        x:DataType="vm:FichaEditorViewModel"
+        Title="{Binding Titulo}"
+        Width="760"
+        Height="700"
+        MinWidth="460"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner">
+  <Window.Styles>
+    <Style Selector="Grid#PageRoot">
+      <Setter Property="Margin" Value="22" />
+    </Style>
+    <Style Selector="StackPanel#FooterActions">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <Style Selector="Window.compact Grid#PageRoot">
+      <Setter Property="Margin" Value="16" />
+    </Style>
+    <Style Selector="Window.compact StackPanel#FooterActions">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Margin" Value="0,12,0,0" />
+    </Style>
+  </Window.Styles>
+
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Ctrl+Enter" Command="{Binding GuardarCommand}" />
+  </Window.KeyBindings>
+
+  <Grid x:Name="PageRoot" RowDefinitions="Auto,*,Auto" RowSpacing="14">
+    <StackPanel Grid.Row="0" Spacing="2">
+      <TextBlock Text="{Binding Titulo}" Classes="h1" TextWrapping="Wrap" />
+      <TextBlock Text="Completá el detalle de la consulta. Los campos con * son obligatorios."
+                 Classes="subtitle" />
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Spacing="16">
+        <Border Classes="card compact">
+          <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="220" ColumnSpacing="16" RowSpacing="8">
+            <StackPanel>
+              <TextBlock Text="DNI" Classes="fieldLabel" />
+              <TextBlock Text="{Binding Dni}" Classes="strong" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="Fecha" Classes="fieldLabel" />
+              <TextBlock Text="{Binding FechaTexto}" Classes="strong" />
+            </StackPanel>
+          </layout:ResponsiveGrid>
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Detalle de la consulta" Classes="sectionTitle" />
+
+            <StackPanel>
+              <TextBlock Text="Motivo *" Classes="fieldLabel" />
+              <TextBox x:Name="MotivoTextBox"
+                       Text="{Binding Motivo, Mode=TwoWay}"
+                       AcceptsReturn="True"
+                       TextWrapping="Wrap"
+                       Height="{DynamicResource FichaMotivoHeight}"
+                       Classes="multiline"
+                       Classes.invalid="{Binding TieneErrorMotivo}"
+                       automation:AutomationProperties.Name="Motivo de la consulta" />
+              <TextBlock Text="{Binding ErrorMotivo}"
+                         IsVisible="{Binding TieneErrorMotivo}"
+                         Classes="errorText" />
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Text="Enfermedad actual *" Classes="fieldLabel" />
+              <TextBox Text="{Binding Enfermedad, Mode=TwoWay}"
+                       AcceptsReturn="True"
+                       TextWrapping="Wrap"
+                       Height="{DynamicResource FichaEnfermedadHeight}"
+                       Classes="multiline"
+                       Classes.invalid="{Binding TieneErrorEnfermedad}"
+                       automation:AutomationProperties.Name="Enfermedad actual" />
+              <TextBlock Text="{Binding ErrorEnfermedad}"
+                         IsVisible="{Binding TieneErrorEnfermedad}"
+                         Classes="errorText" />
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Text="Indicaciones *" Classes="fieldLabel" />
+              <TextBox Text="{Binding Indicaciones, Mode=TwoWay}"
+                       AcceptsReturn="True"
+                       TextWrapping="Wrap"
+                       Height="{DynamicResource FichaIndicacionesHeight}"
+                       Classes="multiline"
+                       Classes.invalid="{Binding TieneErrorIndicaciones}"
+                       automation:AutomationProperties.Name="Indicaciones" />
+              <TextBlock Text="{Binding ErrorIndicaciones}"
+                         IsVisible="{Binding TieneErrorIndicaciones}"
+                         Classes="errorText" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="errorBanner" IsVisible="{Binding HayError}">
+          <TextBlock Text="{Binding MensajeError}"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource DangerBrush}" />
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Grid x:Name="FooterGrid" Grid.Row="2" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" ColumnSpacing="16">
+      <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+        <ProgressBar IsIndeterminate="True"
+                     IsVisible="{Binding IsBusy}"
+                     Width="120"
+                     VerticalAlignment="Center" />
+        <TextBlock Text="Ctrl+Enter para guardar" Classes="caption" VerticalAlignment="Center" />
+      </StackPanel>
+
+      <StackPanel x:Name="FooterActions" Orientation="Horizontal" Spacing="8">
+        <Button Classes="secondary"
+                Command="{Binding CancelarCommand}"
+                IsCancel="True"
+                MinWidth="110"
+                automation:AutomationProperties.Name="Cancelar">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Path Classes="icon onSecondary" Data="{x:Static icons:LucideIcons.X}" />
+            <TextBlock Text="Cancelar" />
+          </StackPanel>
+        </Button>
+        <Button Classes="primary"
+                Command="{Binding GuardarCommand}"
+                MinWidth="110"
+                automation:AutomationProperties.Name="Guardar">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.Check}" />
+            <TextBlock Text="Guardar" />
+          </StackPanel>
+        </Button>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

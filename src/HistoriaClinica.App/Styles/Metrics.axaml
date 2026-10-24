@@ -1,0 +1,33 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="using:System">
+  <sys:Double x:Key="FontSizeH1">26</sys:Double>
+  <sys:Double x:Key="FontSizeH2">20</sys:Double>
+  <sys:Double x:Key="FontSizeSection">16</sys:Double>
+  <sys:Double x:Key="FontSizeBody">14</sys:Double>
+  <sys:Double x:Key="FontSizeSmall">12</sys:Double>
+  <sys:Double x:Key="FontSizeCaption">12</sys:Double>
+  <sys:Double x:Key="FontSizeListPreview">13</sys:Double>
+  <sys:Double x:Key="FontSizeAvatar">14</sys:Double>
+  <sys:Double x:Key="FontSizeEmptyTitle">20</sys:Double>
+  <sys:Double x:Key="LineHeightBody">20</sys:Double>
+
+  <sys:Double x:Key="ControlHeight">38</sys:Double>
+  <sys:Double x:Key="ControlHeightSmall">30</sys:Double>
+  <sys:Double x:Key="UserBadgeHeight">48</sys:Double>
+  <sys:Double x:Key="DateFieldInnerHeight">36</sys:Double>
+
+  <sys:Double x:Key="AvatarSize">40</sys:Double>
+  <CornerRadius x:Key="AvatarRadius">20</CornerRadius>
+  <sys:Double x:Key="IconSize">16</sys:Double>
+  <sys:Double x:Key="IconSizeSmall">14</sys:Double>
+  <sys:Double x:Key="EmptyIconSize">56</sys:Double>
+
+  <sys:Double x:Key="MultilineMinHeight">100</sys:Double>
+  <sys:Double x:Key="FichaMotivoHeight">76</sys:Double>
+  <sys:Double x:Key="FichaEnfermedadHeight">92</sys:Double>
+  <sys:Double x:Key="FichaIndicacionesHeight">100</sys:Double>
+
+  <sys:Double x:Key="UserNameMaxWidth">180</sys:Double>
+  <sys:Double x:Key="EmptyDescriptionMaxWidth">420</sys:Double>
+</ResourceDictionary>

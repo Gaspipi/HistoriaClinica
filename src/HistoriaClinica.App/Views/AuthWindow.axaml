@@ -1,0 +1,241 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HistoriaClinica.App.ViewModels"
+        xmlns:icons="using:HistoriaClinica.App.Icons"
+        xmlns:automation="using:Avalonia.Automation"
+        x:Class="HistoriaClinica.App.Views.AuthWindow"
+        x:DataType="vm:AuthViewModel"
+        Title="Historia Clínica"
+        Width="520"
+        Height="680"
+        MinWidth="360"
+        MinHeight="420"
+        CanResize="True"
+        WindowStartupLocation="CenterScreen">
+  <Window.Styles>
+    <Style Selector="Grid#AuthRoot">
+      <Setter Property="Margin" Value="28" />
+    </Style>
+    <Style Selector="Border#AuthCard">
+      <Setter Property="Padding" Value="28" />
+    </Style>
+    <Style Selector="Image#AuthLogo">
+      <Setter Property="Width" Value="52" />
+      <Setter Property="Height" Value="52" />
+    </Style>
+    <Style Selector="Window.narrow Grid#AuthRoot">
+      <Setter Property="Margin" Value="16" />
+    </Style>
+    <Style Selector="Window.narrow Border#AuthCard">
+      <Setter Property="Padding" Value="20" />
+    </Style>
+    <Style Selector="Window.narrow Image#AuthLogo">
+      <Setter Property="Width" Value="40" />
+      <Setter Property="Height" Value="40" />
+    </Style>
+  </Window.Styles>
+
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <Grid x:Name="AuthRoot">
+      <Border x:Name="AuthCard" Classes="card" VerticalAlignment="Center">
+        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="24">
+          <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="14">
+            <Image x:Name="AuthLogo"
+                   VerticalAlignment="Center"
+                   Source="avares://HistoriaClinica/Assets/Icons/historia-clinica-64.png" />
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+              <TextBlock Text="Historia Clínica" Classes="h1" TextWrapping="Wrap" />
+              <TextBlock Text="Gestión de pacientes y fichas diarias"
+                         Classes="subtitle"
+                         TextWrapping="Wrap" />
+            </StackPanel>
+          </Grid>
+
+          <Grid Grid.Row="1" VerticalAlignment="Center">
+          <StackPanel IsVisible="{Binding IsInicializando}"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Spacing="14">
+            <ProgressBar IsIndeterminate="True" Width="180" />
+            <TextBlock Text="Preparando la base de datos…" Classes="subtitle" />
+          </StackPanel>
+
+          <StackPanel IsVisible="{Binding MostrarErrorFatal}"
+                      Spacing="8">
+            <TextBlock Text="No se puede abrir la base de datos" Classes="h2" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding MensajeError}"
+                       Classes="subtitle"
+                       TextWrapping="Wrap" />
+          </StackPanel>
+
+          <StackPanel IsVisible="{Binding MostrarReintento}"
+                      Spacing="14">
+            <StackPanel Spacing="4">
+              <TextBlock Text="No se pudo iniciar" Classes="h2" />
+              <TextBlock Text="{Binding MensajeError}" Classes="subtitle" />
+            </StackPanel>
+            <Button Classes="primary"
+                    Command="{Binding ReintentarCommand}"
+                    HorizontalAlignment="Left"
+                    automation:AutomationProperties.Name="Reintentar">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.RotateCcw}" />
+                <TextBlock Text="Reintentar" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+
+          <StackPanel IsVisible="{Binding HayFormulario}" Spacing="18">
+            <StackPanel Spacing="4">
+              <TextBlock Text="{Binding Titulo}" Classes="h2" />
+              <TextBlock Text="{Binding Subtitulo}" Classes="subtitle" />
+            </StackPanel>
+
+            <Border Classes="errorBanner" IsVisible="{Binding HayError}">
+              <TextBlock Text="{Binding MensajeError}"
+                         TextWrapping="Wrap"
+                         Foreground="{DynamicResource DangerBrush}" />
+            </Border>
+
+            <StackPanel IsVisible="{Binding !EsRegistro}" Spacing="14">
+              <StackPanel>
+                <TextBlock Text="Usuario" Classes="fieldLabel" />
+                <TextBox x:Name="UsuarioTextBox"
+                         Text="{Binding Usuario, Mode=TwoWay}"
+                         MaxLength="32"
+                         PlaceholderText="Tu usuario"
+                         Classes.invalid="{Binding TieneErrorUsuario}"
+                         automation:AutomationProperties.Name="Usuario" />
+                <TextBlock Text="{Binding ErrorUsuario}"
+                           IsVisible="{Binding TieneErrorUsuario}"
+                           Classes="errorText" />
+              </StackPanel>
+
+              <StackPanel>
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock Text="Contraseña" Classes="fieldLabel" />
+                  <ToggleButton Grid.Column="1"
+                                Classes="ghost small"
+                                IsChecked="{Binding MostrarPassword, Mode=TwoWay}"
+                                automation:AutomationProperties.Name="Mostrar u ocultar contraseña">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <Path Classes="icon small"
+                            Data="{x:Static icons:LucideIcons.Eye}"
+                            IsVisible="{Binding !MostrarPassword}" />
+                      <Path Classes="icon small"
+                            Data="{x:Static icons:LucideIcons.EyeOff}"
+                            IsVisible="{Binding MostrarPassword}" />
+                      <TextBlock Text="{Binding TextoMostrarPassword}" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </ToggleButton>
+                </Grid>
+                <TextBox x:Name="PasswordTextBox"
+                         Text="{Binding Password, Mode=TwoWay}"
+                         PasswordChar="●"
+                         RevealPassword="{Binding MostrarPassword}"
+                         Classes.invalid="{Binding TieneErrorPassword}"
+                         automation:AutomationProperties.Name="Contraseña" />
+                <TextBlock Text="{Binding ErrorPassword}"
+                           IsVisible="{Binding TieneErrorPassword}"
+                           Classes="errorText" />
+              </StackPanel>
+
+              <Button Classes="primary"
+                      Command="{Binding IngresarCommand}"
+                      IsDefault="True"
+                      HorizontalAlignment="Stretch"
+                      automation:AutomationProperties.Name="Ingresar">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.LogIn}" />
+                  <TextBlock Text="Ingresar" />
+                </StackPanel>
+              </Button>
+            </StackPanel>
+
+            <StackPanel IsVisible="{Binding EsRegistro}" Spacing="14">
+              <StackPanel>
+                <TextBlock Text="Usuario" Classes="fieldLabel" />
+                <TextBox x:Name="RegistroUsuarioTextBox"
+                         Text="{Binding Usuario, Mode=TwoWay}"
+                         MaxLength="32"
+                         PlaceholderText="Entre 3 y 32 caracteres"
+                         Classes.invalid="{Binding TieneErrorUsuario}"
+                         automation:AutomationProperties.Name="Usuario del primer usuario" />
+                <TextBlock Text="{Binding ErrorUsuario}"
+                           IsVisible="{Binding TieneErrorUsuario}"
+                           Classes="errorText" />
+              </StackPanel>
+
+              <StackPanel>
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock Text="Contraseña" Classes="fieldLabel" />
+                  <ToggleButton Grid.Column="1"
+                                Classes="ghost small"
+                                IsChecked="{Binding MostrarPassword, Mode=TwoWay}"
+                                automation:AutomationProperties.Name="Mostrar u ocultar contraseña">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <Path Classes="icon small"
+                            Data="{x:Static icons:LucideIcons.Eye}"
+                            IsVisible="{Binding !MostrarPassword}" />
+                      <Path Classes="icon small"
+                            Data="{x:Static icons:LucideIcons.EyeOff}"
+                            IsVisible="{Binding MostrarPassword}" />
+                      <TextBlock Text="{Binding TextoMostrarPassword}" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </ToggleButton>
+                </Grid>
+                <TextBox x:Name="RegistroPasswordTextBox"
+                         Text="{Binding Password, Mode=TwoWay}"
+                         PasswordChar="●"
+                         RevealPassword="{Binding MostrarPassword}"
+                         Classes.invalid="{Binding TieneErrorPassword}"
+                         automation:AutomationProperties.Name="Contraseña del primer usuario" />
+                <TextBlock Text="{Binding ErrorPassword}"
+                           IsVisible="{Binding TieneErrorPassword}"
+                           Classes="errorText" />
+                <TextBlock Text="Mínimo 8 caracteres."
+                           Classes="caption"
+                           Margin="0,4,0,0" />
+              </StackPanel>
+
+              <StackPanel>
+                <TextBlock Text="Repetir contraseña" Classes="fieldLabel" />
+                <TextBox x:Name="ConfirmacionPasswordTextBox"
+                         Text="{Binding ConfirmacionPassword, Mode=TwoWay}"
+                         PasswordChar="●"
+                         RevealPassword="{Binding MostrarPassword}"
+                         Classes.invalid="{Binding TieneErrorConfirmacion}"
+                         automation:AutomationProperties.Name="Repetir contraseña" />
+                <TextBlock Text="{Binding ErrorConfirmacion}"
+                           IsVisible="{Binding TieneErrorConfirmacion}"
+                           Classes="errorText" />
+              </StackPanel>
+
+              <Button Classes="primary"
+                      Command="{Binding RegistrarCommand}"
+                      IsDefault="True"
+                      HorizontalAlignment="Stretch"
+                      automation:AutomationProperties.Name="Crear usuario">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.UserPlus}" />
+                  <TextBlock Text="Crear usuario" />
+                </StackPanel>
+              </Button>
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="True"
+                         IsVisible="{Binding IsBusy}"
+                         Width="140"
+                         HorizontalAlignment="Left" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Grid.Row="2"
+                   Text="Acceso local · Historia Clínica"
+                   Classes="caption"
+                   HorizontalAlignment="Center" />
+        </Grid>
+      </Border>
+    </Grid>
+  </ScrollViewer>
+</Window>

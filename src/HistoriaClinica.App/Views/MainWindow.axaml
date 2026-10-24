@@ -1,0 +1,551 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HistoriaClinica.App.ViewModels"
+        xmlns:models="using:HistoriaClinica.Core.Models"
+        xmlns:converters="using:HistoriaClinica.App.Converters"
+        xmlns:icons="using:HistoriaClinica.App.Icons"
+        xmlns:automation="using:Avalonia.Automation"
+        xmlns:layout="using:HistoriaClinica.App.Layout"
+        x:Class="HistoriaClinica.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Historia Clínica"
+        Width="1080"
+        Height="720"
+        MinWidth="720"
+        MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+  <Window.Resources>
+    <converters:FechaConverter x:Key="FechaConverter" />
+    <converters:EmptyTextConverter x:Key="EmptyTextConverter" />
+  </Window.Resources>
+
+  <Window.Styles>
+    <Style Selector="Grid#PageRoot">
+      <Setter Property="Margin" Value="24" />
+    </Style>
+    <Style Selector="StackPanel#SearchActions">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <Style Selector="StackPanel#PatientActions">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <Style Selector="StackPanel#HistoryActions">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <Style Selector="Border#FichaDetail">
+      <Setter Property="Grid.Column" Value="2" />
+    </Style>
+    <Style Selector="Window.compact TextBlock#HeaderSubtitle">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="Window.narrow StackPanel#UserText">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="Window.narrow Grid#PageRoot">
+      <Setter Property="Margin" Value="16" />
+    </Style>
+    <Style Selector="Window.compact StackPanel#SearchActions">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Margin" Value="0,12,0,0" />
+    </Style>
+    <Style Selector="Window.compact StackPanel#PatientActions">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Margin" Value="0,12,0,0" />
+    </Style>
+    <Style Selector="Window.compact StackPanel#HistoryActions">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Margin" Value="0,12,0,0" />
+    </Style>
+    <Style Selector="Window.narrow GridSplitter#HistorySplitter">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </Window.Styles>
+
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Ctrl+N" Command="{Binding NuevoPacienteCommand}" />
+    <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding NuevaFichaCommand}" />
+    <KeyBinding Gesture="Ctrl+E" Command="{Binding EditarPacienteCommand}" />
+  </Window.KeyBindings>
+
+  <Grid x:Name="PageRoot" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="14">
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="16">
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+        <Image Width="42"
+               Height="42"
+               VerticalAlignment="Center"
+               Source="avares://HistoriaClinica/Assets/Icons/historia-clinica-64.png" />
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+          <TextBlock Text="Historia Clínica" Classes="h1" TextWrapping="Wrap" />
+          <TextBlock x:Name="HeaderSubtitle"
+                     Text="Gestión de pacientes y fichas diarias"
+                     Classes="subtitle" />
+        </StackPanel>
+      </Grid>
+
+      <Button Grid.Column="1"
+              Classes="userBadge"
+              ToolTip.Tip="Opciones de usuario"
+              automation:AutomationProperties.Name="Opciones de usuario">
+        <Button.Flyout>
+          <MenuFlyout>
+            <MenuItem Header="Preferencias" Command="{Binding MostrarPreferenciasCommand}">
+              <MenuItem.Icon>
+                <Path Classes="icon small" Data="{x:Static icons:LucideIcons.Settings}" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Acerca de" Command="{Binding MostrarAcercaDeCommand}">
+              <MenuItem.Icon>
+                <Path Classes="icon small" Data="{x:Static icons:LucideIcons.Info}" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Abrir carpeta de datos" Command="{Binding AbrirCarpetaDatosCommand}">
+              <MenuItem.Icon>
+                <Path Classes="icon small" Data="{x:Static icons:LucideIcons.FolderOpen}" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Crear copia de seguridad" Command="{Binding CrearCopiaSeguridadCommand}">
+              <MenuItem.Icon>
+                <Path Classes="icon small" Data="{x:Static icons:LucideIcons.DatabaseBackup}" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Cerrar sesión" Command="{Binding CerrarSesionCommand}">
+              <MenuItem.Icon>
+                <Path Classes="icon small" Data="{x:Static icons:LucideIcons.LogOut}" />
+              </MenuItem.Icon>
+            </MenuItem>
+          </MenuFlyout>
+        </Button.Flyout>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Border Classes="avatar">
+            <TextBlock Text="{Binding InicialesUsuario}" Classes="avatarText" />
+          </Border>
+          <StackPanel x:Name="UserText" VerticalAlignment="Center" Spacing="2">
+            <TextBlock Text="{Binding NombreUsuario}"
+                       Classes="strong"
+                       MaxWidth="{DynamicResource UserNameMaxWidth}"
+                       TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="Sesión iniciada" Classes="caption" />
+          </StackPanel>
+          <Path Classes="icon small"
+                Data="{x:Static icons:LucideIcons.ChevronDown}" />
+        </StackPanel>
+      </Button>
+    </Grid>
+
+    <Border Grid.Row="1" Classes="card">
+      <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="16">
+        <StackPanel Spacing="6">
+          <TextBlock Text="Buscar paciente" Classes="fieldLabel" />
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+            <TextBlock Text="DNI" Classes="fieldLabel" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <AutoCompleteBox x:Name="DniBox"
+                             Grid.Column="1"
+                             Text="{Binding Dni, Mode=TwoWay}"
+                             ItemsSource="{Binding DnisSugeridos}"
+                             MinimumPrefixLength="0"
+                             FilterMode="Contains"
+                             IsTextCompletionEnabled="True"
+                             MaxLength="8"
+                             MaxDropDownHeight="260"
+                             PlaceholderText="Ingresá los 8 dígitos"
+                             automation:AutomationProperties.Name="DNI del paciente" />
+            <Button Grid.Column="2"
+                    Classes="primary"
+                    Command="{Binding BuscarCommand}"
+                    automation:AutomationProperties.Name="Buscar paciente">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.Search}" />
+                <TextBlock Text="Buscar" />
+              </StackPanel>
+            </Button>
+          </Grid>
+        </StackPanel>
+
+        <StackPanel x:Name="SearchActions"
+                    Orientation="Horizontal"
+                    Spacing="10"
+                    VerticalAlignment="Bottom">
+          <Button Classes="secondary"
+                  Command="{Binding NuevoPacienteCommand}"
+                  automation:AutomationProperties.Name="Crear nuevo paciente">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Path Classes="icon onSecondary" Data="{x:Static icons:LucideIcons.UserPlus}" />
+              <TextBlock Text="Nuevo paciente" />
+            </StackPanel>
+          </Button>
+          <ProgressBar IsIndeterminate="True"
+                       IsVisible="{Binding IsBusy}"
+                       Width="120"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <StackPanel Grid.Row="2" Spacing="8">
+      <Border Classes="errorBanner" IsVisible="{Binding HayError}">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+          <TextBlock Text="{Binding MensajeError}"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource DangerBrush}" />
+          <Button Grid.Column="1"
+                  Classes="ghost small"
+                  Command="{Binding LimpiarErrorCommand}"
+                  automation:AutomationProperties.Name="Cerrar error">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <Path Classes="icon small onDanger" Data="{x:Static icons:LucideIcons.X}" />
+              <TextBlock Text="Cerrar" Foreground="{DynamicResource DangerBrush}" />
+            </StackPanel>
+          </Button>
+        </Grid>
+      </Border>
+
+      <Border Classes="statusBanner" IsVisible="{Binding HayMensajeEstado}">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+          <TextBlock Text="{Binding MensajeEstado}"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource SuccessBrush}" />
+          <Button Grid.Column="1"
+                  Classes="ghost small"
+                  Command="{Binding LimpiarMensajeCommand}"
+                  automation:AutomationProperties.Name="Cerrar mensaje">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <Path Classes="icon small onSuccess" Data="{x:Static icons:LucideIcons.X}" />
+              <TextBlock Text="Cerrar" Foreground="{DynamicResource SuccessBrush}" />
+            </StackPanel>
+          </Button>
+        </Grid>
+      </Border>
+    </StackPanel>
+
+    <Grid Grid.Row="3">
+      <Border Classes="card emptyState" IsVisible="{Binding !HayPaciente}">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="14">
+          <Path Classes="icon emptyIcon"
+                HorizontalAlignment="Center"
+                Data="{x:Static icons:LucideIcons.UserSearch}" />
+          <TextBlock Text="Buscá un paciente para comenzar" Classes="emptyTitle" />
+          <TextBlock Text="Ingresá el DNI y presioná Buscar, o creá un paciente nuevo."
+                     Classes="emptyDescription" />
+          <Button Classes="primary"
+                  Command="{Binding NuevoPacienteCommand}"
+                  HorizontalAlignment="Center"
+                  automation:AutomationProperties.Name="Crear nuevo paciente">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.UserPlus}" />
+              <TextBlock Text="Nuevo paciente" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Border>
+
+      <TabControl IsVisible="{Binding HayPaciente}">
+        <TabItem>
+          <TabItem.Header>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Path Classes="icon small" Data="{x:Static icons:LucideIcons.User}" />
+              <TextBlock Text="Paciente" VerticalAlignment="Center" />
+            </StackPanel>
+          </TabItem.Header>
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="16" Margin="0,16,0,0">
+              <Border Classes="card">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="16">
+                  <StackPanel Spacing="4">
+                    <TextBlock Text="{Binding NombreCompleto}" Classes="h2" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding PacienteResumen}" Classes="subtitle" />
+                  </StackPanel>
+                  <StackPanel x:Name="PatientActions"
+                              Orientation="Horizontal"
+                              Spacing="8"
+                              VerticalAlignment="Center">
+                    <Button Classes="secondary"
+                            automation:AutomationProperties.Name="Copiar datos del paciente">
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Path Classes="icon onSecondary" Data="{x:Static icons:LucideIcons.Copy}" />
+                        <TextBlock Text="Copiar" />
+                      </StackPanel>
+                      <Button.Flyout>
+                        <MenuFlyout>
+                          <MenuItem Header="Resumen del paciente" Command="{Binding CopiarResumenCommand}">
+                            <MenuItem.Icon>
+                              <Path Classes="icon small" Data="{x:Static icons:LucideIcons.FileText}" />
+                            </MenuItem.Icon>
+                          </MenuItem>
+                          <MenuItem Header="DNI" Command="{Binding CopiarDniCommand}">
+                            <MenuItem.Icon>
+                              <Path Classes="icon small" Data="{x:Static icons:LucideIcons.IdCard}" />
+                            </MenuItem.Icon>
+                          </MenuItem>
+                          <MenuItem Header="Teléfono" Command="{Binding CopiarTelefonoCommand}">
+                            <MenuItem.Icon>
+                              <Path Classes="icon small" Data="{x:Static icons:LucideIcons.Phone}" />
+                            </MenuItem.Icon>
+                          </MenuItem>
+                        </MenuFlyout>
+                      </Button.Flyout>
+                    </Button>
+                    <Button Classes="secondary"
+                            Command="{Binding EditarPacienteCommand}"
+                            automation:AutomationProperties.Name="Editar paciente">
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Path Classes="icon onSecondary" Data="{x:Static icons:LucideIcons.Pencil}" />
+                        <TextBlock Text="Editar paciente" />
+                      </StackPanel>
+                    </Button>
+                    <Button Classes="primary"
+                            Command="{Binding NuevaFichaCommand}"
+                            automation:AutomationProperties.Name="Nueva ficha">
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.FilePlus}" />
+                        <TextBlock Text="Nueva ficha" />
+                      </StackPanel>
+                    </Button>
+                  </StackPanel>
+                </Grid>
+              </Border>
+
+              <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="330" ColumnSpacing="16" RowSpacing="12">
+                <Border Classes="card">
+                  <StackPanel Spacing="12">
+                    <TextBlock Text="Datos personales" Classes="sectionTitle" />
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto"
+                          ColumnSpacing="14" RowSpacing="10">
+                      <TextBlock Grid.Row="0" Text="DNI" Classes="caption" VerticalAlignment="Center" />
+                      <TextBlock Grid.Row="0" Grid.Column="1"
+                                 Text="{Binding PacienteActual.Dni, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin DNI'}"
+                                 Classes="strong" VerticalAlignment="Center" />
+
+                      <TextBlock Grid.Row="1" Text="Nacimiento" Classes="caption" VerticalAlignment="Center" />
+                      <TextBlock Grid.Row="1" Grid.Column="1"
+                                 Text="{Binding FechaNacimientoTexto, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin fecha'}"
+                                 Classes="strong" VerticalAlignment="Center" />
+
+                      <TextBlock Grid.Row="2" Text="Edad" Classes="caption" VerticalAlignment="Center" />
+                      <TextBlock Grid.Row="2" Grid.Column="1"
+                                 Text="{Binding EdadTexto}" Classes="strong" VerticalAlignment="Center" />
+
+                      <TextBlock Grid.Row="3" Text="Teléfono" Classes="caption" VerticalAlignment="Center" />
+                      <TextBlock Grid.Row="3" Grid.Column="1"
+                                 Text="{Binding PacienteActual.Phone, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin teléfono'}"
+                                 Classes="strong" VerticalAlignment="Center" />
+                    </Grid>
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                  <StackPanel Spacing="12">
+                    <TextBlock Text="Cobertura" Classes="sectionTitle" />
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto"
+                          ColumnSpacing="14" RowSpacing="10">
+                      <TextBlock Grid.Row="0" Text="Obra social" Classes="caption" VerticalAlignment="Center" />
+                      <TextBlock Grid.Row="0" Grid.Column="1"
+                                 Text="{Binding ObraSocialTexto}" Classes="strong" VerticalAlignment="Center" />
+
+                      <TextBlock Grid.Row="1" Text="Nro asociado" Classes="caption" VerticalAlignment="Center" />
+                      <TextBlock Grid.Row="1" Grid.Column="1"
+                                 Text="{Binding PacienteActual.NroSocio, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin número'}"
+                                 Classes="strong" VerticalAlignment="Center" />
+                    </Grid>
+                  </StackPanel>
+                </Border>
+              </layout:ResponsiveGrid>
+
+              <Border Classes="card">
+                <StackPanel Spacing="12">
+                  <TextBlock Text="Antecedentes" Classes="sectionTitle" />
+                  <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="300" ColumnSpacing="20" RowSpacing="12">
+                    <StackPanel Spacing="4">
+                      <TextBlock Text="Personales" Classes="fieldLabel" />
+                      <SelectableTextBlock
+                          Text="{Binding PacienteActual.AntecPers, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes personales registrados'}"
+                          Classes="valueBlock" />
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                      <TextBlock Text="Familiares" Classes="fieldLabel" />
+                      <SelectableTextBlock
+                          Text="{Binding PacienteActual.AntecFam, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes familiares registrados'}"
+                          Classes="valueBlock" />
+                    </StackPanel>
+                  </layout:ResponsiveGrid>
+                </StackPanel>
+              </Border>
+
+              <Border Classes="card">
+                <StackPanel Spacing="12">
+                  <TextBlock Text="Medicación" Classes="sectionTitle" />
+                  <SelectableTextBlock
+                      Text="{Binding PacienteActual.Medicacion, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin medicación registrada'}"
+                      Classes="valueBlock" />
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
+        <TabItem>
+          <TabItem.Header>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Path Classes="icon small" Data="{x:Static icons:LucideIcons.History}" />
+              <TextBlock Text="Historia clínica" VerticalAlignment="Center" />
+            </StackPanel>
+          </TabItem.Header>
+          <Grid RowDefinitions="Auto,*" RowSpacing="12" Margin="0,16,0,0">
+            <Border Classes="card compact">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="16">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="{Binding NombreCompleto}" Classes="h2" TextWrapping="Wrap" />
+                  <TextBlock Text="{Binding PacienteResumen}" Classes="subtitle" />
+                </StackPanel>
+                <StackPanel x:Name="HistoryActions"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            VerticalAlignment="Center">
+                  <Button Classes="primary"
+                          Command="{Binding NuevaFichaCommand}"
+                          automation:AutomationProperties.Name="Nueva ficha">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.FilePlus}" />
+                      <TextBlock Text="Nueva ficha" />
+                    </StackPanel>
+                  </Button>
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <Grid x:Name="HistoryLayout"
+                  Grid.Row="1"
+                  ColumnDefinitions="320,6,*"
+                  RowDefinitions="*"
+                  ColumnSpacing="12">
+              <Grid x:Name="FichasPanel" Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="8">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Fichas diarias" Classes="sectionTitle" />
+                  <TextBlock Text="{Binding CantidadFichasTexto}" Classes="caption" />
+                </StackPanel>
+
+                <Border Grid.Row="1" Classes="listSurface">
+                  <Grid>
+                    <ListBox x:Name="FichasList"
+                             ItemsSource="{Binding Fichas}"
+                             SelectedItem="{Binding FichaSeleccionada, Mode=TwoWay}"
+                             automation:AutomationProperties.Name="Lista de fichas diarias">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:FichaDiaria">
+                          <Border Classes="fichaItem">
+                            <StackPanel Spacing="2">
+                              <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+                                <TextBlock Text="{Binding Fecha, Converter={StaticResource FechaConverter}, ConverterParameter=date}"
+                                           Classes="strong" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Fecha, Converter={StaticResource FechaConverter}, ConverterParameter=time}"
+                                           Classes="caption" VerticalAlignment="Center" />
+                              </Grid>
+                              <TextBlock Text="{Binding Motivo, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin motivo'}"
+                                         Classes="listPreview" />
+                            </StackPanel>
+                          </Border>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <StackPanel IsVisible="{Binding !HayFichas}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="6"
+                                Margin="12">
+                      <TextBlock Text="Sin fichas" Classes="strong" HorizontalAlignment="Center" />
+                      <TextBlock Text="Creá la primera ficha de este paciente."
+                                 Classes="caption" TextAlignment="Center" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </Grid>
+
+              <GridSplitter x:Name="HistorySplitter"
+                            Grid.Column="1"
+                            ResizeDirection="Columns" />
+
+              <Border x:Name="FichaDetail" Classes="card">
+                <Grid>
+                  <Grid IsVisible="{Binding HayFichaSeleccionada}" RowDefinitions="Auto,*" RowSpacing="12">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                      <StackPanel Spacing="2">
+                        <TextBlock Text="Detalle de la ficha" Classes="sectionTitle" />
+                        <TextBlock Text="{Binding FichaSeleccionada.Fecha, Converter={StaticResource FechaConverter}}"
+                                   Classes="subtitle" />
+                      </StackPanel>
+                      <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                  Spacing="8" VerticalAlignment="Center">
+                        <Button Classes="secondary small"
+                                Command="{Binding EditarFichaCommand}"
+                                automation:AutomationProperties.Name="Editar ficha">
+                          <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Path Classes="icon small onSecondary" Data="{x:Static icons:LucideIcons.Pencil}" />
+                            <TextBlock Text="Editar" />
+                          </StackPanel>
+                        </Button>
+                        <Button Classes="danger small"
+                                Command="{Binding BorrarFichaCommand}"
+                                automation:AutomationProperties.Name="Borrar ficha">
+                          <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Path Classes="icon small onDanger" Data="{x:Static icons:LucideIcons.Trash2}" />
+                            <TextBlock Text="Borrar" />
+                          </StackPanel>
+                        </Button>
+                      </StackPanel>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+                      <StackPanel Spacing="16">
+                        <StackPanel Spacing="4">
+                          <TextBlock Text="Motivo" Classes="fieldLabel" />
+                          <SelectableTextBlock
+                              Text="{Binding FichaSeleccionada.Motivo, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin motivo'}"
+                              Classes="valueBlock" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                          <TextBlock Text="Enfermedad actual" Classes="fieldLabel" />
+                          <SelectableTextBlock
+                              Text="{Binding FichaSeleccionada.Enfermedad, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin datos'}"
+                              Classes="valueBlock" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                          <TextBlock Text="Indicaciones" Classes="fieldLabel" />
+                          <SelectableTextBlock
+                              Text="{Binding FichaSeleccionada.Indicaciones, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin indicaciones'}"
+                              Classes="valueBlock" />
+                        </StackPanel>
+                      </StackPanel>
+                    </ScrollViewer>
+                  </Grid>
+
+                  <StackPanel IsVisible="{Binding !HayFichaSeleccionada}"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              Spacing="8">
+                    <TextBlock Text="Seleccioná una ficha" Classes="emptyTitle" />
+                    <TextBlock Text="Elegí una ficha de la lista para ver su detalle."
+                               Classes="emptyDescription" />
+                  </StackPanel>
+                </Grid>
+              </Border>
+            </Grid>
+          </Grid>
+        </TabItem>
+      </TabControl>
+    </Grid>
+  </Grid>
+</Window>
