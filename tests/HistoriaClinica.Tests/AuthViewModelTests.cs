@@ -3,6 +3,7 @@ using HistoriaClinica.App.ViewModels;
 using HistoriaClinica.Core.Data;
 using HistoriaClinica.Core.Repositories;
 using HistoriaClinica.Core.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace HistoriaClinica.Tests;
@@ -96,6 +97,26 @@ public sealed class AuthViewModelTests : IDisposable
         Assert.False(session.EstaAutenticada);
         Assert.Equal(0, navigator.VecesMain);
         Assert.Equal("Usuario o contraseña incorrectos.", vm.MensajeError);
+    }
+
+    [Fact]
+    public async Task EsquemaFuturo_MuestraErrorSinReintento()
+    {
+        await using (var context = _database.Factory.CreateDbContext())
+        {
+            await context.Database.ExecuteSqlRawAsync("PRAGMA user_version = 99;");
+        }
+
+        var (vm, _, _) = CrearViewModel();
+
+        await vm.InitializeAsync();
+
+        Assert.False(vm.BaseLista);
+        Assert.True(vm.ErrorFatal);
+        Assert.True(vm.MostrarErrorFatal);
+        Assert.False(vm.MostrarReintento);
+        Assert.False(vm.ReintentarCommand.CanExecute(null));
+        Assert.Contains("esquema 99", vm.MensajeError);
     }
 
     [Fact]

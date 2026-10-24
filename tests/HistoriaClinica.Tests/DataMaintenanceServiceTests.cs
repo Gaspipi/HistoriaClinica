@@ -9,11 +9,14 @@ namespace HistoriaClinica.Tests;
 
 public sealed class DataMaintenanceServiceTests : IDisposable
 {
+    private readonly string _tempDirectory;
     private readonly string _databasePath;
 
     public DataMaintenanceServiceTests()
     {
-        _databasePath = Path.Combine(Path.GetTempPath(), $"historia-backup-{Guid.NewGuid():N}.db");
+        _tempDirectory = Path.Combine(Path.GetTempPath(), $"historia-backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(_tempDirectory);
+        _databasePath = Path.Combine(_tempDirectory, "Historia.db");
     }
 
     [Fact]
@@ -51,15 +54,9 @@ public sealed class DataMaintenanceServiceTests : IDisposable
     {
         SqliteConnection.ClearAllPools();
 
-        if (File.Exists(_databasePath))
+        if (Directory.Exists(_tempDirectory))
         {
-            File.Delete(_databasePath);
-        }
-
-        var backups = Path.Combine(Path.GetDirectoryName(_databasePath)!, "Backups");
-        if (Directory.Exists(backups))
-        {
-            Directory.Delete(backups, recursive: true);
+            Directory.Delete(_tempDirectory, recursive: true);
         }
     }
 

@@ -6,13 +6,19 @@ namespace HistoriaClinica.Tests;
 
 internal sealed class TestDatabase : IDisposable
 {
+    private readonly string _tempDirectory;
+
     public TestDatabase()
     {
-        DatabasePath = Path.Combine(Path.GetTempPath(), $"historia-test-{Guid.NewGuid():N}.db");
+        _tempDirectory = Path.Combine(Path.GetTempPath(), $"historia-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(_tempDirectory);
+        DatabasePath = Path.Combine(_tempDirectory, "Historia.db");
         Factory = new TestDbContextFactory(DatabasePath);
 
         using var context = Factory.CreateDbContext();
         context.Database.EnsureCreated();
+        context.Database.ExecuteSqlRaw(
+            $"PRAGMA user_version = {DatabaseSchemaMigrator.CurrentVersion};");
     }
 
     public string DatabasePath { get; }
@@ -22,9 +28,9 @@ internal sealed class TestDatabase : IDisposable
     public void Dispose()
     {
         SqliteConnection.ClearAllPools();
-        if (File.Exists(DatabasePath))
+        if (Directory.Exists(_tempDirectory))
         {
-            File.Delete(DatabasePath);
+            Directory.Delete(_tempDirectory, recursive: true);
         }
     }
 }

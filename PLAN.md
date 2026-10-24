@@ -1,6 +1,6 @@
 # Plan: login, header de usuario, paquete 1 y UI responsive 2.0
 
-**Estado:** implementación funcional completa, UI responsive revisada en Linux y versión 2.0 lista para commit; quedan el escaneo de vulnerabilidades y la validación visual en Windows.
+**Estado:** versión 2.0 y migrador de esquema implementados; PR #6 abierto. Quedan el instalador, el escaneo de vulnerabilidades y la validación visual en Windows.
 
 ## Progreso de implementación (23/10/2026)
 
@@ -12,7 +12,8 @@
   - `IUsuarioRepository` / `UsuarioRepository`.
   - `AuthService` con `HasUsersAsync`, `RegisterFirstUserAsync` y `LoginAsync`.
   - `HistoriaContext` con `DbSet<Usuario>`.
-  - `DatabaseInitializer` crea `Usuarios` e índice único en bases nuevas y existentes.
+  - `DatabaseInitializer` crea bases nuevas y delega el esquema en `DatabaseSchemaMigrator`.
+  - `DatabaseSchemaMigrator` versiona con `PRAGMA user_version`, crea `Usuarios` e índice único, respalda antes de migrar y hace rollback ante errores.
   - Registro de dependencias de autenticación.
 - Tests de Core:
   - `PasswordHasherTests`.
@@ -76,7 +77,7 @@
 ### Verificación ejecutada
 
 - `dotnet build HistoriaClinica.sln --nologo -t:Rebuild`: 0 errores, 6 warnings `AVLN3001` esperados.
-- `dotnet test HistoriaClinica.sln --nologo`: 81/81 tests aprobados (100% pasando).
+- `dotnet test HistoriaClinica.sln --nologo`: 89/89 tests aprobados (100% pasando).
 - Smoke test con base temporal `/tmp/opencode/historia-auth-ui.db`:
   - Primer arranque: registro visible.
   - Registro de `ana`: usuario creado y auto-login.
@@ -141,10 +142,11 @@
   - `HasUsersAsync`.
   - `RegisterFirstUserAsync`: solo si la tabla está vacía; usuario de 3–32 caracteres y contraseña mínimo 8.
   - `LoginAsync`: error genérico ante credenciales incorrectas.
-- Actualización de esquema sin migraciones:
-  - `EnsureCreatedAsync` sigue creando bases nuevas.
-  - `DatabaseInitializer` agrega `CREATE TABLE IF NOT EXISTS Usuarios` e índice único.
-  - No se modifican las tablas `Pacientes` ni `FichasDiarias`.
+- Actualización de esquema con migrador propio:
+  - `EnsureCreatedAsync` solo crea bases nuevas.
+  - `DatabaseInitializer` detecta bases existentes y delega en `DatabaseSchemaMigrator`.
+  - `DatabaseSchemaMigrator` usa `PRAGMA user_version`, crea `Usuarios` e índice único, respalda antes de migrar y hace rollback ante errores.
+  - No se modifican datos de `Pacientes` ni `FichasDiarias`.
 - Tests:
   - Hash y verificación.
   - Registro del primer usuario.
@@ -228,6 +230,7 @@
 - `src/HistoriaClinica.Core/Repositories/UsuarioRepository.cs`
 - `src/HistoriaClinica.Core/Security/PasswordHasher.cs`
 - `src/HistoriaClinica.Core/Services/AuthService.cs`
+- `src/HistoriaClinica.Core/Data/DatabaseSchemaMigrator.cs`
 
 ### Nuevos en App
 

@@ -34,6 +34,7 @@ public partial class AuthViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayFormulario))]
     [NotifyPropertyChangedFor(nameof(MostrarReintento))]
+    [NotifyPropertyChangedFor(nameof(MostrarErrorFatal))]
     [NotifyCanExecuteChangedFor(nameof(IngresarCommand))]
     [NotifyCanExecuteChangedFor(nameof(RegistrarCommand))]
     [NotifyCanExecuteChangedFor(nameof(ReintentarCommand))]
@@ -59,6 +60,12 @@ public partial class AuthViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(Titulo))]
     [NotifyPropertyChangedFor(nameof(Subtitulo))]
     private bool _esRegistro;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MostrarReintento))]
+    [NotifyPropertyChangedFor(nameof(MostrarErrorFatal))]
+    [NotifyCanExecuteChangedFor(nameof(ReintentarCommand))]
+    private bool _errorFatal;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayError))]
@@ -92,7 +99,9 @@ public partial class AuthViewModel : ObservableObject
 
     public bool HayFormulario => BaseLista && !IsInicializando;
 
-    public bool MostrarReintento => !BaseLista && !IsInicializando;
+    public bool MostrarReintento => !BaseLista && !IsInicializando && !ErrorFatal;
+
+    public bool MostrarErrorFatal => ErrorFatal && !IsInicializando;
 
     public bool TieneErrorUsuario => !string.IsNullOrWhiteSpace(ErrorUsuario);
 
@@ -120,6 +129,7 @@ public partial class AuthViewModel : ObservableObject
         _inicializacionEnCurso = true;
         IsInicializando = true;
         BaseLista = false;
+        ErrorFatal = false;
         MensajeError = null;
 
         try
@@ -127,6 +137,17 @@ public partial class AuthViewModel : ObservableObject
             await _databaseInitializer.InitializeAsync();
             EsRegistro = !await _authService.HasUsersAsync();
             BaseLista = true;
+        }
+        catch (DatabaseSchemaVersionException ex)
+        {
+            _logger.LogError(ex, "La base de datos fue creada por una versión más nueva");
+            ErrorFatal = true;
+            MensajeError = ex.Message;
+        }
+        catch (DatabaseMigrationException ex)
+        {
+            _logger.LogError(ex, "Error al migrar la base de datos");
+            MensajeError = ex.Message;
         }
         catch (Exception ex)
         {
@@ -241,7 +262,7 @@ public partial class AuthViewModel : ObservableObject
 
     private bool PuedeAutenticar() => BaseLista && !IsInicializando && !IsBusy;
 
-    private bool PuedeReintentar() => !BaseLista && !IsInicializando && !IsBusy;
+    private bool PuedeReintentar() => !BaseLista && !IsInicializando && !IsBusy && !ErrorFatal;
 
     private void LimpiarErrores()
     {

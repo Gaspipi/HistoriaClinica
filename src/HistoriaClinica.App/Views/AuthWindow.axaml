@@ -60,6 +60,14 @@
             <TextBlock Text="Preparando la base de datos…" Classes="subtitle" />
           </StackPanel>
 
+          <StackPanel IsVisible="{Binding MostrarErrorFatal}"
+                      Spacing="8">
+            <TextBlock Text="No se puede abrir la base de datos" Classes="h2" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding MensajeError}"
+                       Classes="subtitle"
+                       TextWrapping="Wrap" />
+          </StackPanel>
+
           <StackPanel IsVisible="{Binding MostrarReintento}"
                       Spacing="14">
             <StackPanel Spacing="4">
