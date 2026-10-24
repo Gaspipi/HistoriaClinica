@@ -1,0 +1,52 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F4F7FB" />
+      <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SurfaceMutedBrush" Color="#EDF2F7" />
+      <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#E8F0F7" />
+      <SolidColorBrush x:Key="BorderBrush" Color="#D6E0EA" />
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#16232E" />
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#51606F" />
+      <SolidColorBrush x:Key="TextMutedBrush" Color="#7A8794" />
+      <SolidColorBrush x:Key="AccentBrush" Color="#0F6B8A" />
+      <SolidColorBrush x:Key="AccentHoverBrush" Color="#0B5A75" />
+      <SolidColorBrush x:Key="AccentSoftBrush" Color="#E1F1F7" />
+      <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="#0F6B8A" />
+      <SolidColorBrush x:Key="DangerBrush" Color="#B42318" />
+      <SolidColorBrush x:Key="DangerSoftBrush" Color="#FDECEA" />
+      <SolidColorBrush x:Key="SuccessBrush" Color="#176B3A" />
+      <SolidColorBrush x:Key="SuccessSoftBrush" Color="#E7F6EC" />
+      <SolidColorBrush x:Key="WarningBrush" Color="#9A6700" />
+      <SolidColorBrush x:Key="FocusBrush" Color="#0F6B8A" />
+      <SolidColorBrush x:Key="OverlayBrush" Color="#6616232E" />
+      <BoxShadows x:Key="CardShadow">0 1 3 0 #0D16232E, 0 1 2 0 #0816232E</BoxShadows>
+    </ResourceDictionary>
+
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0D151D" />
+      <SolidColorBrush x:Key="SurfaceBrush" Color="#16222E" />
+      <SolidColorBrush x:Key="SurfaceMutedBrush" Color="#1E2D3B" />
+      <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#26394A" />
+      <SolidColorBrush x:Key="BorderBrush" Color="#33495C" />
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F2F7FB" />
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B7C5D3" />
+      <SolidColorBrush x:Key="TextMutedBrush" Color="#8FA2B4" />
+      <SolidColorBrush x:Key="AccentBrush" Color="#5CC0DD" />
+      <SolidColorBrush x:Key="AccentHoverBrush" Color="#7AD1EA" />
+      <SolidColorBrush x:Key="AccentSoftBrush" Color="#173A49" />
+      <SolidColorBrush x:Key="AccentForegroundBrush" Color="#06232E" />
+      <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="#5CC0DD" />
+      <SolidColorBrush x:Key="DangerBrush" Color="#FF8A80" />
+      <SolidColorBrush x:Key="DangerSoftBrush" Color="#3A2020" />
+      <SolidColorBrush x:Key="SuccessBrush" Color="#7DDBA0" />
+      <SolidColorBrush x:Key="SuccessSoftBrush" Color="#153322" />
+      <SolidColorBrush x:Key="WarningBrush" Color="#F2C94C" />
+      <SolidColorBrush x:Key="FocusBrush" Color="#7AD1EA" />
+      <SolidColorBrush x:Key="OverlayBrush" Color="#99000000" />
+      <BoxShadows x:Key="CardShadow">0 1 4 0 #33000000</BoxShadows>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

@@ -1,0 +1,212 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HistoriaClinica.App.ViewModels"
+        xmlns:converters="using:HistoriaClinica.App.Converters"
+        xmlns:icons="using:HistoriaClinica.App.Icons"
+        xmlns:automation="using:Avalonia.Automation"
+        xmlns:layout="using:HistoriaClinica.App.Layout"
+        x:Class="HistoriaClinica.App.Views.PatientEditorWindow"
+        x:DataType="vm:PatientEditorViewModel"
+        Title="{Binding Titulo}"
+        Width="900"
+        Height="700"
+        MinWidth="520"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner">
+  <Window.Resources>
+    <converters:DateTimeOffsetConverter x:Key="DateTimeOffsetConverter" />
+  </Window.Resources>
+
+  <Window.Styles>
+    <Style Selector="Grid#PageRoot">
+      <Setter Property="Margin" Value="22" />
+    </Style>
+    <Style Selector="StackPanel#FooterActions">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <Style Selector="Window.compact Grid#PageRoot">
+      <Setter Property="Margin" Value="16" />
+    </Style>
+    <Style Selector="Window.compact StackPanel#FooterActions">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Margin" Value="0,12,0,0" />
+    </Style>
+  </Window.Styles>
+
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Ctrl+Enter" Command="{Binding GuardarCommand}" />
+  </Window.KeyBindings>
+
+  <Grid x:Name="PageRoot" RowDefinitions="Auto,*,Auto" RowSpacing="14">
+    <StackPanel Grid.Row="0" Spacing="2">
+      <TextBlock Text="{Binding Titulo}" Classes="h1" TextWrapping="Wrap" />
+      <TextBlock Text="Completá los datos del paciente. Los campos con * son obligatorios."
+                 Classes="subtitle" />
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Spacing="12">
+        <Border Classes="card">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Datos personales" Classes="sectionTitle" />
+            <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="300" ColumnSpacing="16" RowSpacing="12">
+              <StackPanel>
+                <TextBlock Text="DNI *" Classes="fieldLabel" />
+                <TextBox x:Name="DniTextBox"
+                         Text="{Binding Dni, Mode=TwoWay}"
+                         IsEnabled="{Binding DniEditable}"
+                         MaxLength="8"
+                         PlaceholderText="8 dígitos"
+                         Classes.invalid="{Binding TieneErrorDni}"
+                         automation:AutomationProperties.Name="DNI del paciente" />
+                <TextBlock Text="{Binding ErrorDni}"
+                           IsVisible="{Binding TieneErrorDni}"
+                           Classes="errorText" />
+              </StackPanel>
+
+              <StackPanel>
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,4">
+                  <TextBlock Text="Fecha de nacimiento" Classes="fieldLabel" Margin="0" VerticalAlignment="Center" />
+                  <Button Grid.Column="1"
+                          Classes="ghost small"
+                          Padding="4,0"
+                          MinHeight="20"
+                          Command="{Binding LimpiarFechaNacimientoCommand}"
+                          IsVisible="{Binding TieneFechaNacimiento}"
+                          ToolTip.Tip="Quitar fecha de nacimiento"
+                          automation:AutomationProperties.Name="Quitar fecha de nacimiento">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <Path Classes="icon small" Data="{x:Static icons:LucideIcons.X}" />
+                      <TextBlock Text="Quitar" Classes="caption" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                </Grid>
+                <Border Classes="dateField">
+                  <DatePicker SelectedDate="{Binding FechaNacimiento, Mode=TwoWay, Converter={StaticResource DateTimeOffsetConverter}}"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              automation:AutomationProperties.Name="Fecha de nacimiento" />
+                </Border>
+                <TextBlock Text="{Binding ErrorFechaNacimiento}"
+                           IsVisible="{Binding TieneErrorFechaNacimiento}"
+                           Classes="errorText" />
+              </StackPanel>
+
+              <StackPanel>
+                <TextBlock Text="Nombre" Classes="fieldLabel" />
+                <TextBox x:Name="FirstNameTextBox"
+                         Text="{Binding FirstName, Mode=TwoWay}"
+                         automation:AutomationProperties.Name="Nombre del paciente" />
+              </StackPanel>
+
+              <StackPanel>
+                <TextBlock Text="Apellido" Classes="fieldLabel" />
+                <TextBox Text="{Binding LastName, Mode=TwoWay}"
+                         automation:AutomationProperties.Name="Apellido del paciente" />
+              </StackPanel>
+            </layout:ResponsiveGrid>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Cobertura" Classes="sectionTitle" />
+            <layout:ResponsiveGrid MaxColumns="3" MinColumnWidth="260" ColumnSpacing="16" RowSpacing="12">
+              <StackPanel>
+                <TextBlock Text="Teléfono" Classes="fieldLabel" />
+                <TextBox Text="{Binding Phone, Mode=TwoWay}"
+                         automation:AutomationProperties.Name="Teléfono del paciente" />
+              </StackPanel>
+
+              <StackPanel>
+                <TextBlock Text="Obra social" Classes="fieldLabel" />
+                <TextBox Text="{Binding ObraSocial, Mode=TwoWay}"
+                         automation:AutomationProperties.Name="Obra social" />
+              </StackPanel>
+
+              <StackPanel>
+                <TextBlock Text="Nro asociado" Classes="fieldLabel" />
+                <TextBox Text="{Binding NroSocio, Mode=TwoWay}"
+                         automation:AutomationProperties.Name="Número de asociado" />
+              </StackPanel>
+            </layout:ResponsiveGrid>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Antecedentes y medicación" Classes="sectionTitle" />
+            <layout:ResponsiveGrid MaxColumns="3" MinColumnWidth="260" ColumnSpacing="16" RowSpacing="12">
+              <StackPanel>
+                <TextBlock Text="Personales" Classes="fieldLabel" />
+                <TextBox Text="{Binding AntecPers, Mode=TwoWay}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Classes="multiline"
+                         automation:AutomationProperties.Name="Antecedentes personales" />
+              </StackPanel>
+
+              <StackPanel>
+                <TextBlock Text="Familiares" Classes="fieldLabel" />
+                <TextBox Text="{Binding AntecFam, Mode=TwoWay}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Classes="multiline"
+                         automation:AutomationProperties.Name="Antecedentes familiares" />
+              </StackPanel>
+
+              <StackPanel>
+                <TextBlock Text="Medicación" Classes="fieldLabel" />
+                <TextBox Text="{Binding Medicacion, Mode=TwoWay}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Classes="multiline"
+                         automation:AutomationProperties.Name="Medicación" />
+              </StackPanel>
+            </layout:ResponsiveGrid>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="errorBanner" IsVisible="{Binding HayError}">
+          <TextBlock Text="{Binding MensajeError}"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource DangerBrush}" />
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Grid x:Name="FooterGrid" Grid.Row="2" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" ColumnSpacing="16">
+      <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+        <ProgressBar IsIndeterminate="True"
+                     IsVisible="{Binding IsBusy}"
+                     Width="120"
+                     VerticalAlignment="Center" />
+        <TextBlock Text="Ctrl+Enter para guardar" Classes="caption" VerticalAlignment="Center" />
+      </StackPanel>
+
+      <StackPanel x:Name="FooterActions" Orientation="Horizontal" Spacing="8">
+        <Button Classes="secondary"
+                Command="{Binding CancelarCommand}"
+                IsCancel="True"
+                MinWidth="110"
+                automation:AutomationProperties.Name="Cancelar">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Path Classes="icon onSecondary" Data="{x:Static icons:LucideIcons.X}" />
+            <TextBlock Text="Cancelar" />
+          </StackPanel>
+        </Button>
+        <Button Classes="primary"
+                Command="{Binding GuardarCommand}"
+                MinWidth="110"
+                automation:AutomationProperties.Name="Guardar">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Path Classes="icon onAccent" Data="{x:Static icons:LucideIcons.Check}" />
+            <TextBlock Text="Guardar" />
+          </StackPanel>
+        </Button>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

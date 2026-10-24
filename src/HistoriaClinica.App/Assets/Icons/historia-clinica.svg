@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <title>Historia Clínica</title>
+  <rect x="8" y="8" width="240" height="240" rx="54" fill="#0F6B8A"/>
+  <!-- Document sheets -->
+  <path d="M105 54h72a8 8 0 0 1 8 8v18h-80z" fill="#E1F1F7"/>
+  <path d="M113 86h72a8 8 0 0 1 8 8v8h-80z" fill="#E1F1F7"/>
+  <!-- Medical record folder -->
+  <path d="M43 104a12 12 0 0 1 12-12h35l17 18h94a13 13 0 0 1 13 13v76a13 13 0 0 1-13 13H55a12 12 0 0 1-12-12z" fill="#FFFFFF"/>
+  <!-- Medical cross -->
+  <path d="M77 126a7 7 0 0 1 7-7h14a7 7 0 0 1 7 7v14h14a7 7 0 0 1 7 7v14a7 7 0 0 1-7 7h-14v14a7 7 0 0 1-7 7H84a7 7 0 0 1-7-7v-14H63a7 7 0 0 1-7-7v-14a7 7 0 0 1 7-7h14z" fill="#0F6B8A"/>
+  <!-- Record lines -->
+  <g fill="#0F6B8A">
+    <rect x="139" y="132" width="48" height="7" rx="3.5"/>
+    <rect x="139" y="149" width="42" height="7" rx="3.5"/>
+    <rect x="139" y="166" width="34" height="7" rx="3.5"/>
+  </g>
+</svg>
