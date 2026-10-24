@@ -38,15 +38,25 @@ No se necesita Windows Forms, Visual Studio ni permisos de administrador.
 
 ## Instalación
 
-Todavía **no hay un instalador publicado**. Hoy la aplicación se distribuye y ejecuta desde el código fuente o como publicación portable.
+Todavía **no hay un instalador publicado**, pero el repositorio ya incluye el instalador de Windows basado en Inno Setup. Hoy la aplicación se puede ejecutar desde el código fuente, como publicación portable o generando el instalador localmente.
 
-La estrategia de instalación, reemplazo de versiones anteriores y migraciones está documentada en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). El objetivo es publicar un instalador por usuario que:
+La estrategia completa está documentada en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) y el proceso del instalador en [`installer/README.md`](installer/README.md). El instalador:
 
-- no pida permisos de administrador;
-- instale la aplicación fuera de la carpeta de datos;
-- conserve `Historia.db`, `preferences.json` y `Backups/` al actualizar;
-- haga una copia de seguridad antes de migrar la base;
-- permita volver a la versión anterior sin perder datos.
+- no pide permisos de administrador;
+- instala la aplicación fuera de la carpeta de datos;
+- conserva `Historia.db`, `preferences.json` y `Backups/` al actualizar;
+- hace un backup de la base antes de instalar;
+- conserva la versión anterior en `app\<version>` para rollback.
+
+### Instalador de Windows
+
+En Windows, con .NET 10 SDK e Inno Setup 6 instalados:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File installer/build-installer.ps1
+```
+
+El instalador se genera en `artifacts/installer/`. El flujo soportado requiere Windows; la compilación se validó además con Wine.
 
 ### Desde el código fuente
 
@@ -181,8 +191,9 @@ shell.nix                   Entorno NixOS para ejecutar Avalonia
 - [x] UI responsive y escala de texto.
 - [x] Tests de autenticación, validación, persistencia y preferencias.
 - [x] Migrador de esquema con backup automático y rechazo de bases más nuevas.
-- [ ] Instalador Windows por usuario.
+- [x] Instalador Windows por usuario con backup previo y carpetas versionadas.
 - [ ] Publicación automatizada y artefactos por plataforma.
+- [ ] Firma Authenticode del instalador y los ejecutables.
 - [ ] Validación visual final en Windows.
 
 ## Contribución

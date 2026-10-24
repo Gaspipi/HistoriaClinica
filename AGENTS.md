@@ -13,6 +13,9 @@ dotnet run --project src/HistoriaClinica.App
 
 # Ejecutar los tests
 dotnet test HistoriaClinica.sln
+
+# Generar el instalador de Windows (requiere Windows, .NET 10 e Inno Setup 6)
+powershell -ExecutionPolicy Bypass -File installer/build-installer.ps1
 ```
 
 - La app ya no depende de Windows Forms ni de `net6.0-windows`; se puede compilar y ejecutar en Linux.
@@ -32,6 +35,8 @@ dotnet test HistoriaClinica.sln
 | `src/HistoriaClinica.Core/Validation/` | Validadores de DNI, usuario, fechas y entidades; cultura `es-ES`. |
 | `src/HistoriaClinica.App/` | Aplicación Avalonia: `Program.cs`, `App.axaml`, `Views/`, `ViewModels/`, `Services/`, `Converters/`, `Assets/Icons/`. |
 | `tests/HistoriaClinica.Tests/` | Tests xUnit de autenticación, validación, rutas y persistencia con SQLite temporal. |
+| `installer/` | Inno Setup, script de build `win-x64` y documentación del instalador. |
+| `.github/workflows/` | CI de tests y build del instalador en Windows (`windows-installer.yml`). |
 | `shell.nix` | Entorno Nix con `fontconfig`, X11 y GL para ejecutar Avalonia en NixOS. |
 | `Data/Historia.db` | Archivo vacío versionado como referencia; la app usa `Documentos/Historia.db` (o `HISTORIA_DB_PATH`). |
 
@@ -69,4 +74,5 @@ dotnet test HistoriaClinica.sln
 - Avalonia 12.1.4 fija `Tmds.DBus.Protocol` 0.95.1 para evitar un cierre con excepción en Wayland.
 - Las ventanas se crean con DI y no exponen constructor sin parámetros; el build emite 6 warnings `AVLN3001` esperados.
 - Falta validación visual en Windows de la UI (tema, icono, DPI y pantallas chicas).
+- El instalador no está firmado y todavía no se validó en Windows; el rollback es manual abriendo `app\<version>`.
 - Sin recuperación de contraseña ni gestión de usuarios; un solo usuario inicial.

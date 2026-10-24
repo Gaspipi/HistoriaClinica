@@ -2,7 +2,7 @@
 
 Este documento define cómo distribuir Historia Clínica, cómo reemplazar versiones anteriores sin perder datos y cómo evolucionar el esquema SQLite.
 
-**Estado:** migrador de esquema implementado y cubierto por los tests principales. La versión 2.0 todavía no incluye instalador; el procedimiento manual está en el README.
+**Estado:** migrador de esquema e instalador Inno Setup implementados. El script compila con Inno Setup 6.7.3 y se probó la instalación silenciosa en Wine; todavía no está publicado ni firmado, y falta validarlo en Windows.
 
 ## 1. Objetivos
 
@@ -62,21 +62,31 @@ Alternativas descartadas por ahora:
 ### Flujo del instalador
 
 1. Verificar que la app no esté ejecutándose.
-   - Si está abierta, ofrecer cerrarla o pedir al usuario que la cierre.
-   - No matar procesos sin confirmación.
-2. Detectar una instalación anterior y su versión.
+   - Si está abierta, el instalador aborta y pide cerrarla.
+   - No mata procesos automáticamente.
+2. Detectar una instalación anterior y reutilizar su carpeta.
 3. Crear un backup de la base si existe:
-   - `Backups/pre-install-<version>-<timestamp>.db`.
+   - `Backups/pre-install-v<version>-<timestamp>.db`.
+   - Usa `HISTORIA_DB_PATH` si está definida; si no, `Documentos\Historia.db`.
 4. Instalar los binarios en una carpeta versionada:
    - `app\2.0.0\`
    - `app\2.1.0\`
-5. Actualizar el lanzador estable para que apunte a la versión nueva.
-6. Crear accesos directos en inicio y escritorio (opcional).
-7. Registrar la entrada de desinstalación.
-8. Al primer arranque, ejecutar migraciones pendientes.
-9. Si la migración falla, mostrar un error y dejar la versión anterior disponible.
+5. Crear o actualizar accesos directos en inicio y escritorio (opcional), apuntando a la versión nueva.
+   - Si el acceso del escritorio ya existía, se actualiza aunque no se marque la tarea.
+   - Los accesos fijados a la barra de tareas pueden requerir volver a fijarse.
+6. Registrar la entrada de desinstalación.
+7. Al primer arranque, ejecutar migraciones pendientes.
+8. Si la migración falla, mostrar un error y dejar la versión anterior disponible.
 
-La carpeta versionada permite rollback: el instalador anterior o un comando de mantenimiento puede volver a apuntar el lanzador a la versión previa.
+La carpeta versionada permite rollback: la versión anterior sigue en `app\<version>` y se puede abrir directamente. No se borran versiones anteriores automáticamente.
+
+Archivos implementados:
+
+- `installer/HistoriaClinica.iss`: definición de Inno Setup.
+- `installer/build-installer.ps1`: publica `win-x64`, compila el instalador y genera el checksum SHA-256.
+- `.github/workflows/windows-installer.yml`: tests y build del instalador en Windows.
+
+El instalador no está firmado todavía. Windows SmartScreen puede advertir sobre el archivo.
 
 ### Linux
 

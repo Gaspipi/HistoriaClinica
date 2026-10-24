@@ -1,6 +1,6 @@
 # Plan: login, header de usuario, paquete 1 y UI responsive 2.0
 
-**Estado:** versión 2.0 y migrador de esquema implementados; PR #6 abierto. Quedan el instalador, el escaneo de vulnerabilidades y la validación visual en Windows.
+**Estado:** versión 2.0, migrador de esquema e instalador Windows implementados; PR #6 abierto. Quedan la firma y validación del instalador, el escaneo de vulnerabilidades y la validación visual en Windows.
 
 ## Progreso de implementación (23/10/2026)
 
@@ -93,12 +93,21 @@
   - Revisión visual de login, main vacío, resultado, editor de paciente, editor de ficha y menú en modo claro y oscuro.
 - `Data/Historia.db`, `bin/` y `obj/` no se modificaron manualmente.
 
+### Instalador
+
+- `installer/HistoriaClinica.iss`: instalación por usuario, binarios versionados, backup previo y detección de la app abierta.
+- `installer/build-installer.ps1`: publica `win-x64`, compila con Inno Setup 6 y genera SHA-256.
+- `.github/workflows/windows-installer.yml`: tests y build del instalador en Windows.
+- `installer/README.md`, `README.md` y `docs/DEPLOYMENT.md` actualizados.
+- Compilado con Inno Setup 6.7.3; instalación silenciosa, backup y desinstalación probados en Wine.
+
 ### Pendientes
 
 - Confirmar el pegado real en el portapapeles del sistema.
 - Validación visual definitiva en Windows (tema, icono, DPI y tamaño de pantalla).
+- Validar el instalador en Windows real: asistente, accesos directos, detección de la app abierta y DPI.
+- Firmar el instalador y los ejecutables con Authenticode.
 - Escaneo de vulnerabilidades: la sintaxis de `dotnet list package --vulnerable` no funcionó con el SDK 10.0.401.
-- Commit y PR de la versión 2.0 autorizados por el usuario; pendiente de ejecución.
 
 ## Decisiones cerradas
 

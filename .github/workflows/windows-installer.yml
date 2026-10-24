@@ -1,0 +1,41 @@
+name: Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore HistoriaClinica.sln
+
+      - name: Test
+        run: dotnet test HistoriaClinica.sln --configuration Release --no-restore
+
+      - name: Install Inno Setup
+        run: choco install innosetup --version=6.7.3 --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: ./installer/build-installer.ps1 -Configuration Release
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: HistoriaClinica-windows-installer
+          path: artifacts/installer/*
