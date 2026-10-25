@@ -35,8 +35,10 @@ powershell -ExecutionPolicy Bypass -File installer/build-installer.ps1
 | `src/HistoriaClinica.Core/Validation/` | Validadores de DNI, usuario, fechas y entidades; cultura `es-ES`. |
 | `src/HistoriaClinica.App/` | Aplicación Avalonia: `Program.cs`, `App.axaml`, `Views/`, `ViewModels/`, `Services/`, `Converters/`, `Assets/Icons/`. |
 | `tests/HistoriaClinica.Tests/` | Tests xUnit de autenticación, validación, rutas y persistencia con SQLite temporal. |
-| `installer/` | Inno Setup, script de build `win-x64` y documentación del instalador. |
-| `.github/workflows/` | CI de tests y build del instalador en Windows (`windows-installer.yml`). |
+| `installer/` | Inno Setup, script de build `win-x64`, firma SignPath y documentación del instalador. |
+| `.github/workflows/` | CI de tests, build sin firma (`windows-installer.yml`) y release firmada (`windows-signed-release.yml`). |
+| `.signpath/` | Configuraciones de artefactos para firmar el ejecutable y el instalador. |
+| `CODE_SIGNING_POLICY.md` | Política pública de firma requerida por SignPath Foundation. |
 | `shell.nix` | Entorno Nix con `fontconfig`, X11 y GL para ejecutar Avalonia en NixOS. |
 | `Data/Historia.db` | Archivo vacío versionado como referencia; la app usa `Documentos/Historia.db` (o `HISTORIA_DB_PATH`). |
 

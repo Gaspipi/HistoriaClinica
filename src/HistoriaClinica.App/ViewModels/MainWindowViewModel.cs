@@ -291,7 +291,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private Task MostrarAcercaDeAsync() => EjecutarAsync(async () =>
     {
-        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "2.0.0";
+        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "2.0.1";
         var mensaje = $"""
             Historia Clínica {version}
             Usuario: {_session.NombreUsuario}

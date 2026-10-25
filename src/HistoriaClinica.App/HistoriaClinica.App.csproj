@@ -9,7 +9,16 @@
     <RootNamespace>HistoriaClinica.App</RootNamespace>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>Assets/Icons/historia-clinica.ico</ApplicationIcon>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
+    <AssemblyVersion>2.0.1.0</AssemblyVersion>
+    <FileVersion>2.0.1</FileVersion>
+    <InformationalVersion>2.0.1</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <Product>Historia Clínica</Product>
+    <Company>Gaspar Ferreyra</Company>
+    <Copyright>Copyright © 2022-2026 Gaspar Ferreyra</Copyright>
+    <AssemblyTitle>Historia Clínica</AssemblyTitle>
+    <Description>Gestión de pacientes e historias clínicas</Description>
   </PropertyGroup>
 
   <ItemGroup>
