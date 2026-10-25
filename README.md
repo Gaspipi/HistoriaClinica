@@ -6,7 +6,7 @@ Aplicación de escritorio para gestionar pacientes, sus datos clínicos y fichas
 - **Plataforma:** .NET 10 · Windows, Linux y macOS
 - **Datos:** EF Core 10 + SQLite local
 - **Seguridad:** login local con PBKDF2-SHA256; la base SQLite **no** está cifrada
-- **Versión actual:** 2.0.0
+- **Versión actual:** 2.0.1
 
 ## Funcionalidad
 
@@ -38,9 +38,9 @@ No se necesita Windows Forms, Visual Studio ni permisos de administrador.
 
 ## Instalación
 
-Todavía **no hay un instalador publicado**, pero el repositorio ya incluye el instalador de Windows basado en Inno Setup. Hoy la aplicación se puede ejecutar desde el código fuente, como publicación portable o generando el instalador localmente.
+La release publicada más reciente está en [Releases](https://github.com/Gaspipi/HistoriaClinica/releases). El instalador de Windows es por usuario y no requiere permisos de administrador. La próxima `v2.0.1` incorporará firma Authenticode a través de SignPath Foundation; hasta que el proyecto sea aprobado, Windows puede mostrar una advertencia de SmartScreen.
 
-La estrategia completa está documentada en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) y el proceso del instalador en [`installer/README.md`](installer/README.md). El instalador:
+La estrategia completa está documentada en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md), el proceso del instalador en [`installer/README.md`](installer/README.md) y la firma en [`docs/SIGNPATH.md`](docs/SIGNPATH.md). El instalador:
 
 - no pide permisos de administrador;
 - instala la aplicación fuera de la carpeta de datos;
@@ -117,13 +117,15 @@ Antes de actualizar la aplicación, cerrá la app y copiá manualmente `Historia
 
 La versión 2.0 conserva la ubicación de datos de la versión WinForms anterior en Windows: `%USERPROFILE%\Documents\Historia.db`.
 
-Procedimiento manual mientras no exista instalador:
+Actualización recomendada:
 
 1. Cerrá completamente la aplicación anterior.
 2. Copiá `Historia.db`, `preferences.json` y la carpeta `Backups/` a un lugar seguro.
-3. Reemplazá los binarios por los de la versión nueva sin borrar la carpeta de datos.
+3. Ejecutá el instalador nuevo; conserva la carpeta de datos y crea un backup previo.
 4. Abrí la aplicación nueva y verificá el login y la búsqueda de pacientes.
 5. No reemplaces la base nueva por la copia vieja después de que la aplicación haya migrado el esquema.
+
+Para la publicación portable, reemplazá los binarios por los de la versión nueva sin borrar la carpeta de datos.
 
 La base de la versión anterior ya contiene `Pacientes` y `FichasDiarias`; al abrirla, la aplicación agrega la tabla `Usuarios` y su índice si faltan. Antes de modificar el esquema se crea automáticamente un backup en `Backups/Historia-pre-migracion-v0-yyyyMMdd-HHmmss.db`.
 
@@ -162,7 +164,11 @@ Reemplazá `win-x64` por `linux-x64` u `osx-x64` según el destino.
 src/HistoriaClinica.Core/   Modelos, EF Core, repositorios, autenticación, servicios y validación
 src/HistoriaClinica.App/    UI Avalonia, ViewModels, estilos, iconos, diálogos y DI
 tests/HistoriaClinica.Tests/ Pruebas xUnit
-docs/                       Documentación de despliegue y mantenimiento
+docs/                       Documentación de despliegue, mantenimiento y firma
+installer/                  Inno Setup y script de publicación
+.github/workflows/          CI y release firmada
+.signpath/                  Configuraciones de artefactos para SignPath
+CODE_SIGNING_POLICY.md      Política pública de firma
 Data/Historia.db            Archivo vacío de referencia; no usar en producción
 shell.nix                   Entorno NixOS para ejecutar Avalonia
 ```
@@ -192,9 +198,23 @@ shell.nix                   Entorno NixOS para ejecutar Avalonia
 - [x] Tests de autenticación, validación, persistencia y preferencias.
 - [x] Migrador de esquema con backup automático y rechazo de bases más nuevas.
 - [x] Instalador Windows por usuario con backup previo y carpetas versionadas.
-- [ ] Publicación automatizada y artefactos por plataforma.
-- [ ] Firma Authenticode del instalador y los ejecutables.
+- [x] Publicación de releases en GitHub (`v2.0.0`).
+- [ ] Firma Authenticode del instalador y los ejecutables (preparada, pendiente de aprobación de SignPath Foundation).
 - [ ] Validación visual final en Windows.
+
+## Code signing policy
+
+**Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
+
+La firma Authenticode cubre `HistoriaClinica.exe` y el instalador de Windows. Los binarios se construyen en GitHub Actions desde `main`; cada release requiere aprobación manual en SignPath. El certificado pertenece a SignPath Foundation.
+
+- **Authors/Committers:** [Gaspar Ferreyra](https://github.com/Gaspipi)
+- **Reviewers:** [Gaspar Ferreyra](https://github.com/Gaspipi); los cambios externos se revisan por pull request.
+- **Approvers:** [Gaspar Ferreyra](https://github.com/Gaspipi)
+
+This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.
+
+La política completa está en [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md) y el procedimiento de alta en [`docs/SIGNPATH.md`](docs/SIGNPATH.md).
 
 ## Contribución
 

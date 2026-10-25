@@ -4,7 +4,7 @@
 #define AppExeName "HistoriaClinica.exe"
 
 #ifndef AppVersion
-  #define AppVersion "2.0.0"
+  #define AppVersion "2.0.1"
 #endif
 
 [Setup]
@@ -40,6 +40,7 @@ VersionInfoCompany={#AppPublisher}
 VersionInfoDescription={#AppName} installer
 VersionInfoProductName={#AppName}
 VersionInfoProductVersion={#AppVersion}
+VersionInfoCopyright=Copyright © 2022-2026 {#AppPublisher}
 
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
