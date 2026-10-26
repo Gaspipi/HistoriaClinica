@@ -35,10 +35,18 @@ powershell -ExecutionPolicy Bypass -File installer/build-installer.ps1
 | `src/HistoriaClinica.Core/Validation/` | Validadores de DNI, usuario, fechas y entidades; cultura `es-ES`. |
 | `src/HistoriaClinica.App/` | Aplicación Avalonia: `Program.cs`, `App.axaml`, `Views/`, `ViewModels/`, `Services/`, `Converters/`, `Assets/Icons/`. |
 | `tests/HistoriaClinica.Tests/` | Tests xUnit de autenticación, validación, rutas y persistencia con SQLite temporal. |
-| `installer/` | Inno Setup, script de build `win-x64`, firma SignPath y documentación del instalador. |
-| `.github/workflows/` | CI de tests, build sin firma (`windows-installer.yml`) y release firmada (`windows-signed-release.yml`). |
-| `.signpath/` | Configuraciones de artefactos para firmar el ejecutable y el instalador. |
-| `CODE_SIGNING_POLICY.md` | Política pública de firma requerida por SignPath Foundation. |
+| `installer/` | Inno Setup, script de build `win-x64`, flujo de firma preparado y documentación del instalador. |
+| `.github/workflows/` | CI de pull requests, build sin firma (`windows-installer.yml`) y workflow de release (`windows-signed-release.yml`). |
+| `.github/ISSUE_TEMPLATE/` | Plantillas de bugs, mejoras y enlaces de soporte. |
+| `.github/dependabot.yml` | Actualizaciones mensuales de NuGet y GitHub Actions. |
+| `.signpath/` | Configuraciones de artefactos para una futura firma (sin certificado activo). |
+| `CONTRIBUTING.md` | Guía de contribución, entorno y convenciones. |
+| `CODE_OF_CONDUCT.md` | Código de conducta de la comunidad. |
+| `SECURITY.md` | Reporte privado de vulnerabilidades y alcance de seguridad. |
+| `ROADMAP.md` | Hoja de ruta pública orientativa. |
+| `CHANGELOG.md` | Historial de cambios por versión. |
+| `docs/ARCHITECTURE.md` | Capas, flujos y puntos de extensión. |
+| `CODE_SIGNING_POLICY.md` | Política de firma objetivo; no hay certificado activo. |
 | `shell.nix` | Entorno Nix con `fontconfig`, X11 y GL para ejecutar Avalonia en NixOS. |
 | `Data/Historia.db` | Archivo vacío versionado como referencia; la app usa `Documentos/Historia.db` (o `HISTORIA_DB_PATH`). |
 
@@ -54,6 +62,7 @@ powershell -ExecutionPolicy Bypass -File installer/build-installer.ps1
 - Usá MVVM (`CommunityToolkit.Mvvm`): comandos, propiedades observables y validación en ViewModels. Los diálogos pasan por `IDialogService`.
 - Respetá nullable: inicializá propiedades no anulables y evitá `!` innecesarios.
 - No agregues paquetes NuGet ni cambies el target framework sin confirmar.
+- No incluyas datos reales de pacientes en issues, PRs, capturas, logs ni tests; usá datos ficticios y bases temporales.
 - No commitees, hagas push ni abras PR salvo pedido explícito.
 
 ## Base de datos
@@ -76,5 +85,6 @@ powershell -ExecutionPolicy Bypass -File installer/build-installer.ps1
 - Avalonia 12.1.4 fija `Tmds.DBus.Protocol` 0.95.1 para evitar un cierre con excepción en Wayland.
 - Las ventanas se crean con DI y no exponen constructor sin parámetros; el build emite 6 warnings `AVLN3001` esperados.
 - Falta validación visual en Windows de la UI (tema, icono, DPI y pantallas chicas).
-- El instalador no está firmado y todavía no se validó en Windows; el rollback es manual abriendo `app\<version>`.
+- El instalador no está firmado: SignPath Foundation rechazó la solicitud por falta de adopción pública; el rollback es manual abriendo `app\<version>`.
+- Falta validar el instalador en Windows real: asistente, accesos directos, DPI y detección de app abierta.
 - Sin recuperación de contraseña ni gestión de usuarios; un solo usuario inicial.

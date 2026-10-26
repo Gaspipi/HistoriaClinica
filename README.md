@@ -2,11 +2,14 @@
 
 Aplicación de escritorio para gestionar pacientes, sus datos clínicos y fichas diarias. Está pensada para consultorios y equipos pequeños que necesitan una base local, simple y sin servicios en la nube.
 
+Si querés contribuir, empezá por [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 - **UI:** Avalonia 12 + MVVM (`CommunityToolkit.Mvvm`)
 - **Plataforma:** .NET 10 · Windows, Linux y macOS
 - **Datos:** EF Core 10 + SQLite local
 - **Seguridad:** login local con PBKDF2-SHA256; la base SQLite **no** está cifrada
-- **Versión actual:** 2.0.1
+- **Versión en desarrollo:** 2.0.1
+- **Última release publicada:** 2.0.0
 
 ## Funcionalidad
 
@@ -38,7 +41,7 @@ No se necesita Windows Forms, Visual Studio ni permisos de administrador.
 
 ## Instalación
 
-La release publicada más reciente está en [Releases](https://github.com/Gaspipi/HistoriaClinica/releases). El instalador de Windows es por usuario y no requiere permisos de administrador. La próxima `v2.0.1` incorporará firma Authenticode a través de SignPath Foundation; hasta que el proyecto sea aprobado, Windows puede mostrar una advertencia de SmartScreen.
+La release publicada más reciente está en [Releases](https://github.com/Gaspipi/HistoriaClinica/releases). El instalador de Windows es por usuario y no requiere permisos de administrador. Los binarios actuales **no están firmados**: SignPath Foundation rechazó la solicitud inicial por falta de señales públicas, así que Windows puede mostrar una advertencia de SmartScreen. La firma se retomará cuando el proyecto tenga más adopción o se use un certificado comercial; el estado real está en [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md).
 
 La estrategia completa está documentada en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md), el proceso del instalador en [`installer/README.md`](installer/README.md) y la firma en [`docs/SIGNPATH.md`](docs/SIGNPATH.md). El instalador:
 
@@ -164,22 +167,32 @@ Reemplazá `win-x64` por `linux-x64` u `osx-x64` según el destino.
 src/HistoriaClinica.Core/   Modelos, EF Core, repositorios, autenticación, servicios y validación
 src/HistoriaClinica.App/    UI Avalonia, ViewModels, estilos, iconos, diálogos y DI
 tests/HistoriaClinica.Tests/ Pruebas xUnit
-docs/                       Documentación de despliegue, mantenimiento y firma
+docs/                       Arquitectura, despliegue, mantenimiento y firma
 installer/                  Inno Setup y script de publicación
-.github/workflows/          CI y release firmada
+.github/workflows/          CI de pull requests y workflow de release
+.github/ISSUE_TEMPLATE/     Plantillas de issues
 .signpath/                  Configuraciones de artefactos para SignPath
-CODE_SIGNING_POLICY.md      Política pública de firma
+CONTRIBUTING.md             Guía para contribuir
+CODE_OF_CONDUCT.md          Código de conducta
+SECURITY.md                 Política de reporte de vulnerabilidades
+ROADMAP.md                  Hoja de ruta pública
+CHANGELOG.md                Historial de cambios
+CODE_SIGNING_POLICY.md      Política de firma; sin certificado activo
 Data/Historia.db            Archivo vacío de referencia; no usar en producción
 shell.nix                   Entorno NixOS para ejecutar Avalonia
 ```
 
 ### Convenciones
 
+La guía completa está en [`CONTRIBUTING.md`](CONTRIBUTING.md) y en
+[`AGENTS.md`](AGENTS.md). En resumen:
+
 - UI, mensajes y comentarios nuevos en español.
 - `HistoriaContext` se crea mediante `IDbContextFactory`; los ViewModels no ejecutan consultas EF Core.
 - Operaciones async con `await`, sin fire-and-forget.
 - Fechas clínicas en `dd/MM/yyyy` con cultura `es-ES`.
 - No agregar paquetes NuGet ni cambiar el target framework sin evaluar impacto y compatibilidad.
+- No incluir datos reales de pacientes en issues, pull requests, capturas ni logs.
 
 ## Problemas frecuentes
 
@@ -199,14 +212,26 @@ shell.nix                   Entorno NixOS para ejecutar Avalonia
 - [x] Migrador de esquema con backup automático y rechazo de bases más nuevas.
 - [x] Instalador Windows por usuario con backup previo y carpetas versionadas.
 - [x] Publicación de releases en GitHub (`v2.0.0`).
-- [ ] Firma Authenticode del instalador y los ejecutables (preparada, pendiente de aprobación de SignPath Foundation).
+- [x] Guía de contribución, código de conducta, política de seguridad y plantillas.
+- [x] Validación de build y tests en Linux y Windows para pull requests.
+- [ ] Capturas y demostración corta para nuevas personas.
+- [ ] Firma Authenticode: solicitud a SignPath Foundation rechazada por falta de adopción; reaplicar o usar un certificado comercial.
 - [ ] Validación visual final en Windows.
 
-## Code signing policy
+La hoja de ruta pública está en [`ROADMAP.md`](ROADMAP.md) y el historial de
+cambios en [`CHANGELOG.md`](CHANGELOG.md).
 
-**Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
+## Firma de código
 
-La firma Authenticode cubre `HistoriaClinica.exe` y el instalador de Windows. Los binarios se construyen en GitHub Actions desde `main`; cada release requiere aprobación manual en SignPath. El certificado pertenece a SignPath Foundation.
+**Estado: sin firma Authenticode activa.** SignPath Foundation rechazó la
+solicitud inicial por falta de señales públicas de adopción. Las builds actuales
+se distribuyen sin firma; cuando se publique `v2.0.1`, también será sin firma
+mientras no haya un certificado. Windows puede mostrar SmartScreen.
+
+El flujo técnico de firma en dos fases quedó preparado y documentado, pero no se
+ejecutará hasta contar con un certificado. La política objetivo está en
+[`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md) y el procedimiento y plan de
+reaplicación en [`docs/SIGNPATH.md`](docs/SIGNPATH.md).
 
 - **Authors/Committers:** [Gaspar Ferreyra](https://github.com/Gaspipi)
 - **Reviewers:** [Gaspar Ferreyra](https://github.com/Gaspipi); los cambios externos se revisan por pull request.
@@ -214,14 +239,29 @@ La firma Authenticode cubre `HistoriaClinica.exe` y el instalador de Windows. Lo
 
 This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.
 
-La política completa está en [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md) y el procedimiento de alta en [`docs/SIGNPATH.md`](docs/SIGNPATH.md).
+## Comunidad y contribución
 
-## Contribución
+Las contribuciones de código, documentación, pruebas, traducciones y reportes de
+uso son bienvenidas. No hace falta escribir código para ayudar.
 
-1. Crear una rama desde `main` (`feature/mi-cambio`).
-2. Mantener los cambios acotados y con tests cuando corresponda.
-3. Ejecutar `dotnet build` y `dotnet test` antes de abrir el PR.
-4. Describir el cambio, el impacto en datos y los pasos de verificación.
+- Guía completa: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Código de conducta: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)
+- Seguridad: [`SECURITY.md`](SECURITY.md)
+- Preguntas y discusiones: [Discussions](https://github.com/Gaspipi/HistoriaClinica/discussions)
+- Errores y propuestas: [Issues](https://github.com/Gaspipi/HistoriaClinica/issues)
+- Arquitectura: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
+Resumen del flujo:
+
+1. Abrí un issue o una discusión antes de un cambio grande.
+2. Creá una rama desde `main` (`feature/mi-cambio`).
+3. Mantené los cambios acotados y agregá tests cuando corresponda.
+4. Ejecutá `dotnet build` y `dotnet test` antes de abrir el PR.
+5. Describí el cambio, el impacto en datos y los pasos de verificación.
+
+**No incluyas datos reales de pacientes en issues, pull requests, capturas ni
+logs.** Para reportar una vulnerabilidad, usá el canal privado de
+[`SECURITY.md`](SECURITY.md).
 
 ## Licencia
 

@@ -1,34 +1,44 @@
-# Code signing policy
+# Política de firma de código
 
-**Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
+**Estado: no hay firma Authenticode activa.**
 
-Esta política se aplica a los binarios de Windows publicados desde
-[Gaspipi/HistoriaClinica](https://github.com/Gaspipi/HistoriaClinica).
+SignPath Foundation rechazó la solicitud inicial en octubre de 2026 por falta de
+señales públicas de adopción. El proyecto mantiene preparado el flujo técnico de
+firma, pero no anuncia ni distribuye binarios firmados hasta contar con un
+certificado emitido. Se puede reaplicar cuando el proyecto tenga más visibilidad
+o usar un certificado Authenticode comercial.
 
-## Alcance
+Esta política describe el alcance y las reglas que se aplicarán cuando exista un
+certificado. El estado operativo y el plan de reaplicación están en
+[`docs/SIGNPATH.md`](docs/SIGNPATH.md).
+
+## Alcance previsto
 
 - `HistoriaClinica.exe`, el ejecutable de la aplicación.
 - `HistoriaClinica-<version>-setup.exe`, el instalador de Windows.
 
-El ejecutable se firma antes de compilar el instalador, de modo que la versión
-instalada también tenga firma Authenticode. El instalador se firma después de
-incluir el ejecutable firmado.
+El ejecutable se firmaría antes de compilar el instalador, de modo que la
+versión instalada también tenga firma Authenticode. El instalador se firmaría
+después de incluir el ejecutable firmado.
 
-El desinstalador que genera Inno Setup no se firma en esta etapa. La aplicación
-incluye un desinstalador estándar y no modifica la base de datos al desinstalar.
+El desinstalador que genera Inno Setup no se firmaría en esta etapa. La
+aplicación incluye un desinstalador estándar y no modifica la base de datos al
+desinstalar.
 
 ## Construcción y aprobación
 
-- Los binarios se construyen en GitHub Actions sobre runners oficiales de
+Cuando haya un certificado:
+
+- Los binarios se construirán en GitHub Actions sobre runners oficiales de
   GitHub (`windows-latest`) desde el repositorio público.
-- La política de firma de release solo acepta builds de la rama `main` con
-  verificación de origen de SignPath.
-- Cada release requiere dos aprobaciones manuales en SignPath: una para el
-  ejecutable y otra para el instalador.
-- Las builds de pull requests y ramas de trabajo no usan el certificado de
+- La política de firma de release solo aceptará builds de la rama `main` con
+  verificación de origen.
+- Cada release requerirá dos aprobaciones manuales: una para el ejecutable y
+  otra para el instalador.
+- Las builds de pull requests y ramas de trabajo no usarán el certificado de
   release.
 - La versión de producto, la versión de archivo y el nombre de producto se
-  verifican mediante la configuración de artefactos de SignPath.
+  verificarán mediante la configuración de artefactos.
 
 ## Roles
 
@@ -38,9 +48,10 @@ Proyecto mantenido por una sola persona:
 - **Reviewers:** [Gaspar Ferreyra](https://github.com/Gaspipi). Todo cambio
   externo se revisa mediante pull request antes de integrarse.
 - **Approvers:** [Gaspar Ferreyra](https://github.com/Gaspipi). Aprueba cada
-  solicitud de firma en el panel de SignPath.
+  solicitud de firma.
 
-Todos los accesos a GitHub y SignPath deben usar autenticación multifactor.
+Todos los accesos a GitHub y al proveedor de firma deben usar autenticación
+multifactor.
 
 ## Privacidad
 
@@ -52,14 +63,22 @@ La aplicación guarda pacientes, fichas, usuarios y preferencias localmente en
 SQLite y JSON. No incluye telemetría ni envía datos clínicos a servicios
 externos. Los enlaces externos solo se abren cuando el usuario los selecciona.
 
-## Verificación
+## Verificación mientras no haya firma
 
-Los usuarios pueden verificar la firma desde Windows con:
+Mientras no exista un certificado, verificá la integridad con el archivo
+`.sha256` publicado junto a cada instalador:
+
+```powershell
+Get-FileHash .\HistoriaClinica-<version>-setup.exe -Algorithm SHA256
+```
+
+El hash debe coincidir con el archivo `.sha256` de la release. La ausencia de
+firma Authenticode es esperada y puede provocar advertencias de SmartScreen.
+
+Cuando exista un certificado, la verificación será:
 
 ```powershell
 Get-AuthenticodeSignature .\HistoriaClinica-<version>-setup.exe
 ```
 
-El resultado debe indicar `Status: Valid` y un firmante emitido por SignPath
-Foundation. El archivo `.sha256` publicado junto al instalador permite verificar
-la integridad de la descarga.
+El resultado deberá indicar `Status: Valid` y el firmante correspondiente.
