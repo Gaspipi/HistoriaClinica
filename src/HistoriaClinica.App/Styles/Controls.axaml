@@ -320,6 +320,63 @@
     <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="DayFormat" Value="dd" />
+    <Setter Property="MonthFormat" Value="MM" />
+    <Setter Property="YearFormat" Value="yyyy" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <DataValidationErrors>
+          <Grid Name="LayoutRoot" Margin="{TemplateBinding Padding}">
+            <Button Name="PART_FlyoutButton"
+                    MinHeight="0"
+                    Padding="0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Foreground="{TemplateBinding Foreground}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    IsEnabled="{TemplateBinding IsEnabled}"
+                    TemplatedControl.IsTemplateFocusTarget="True">
+              <Grid Name="PART_ButtonContentGrid"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                <StackPanel Grid.ColumnSpan="5"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                  <TextBlock Name="PART_DayTextBlock"
+                             Text="dd"
+                             VerticalAlignment="Center" />
+                  <TextBlock Text="/"
+                             Foreground="{DynamicResource TextMutedBrush}"
+                             VerticalAlignment="Center" />
+                  <TextBlock Name="PART_MonthTextBlock"
+                             Text="mm"
+                             VerticalAlignment="Center" />
+                  <TextBlock Text="/"
+                             Foreground="{DynamicResource TextMutedBrush}"
+                             VerticalAlignment="Center" />
+                  <TextBlock Name="PART_YearTextBlock"
+                             Text="aaaa"
+                             VerticalAlignment="Center" />
+                </StackPanel>
+                <Rectangle Name="PART_FirstSpacer" Width="0" Height="0" Opacity="0" />
+                <Rectangle Name="PART_SecondSpacer" Width="0" Height="0" Opacity="0" />
+              </Grid>
+            </Button>
+            <Popup Name="PART_Popup"
+                   WindowManagerAddShadowHint="False"
+                   IsLightDismissEnabled="True"
+                   PlacementTarget="{TemplateBinding}"
+                   Placement="Bottom">
+              <DatePickerPresenter Name="PART_PickerPresenter" />
+            </Popup>
+          </Grid>
+        </DataValidationErrors>
+      </ControlTemplate>
+    </Setter>
   </Style>
 
   <Style Selector="DatePicker:pointerover">
@@ -386,7 +443,7 @@
     <Setter Property="Padding" Value="0" />
   </Style>
 
-  <Style Selector="ListBoxItem">
+  <Style Selector="ListBox ListBoxItem">
     <Setter Property="Padding" Value="0" />
     <Setter Property="Margin" Value="0,0,0,6" />
     <Setter Property="CornerRadius" Value="8" />
@@ -394,30 +451,41 @@
     <Setter Property="Cursor" Value="Hand" />
   </Style>
 
-  <Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+  <Style Selector="ListBox ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="CornerRadius" Value="8" />
   </Style>
 
-  <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+  <Style Selector="ListBox ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
     <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
   </Style>
 
-  <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+  <Style Selector="ListBox ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
     <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
   </Style>
 
-  <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+  <Style Selector="ListBox ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
     <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
   </Style>
 
-  <Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
+  <Style Selector="ListBox ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
     <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+  </Style>
+
+  <Style Selector="DatePickerPresenter ListBoxItem">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="DatePickerPresenter ListBoxItem.MonthItem">
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
   </Style>
 
   <Style Selector="GridSplitter">
