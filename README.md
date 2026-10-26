@@ -6,7 +6,7 @@ Aplicación de escritorio para gestionar pacientes, sus datos clínicos y fichas
 - **Plataforma:** .NET 10 · Windows, Linux y macOS
 - **Datos:** EF Core 10 + SQLite local
 - **Seguridad:** login local con PBKDF2-SHA256; la base SQLite **no** está cifrada
-- **Versión actual:** 2.0.1
+- **Versión:** `v2.0.0` publicada; `2.0.1` en desarrollo
 
 ## Funcionalidad
 
@@ -38,7 +38,7 @@ No se necesita Windows Forms, Visual Studio ni permisos de administrador.
 
 ## Instalación
 
-La release publicada más reciente está en [Releases](https://github.com/Gaspipi/HistoriaClinica/releases). El instalador de Windows es por usuario y no requiere permisos de administrador. La próxima `v2.0.1` incorporará firma Authenticode a través de SignPath Foundation; hasta que el proyecto sea aprobado, Windows puede mostrar una advertencia de SmartScreen.
+La release publicada más reciente (`v2.0.0`) está en [Releases](https://github.com/Gaspipi/HistoriaClinica/releases). El instalador de Windows es por usuario y no requiere permisos de administrador. Los binarios publicados **no** están firmados: la firma Authenticode a través de SignPath Foundation está preparada pero inactiva, pendiente de aprobación. Mientras tanto, Windows puede mostrar una advertencia de SmartScreen. La versión `2.0.1` está en desarrollo.
 
 La estrategia completa está documentada en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md), el proceso del instalador en [`installer/README.md`](installer/README.md) y la firma en [`docs/SIGNPATH.md`](docs/SIGNPATH.md). El instalador:
 
@@ -95,6 +95,13 @@ Se puede indicar otra ruta:
 
 ```bash
 HISTORIA_DB_PATH=/ruta/a/Historia.db dotnet run --project src/HistoriaClinica.App
+```
+
+En Windows (PowerShell):
+
+```powershell
+$env:HISTORIA_DB_PATH = "C:\ruta\a\Historia.db"
+dotnet run --project src/HistoriaClinica.App
 ```
 
 El archivo `preferences.json` se guarda en la misma carpeta que la base. Las copias de seguridad se crean en `Backups/`, también junto a la base.
@@ -166,7 +173,7 @@ src/HistoriaClinica.App/    UI Avalonia, ViewModels, estilos, iconos, diálogos 
 tests/HistoriaClinica.Tests/ Pruebas xUnit
 docs/                       Documentación de despliegue, mantenimiento y firma
 installer/                  Inno Setup y script de publicación
-.github/workflows/          CI y release firmada
+.github/workflows/          CI y release con firma (inactiva hasta la aprobación de SignPath)
 .signpath/                  Configuraciones de artefactos para SignPath
 CODE_SIGNING_POLICY.md      Política pública de firma
 Data/Historia.db            Archivo vacío de referencia; no usar en producción
@@ -206,7 +213,7 @@ shell.nix                   Entorno NixOS para ejecutar Avalonia
 
 **Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
 
-La firma Authenticode cubre `HistoriaClinica.exe` y el instalador de Windows. Los binarios se construyen en GitHub Actions desde `main`; cada release requiere aprobación manual en SignPath. El certificado pertenece a SignPath Foundation.
+**Estado: la firma Authenticode está inactiva.** El proyecto está pendiente de aprobación de SignPath Foundation y la release publicada (`v2.0.0`) no está firmada. Una vez aprobada, la firma cubrirá `HistoriaClinica.exe` y el instalador de Windows. Los binarios se construirán en GitHub Actions desde `main`; cada release requerirá aprobación manual en SignPath. El certificado será emitido por SignPath Foundation.
 
 - **Authors/Committers:** [Gaspar Ferreyra](https://github.com/Gaspipi)
 - **Reviewers:** [Gaspar Ferreyra](https://github.com/Gaspipi); los cambios externos se revisan por pull request.

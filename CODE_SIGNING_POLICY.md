@@ -2,6 +2,11 @@
 
 **Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
 
+> **Estado: la firma de código está inactiva.** El proyecto está pendiente de
+> aprobación de SignPath Foundation y la release publicada (`v2.0.0`) no está
+> firmada. Esta política describe cómo se firmarán los binarios una vez aprobada
+> la solicitud; ver [`docs/SIGNPATH.md`](docs/SIGNPATH.md).
+
 Esta política se aplica a los binarios de Windows publicados desde
 [Gaspipi/HistoriaClinica](https://github.com/Gaspipi/HistoriaClinica).
 
@@ -10,9 +15,9 @@ Esta política se aplica a los binarios de Windows publicados desde
 - `HistoriaClinica.exe`, el ejecutable de la aplicación.
 - `HistoriaClinica-<version>-setup.exe`, el instalador de Windows.
 
-El ejecutable se firma antes de compilar el instalador, de modo que la versión
-instalada también tenga firma Authenticode. El instalador se firma después de
-incluir el ejecutable firmado.
+Cuando la firma esté activa, el ejecutable se firmará antes de compilar el
+instalador, de modo que la versión instalada también tenga firma Authenticode.
+El instalador se firmará después de incluir el ejecutable firmado.
 
 El desinstalador que genera Inno Setup no se firma en esta etapa. La aplicación
 incluye un desinstalador estándar y no modifica la base de datos al desinstalar.
@@ -54,7 +59,7 @@ externos. Los enlaces externos solo se abren cuando el usuario los selecciona.
 
 ## Verificación
 
-Los usuarios pueden verificar la firma desde Windows con:
+Cuando la firma esté activa, los usuarios podrán verificarla desde Windows con:
 
 ```powershell
 Get-AuthenticodeSignature .\HistoriaClinica-<version>-setup.exe
