@@ -8,6 +8,8 @@ versionado semántico.
 
 ### Added
 
+- Instalador sin firma digital: aviso SmartScreen y verificación SHA256 en README.
+- Limpieza de referencias a SignPath y workflow firmado.
 - Guía de contribución, código de conducta y política de seguridad.
 - Plantillas de issues y de pull request.
 - Validación de build y tests en Linux y Windows para pull requests.

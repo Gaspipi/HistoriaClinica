@@ -8,7 +8,7 @@ namespace HistoriaClinica.App.ViewModels;
 
 public abstract partial class EditorViewModelBase : ObservableObject
 {
-    private readonly IDialogService _dialogs;
+    protected readonly IDialogService _dialogs;
     private readonly ILogger _logger;
 
     protected EditorViewModelBase(IDialogService dialogs, ILogger logger)
@@ -25,6 +25,7 @@ public abstract partial class EditorViewModelBase : ObservableObject
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GuardarCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CancelarCommand))]
     private bool _isBusy;
 
     public abstract string Titulo { get; }
@@ -67,7 +68,7 @@ public abstract partial class EditorViewModelBase : ObservableObject
         try
         {
             IsBusy = true;
-            if (await GuardarCoreAsync())
+            if (await GuardarCoreAsync() && !CierreConfirmado)
             {
                 Cerrar(true);
             }
@@ -87,9 +88,16 @@ public abstract partial class EditorViewModelBase : ObservableObject
         }
     }
 
-    [RelayCommand]
+    private bool PuedeCancelar() => !IsBusy;
+
+    [RelayCommand(CanExecute = nameof(PuedeCancelar))]
     private async Task CancelarAsync()
     {
+        if (IsBusy)
+        {
+            return;
+        }
+
         if (!HayCambios
             || await _dialogs.ConfirmAsync("Cancelar", "¿Está seguro de que desea cancelar? Se perderán los cambios."))
         {

@@ -50,6 +50,38 @@ public sealed class DataMaintenanceServiceTests : IDisposable
             Path.GetDirectoryName(copia));
     }
 
+    [Fact]
+    public async Task CrearCopiaSeguridad_RutaConEspacios_CopiaLosDatos()
+    {
+        var carpeta = Path.Combine(_tempDirectory, "Documentos Clinica");
+        Directory.CreateDirectory(carpeta);
+        var rutaBase = Path.Combine(carpeta, "Historia con espacios.db");
+
+        var factory = new TestDbContextFactory(rutaBase);
+        using (var context = factory.CreateDbContext())
+        {
+            context.Database.EnsureCreated();
+        }
+
+        var pacientes = new PacienteRepository(factory);
+        await pacientes.SaveAsync(new Paciente
+        {
+            Dni = "12345678",
+            FirstName = "Ana",
+            LastName = "Pérez",
+            DOB = new DateTime(1990, 5, 4),
+        });
+
+        var service = new DataMaintenanceService(
+            new DatabasePathProvider(rutaBase),
+            NullLogger<DataMaintenanceService>.Instance);
+
+        var copia = await service.CrearCopiaSeguridadAsync();
+
+        Assert.True(File.Exists(copia));
+        Assert.Equal(1, await ContarPacientesAsync(copia));
+    }
+
     public void Dispose()
     {
         SqliteConnection.ClearAllPools();

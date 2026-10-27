@@ -97,7 +97,10 @@ public static class DatabaseSchemaMigrator
         var connectionString = new SqliteConnectionStringBuilder
         {
             DataSource = fullPath,
-            Mode = SqliteOpenMode.ReadWriteCreate,
+
+            // Con el archivo presente abrimos en ReadWrite para no crear una base
+            // vacía por error; ReadWriteCreate queda solo para el caso inexistente.
+            Mode = File.Exists(fullPath) ? SqliteOpenMode.ReadWrite : SqliteOpenMode.ReadWriteCreate,
             Pooling = false,
         }.ToString();
 
@@ -319,6 +322,8 @@ public static class DatabaseSchemaMigrator
                 source.BackupDatabase(destination);
             }, cancellationToken);
 
+            await VerifyBackupAsync(databasePath, backupPath, cancellationToken);
+
             logger.LogInformation(
                 "Copia de seguridad previa a la migración creada en {BackupPath}",
                 backupPath);
@@ -327,13 +332,96 @@ public static class DatabaseSchemaMigrator
         }
         catch
         {
-            if (File.Exists(backupPath))
+            // El borrado del backup no debe enmascarar la excepción original.
+            try
             {
-                File.Delete(backupPath);
+                if (File.Exists(backupPath))
+                {
+                    File.Delete(backupPath);
+                }
+            }
+            catch (Exception deleteException)
+            {
+                logger.LogWarning(
+                    deleteException,
+                    "No se pudo borrar el backup incompleto en {BackupPath}",
+                    backupPath);
             }
 
             throw;
         }
+    }
+
+    // Verifica que el backup sea un archivo SQLite íntegro y con la misma
+    // estructura que la base original; si algo no coincide, se descarta.
+    private static async Task VerifyBackupAsync(
+        string databasePath,
+        string backupPath,
+        CancellationToken cancellationToken)
+    {
+        int versionOrigen;
+        int tablasOrigen;
+
+        await using (var origen = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = databasePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false,
+        }.ToString()))
+        {
+            await origen.OpenAsync(cancellationToken);
+            versionOrigen = await GetUserVersionAsync(origen, cancellationToken);
+            tablasOrigen = await CountTablesAsync(origen, cancellationToken);
+        }
+
+        await using var copia = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = backupPath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false,
+        }.ToString());
+        await copia.OpenAsync(cancellationToken);
+
+        var quickCheck = await ExecuteQuickCheckAsync(copia, cancellationToken);
+        if (!string.Equals(quickCheck, "ok", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"El backup {backupPath} no pasó la verificación quick_check: {quickCheck}.");
+        }
+
+        var versionCopia = await GetUserVersionAsync(copia, cancellationToken);
+        if (versionCopia != versionOrigen)
+        {
+            throw new InvalidOperationException(
+                $"El backup {backupPath} tiene user_version {versionCopia}, pero la base original tiene {versionOrigen}.");
+        }
+
+        var tablasCopia = await CountTablesAsync(copia, cancellationToken);
+        if (tablasCopia != tablasOrigen)
+        {
+            throw new InvalidOperationException(
+                $"El backup {backupPath} tiene {tablasCopia} tablas, pero la base original tiene {tablasOrigen}.");
+        }
+    }
+
+    private static async Task<string> ExecuteQuickCheckAsync(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA quick_check;";
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        return Convert.ToString(result, CultureInfo.InvariantCulture) ?? string.Empty;
+    }
+
+    private static async Task<int> CountTablesAsync(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table';";
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        return Convert.ToInt32(result, CultureInfo.InvariantCulture);
     }
 
     private static string GetBackupPath(string directory, int fromVersion)

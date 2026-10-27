@@ -65,8 +65,16 @@ public sealed class DataMaintenanceService : IDataMaintenanceService
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using var origen = new SqliteConnection($"Data Source={DatabasePath};Mode=ReadOnly");
-                using var copia = new SqliteConnection($"Data Source={destino};Mode=ReadWriteCreate");
+                using var origen = new SqliteConnection(new SqliteConnectionStringBuilder
+                {
+                    DataSource = DatabasePath,
+                    Mode = SqliteOpenMode.ReadOnly,
+                }.ToString());
+                using var copia = new SqliteConnection(new SqliteConnectionStringBuilder
+                {
+                    DataSource = destino,
+                    Mode = SqliteOpenMode.ReadWriteCreate,
+                }.ToString());
                 origen.Open();
                 copia.Open();
                 origen.BackupDatabase(copia);
@@ -77,9 +85,20 @@ public sealed class DataMaintenanceService : IDataMaintenanceService
         }
         catch
         {
-            if (File.Exists(destino))
+            // El borrado de la copia incompleta no debe enmascarar la excepción original.
+            try
             {
-                File.Delete(destino);
+                if (File.Exists(destino))
+                {
+                    File.Delete(destino);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "No se pudo borrar la copia de seguridad incompleta en {BackupPath}",
+                    destino);
             }
 
             throw;

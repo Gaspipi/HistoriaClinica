@@ -12,13 +12,26 @@ public sealed class DialogService : IDialogService
 {
     private readonly IServiceProvider _services;
 
+    // Ventanas hijas abiertas en modo diálogo; sus confirms deben ser modales a ellas.
+    private readonly Stack<Window> _owners = new();
+
     public DialogService(IServiceProvider services)
     {
         _services = services;
     }
 
-    private static Window? Owner =>
-        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+    private Window? Owner
+    {
+        get
+        {
+            if (_owners.Count > 0)
+            {
+                return _owners.Peek();
+            }
+
+            return (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        }
+    }
 
     public async Task<Paciente?> ShowPatientEditorAsync(Paciente paciente, bool esNuevo)
     {
@@ -32,8 +45,16 @@ public sealed class DialogService : IDialogService
             return null;
         }
 
-        var guardado = await window.ShowDialog<bool>(owner);
-        return guardado ? viewModel.Resultado : null;
+        _owners.Push(window);
+        try
+        {
+            var guardado = await window.ShowDialog<bool>(owner);
+            return guardado ? viewModel.Resultado : null;
+        }
+        finally
+        {
+            _owners.Pop();
+        }
     }
 
     public async Task<FichaDiaria?> ShowFichaEditorAsync(
@@ -55,11 +76,24 @@ public sealed class DialogService : IDialogService
             return null;
         }
 
-        var guardado = await window.ShowDialog<bool>(owner);
-        return guardado ? viewModel.Resultado : null;
+        _owners.Push(window);
+        try
+        {
+            var guardado = await window.ShowDialog<bool>(owner);
+            return guardado ? viewModel.Resultado : null;
+        }
+        finally
+        {
+            _owners.Pop();
+        }
     }
 
-    public async Task<bool> ConfirmAsync(string titulo, string mensaje, string aceptar = "Sí", string cancelar = "No")
+    public async Task<bool> ConfirmAsync(
+        string titulo,
+        string mensaje,
+        string aceptar = "Sí",
+        string cancelar = "No",
+        bool esDestructiva = false)
     {
         var owner = Owner;
         if (owner is null)
@@ -67,7 +101,7 @@ public sealed class DialogService : IDialogService
             return false;
         }
 
-        var dialog = new MessageDialog(titulo, mensaje, mostrarCancelar: true, aceptar, cancelar);
+        var dialog = new MessageDialog(titulo, mensaje, mostrarCancelar: true, aceptar, cancelar, esDestructiva);
         return await dialog.ShowDialog<bool>(owner);
     }
 

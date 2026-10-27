@@ -11,4 +11,6 @@ public interface IUsuarioRepository
         CancellationToken cancellationToken = default);
 
     Task AddAsync(Usuario usuario, CancellationToken cancellationToken = default);
+
+    Task ActualizarPasswordAsync(Usuario usuario, CancellationToken cancellationToken = default);
 }

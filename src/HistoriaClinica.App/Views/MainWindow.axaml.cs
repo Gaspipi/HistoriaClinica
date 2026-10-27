@@ -27,8 +27,10 @@ public partial class MainWindow : Window
         DataContext = viewModel;
         Icon = AppIcons.Load();
 
-        _dniBox = this.FindControl<AutoCompleteBox>("DniBox")!;
-        _fichasList = this.FindControl<ListBox>("FichasList")!;
+        _dniBox = this.FindControl<AutoCompleteBox>("DniBox")
+            ?? throw new InvalidOperationException("No se encontró el control DniBox");
+        _fichasList = this.FindControl<ListBox>("FichasList")
+            ?? throw new InvalidOperationException("No se encontró el control FichasList");
         _statusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
         _statusTimer.Tick += OnStatusTimerTick;
 
@@ -103,7 +105,7 @@ public partial class MainWindow : Window
 
     private void ActualizarHistorial()
     {
-        var angosto = ClientSize.Width < NarrowWidth * UiMetrics.Scale;
+        var angosto = Responsive.EsNarrow(this);
         HistoryLayout.ColumnDefinitions = new ColumnDefinitions(angosto ? "240,0,*" : "320,6,*");
     }
 

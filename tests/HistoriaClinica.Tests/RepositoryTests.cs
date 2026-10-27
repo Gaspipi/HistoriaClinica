@@ -119,6 +119,25 @@ public sealed class RepositoryTests : IDisposable
         Assert.False(await _fichas.DeleteAsync(ficha.Id));
     }
 
+    [Fact]
+    public async Task Ficha_ConDniInexistente_FallaPorClaveForanea()
+    {
+        var ficha = CrearFicha("99999999", DateTime.Now);
+
+        await Assert.ThrowsAsync<DbUpdateException>(() => _fichas.SaveAsync(ficha));
+    }
+
+    [Fact]
+    public async Task Ficha_ConDniExistente_SeGuarda()
+    {
+        await _pacientes.SaveAsync(CrearPaciente("12345678", "Ana", "Pérez"));
+
+        await _fichas.SaveAsync(CrearFicha("12345678", DateTime.Now));
+
+        var fichas = await _fichas.GetByDniAsync("12345678");
+        Assert.Single(fichas);
+    }
+
     public void Dispose()
     {
         SqliteConnection.ClearAllPools();
@@ -158,7 +177,11 @@ public sealed class RepositoryTests : IDisposable
         public TestDbContextFactory(string databasePath)
         {
             _options = new DbContextOptionsBuilder<HistoriaContext>()
-                .UseSqlite($"Data Source={databasePath}")
+                .UseSqlite(new SqliteConnectionStringBuilder
+                {
+                    DataSource = databasePath,
+                    ForeignKeys = true,
+                }.ToString())
                 .Options;
         }
 

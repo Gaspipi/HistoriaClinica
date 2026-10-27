@@ -1,5 +1,5 @@
 using HistoriaClinica.Core.Models;
-using HistoriaClinica.Core.Services;
+using HistoriaClinica.Core.Validation;
 using Microsoft.EntityFrameworkCore;
 
 namespace HistoriaClinica.Core.Data;
@@ -22,7 +22,6 @@ public class HistoriaContext : DbContext
         modelBuilder.Entity<Paciente>(entity =>
         {
             entity.HasKey(p => p.Dni);
-            entity.Property(p => p.DOB).IsRequired();
             entity.HasMany(p => p.FichasDiarias)
                 .WithOne(f => f.Paciente)
                 .HasForeignKey(f => f.Dni);
@@ -40,9 +39,9 @@ public class HistoriaContext : DbContext
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(u => u.Id);
-            entity.Property(u => u.Username).HasMaxLength(AuthService.MaxUsernameLength).IsRequired();
+            entity.Property(u => u.Username).HasMaxLength(UsuarioLengths.Max).IsRequired();
             entity.Property(u => u.NormalizedUsername)
-                .HasMaxLength(AuthService.MaxUsernameLength)
+                .HasMaxLength(UsuarioLengths.Max)
                 .IsRequired();
             entity.Property(u => u.PasswordHash).IsRequired();
             entity.Property(u => u.PasswordSalt).IsRequired();

@@ -51,6 +51,25 @@ La estrategia completa está documentada en [`docs/DEPLOYMENT.md`](docs/DEPLOYME
 - hace un backup de la base antes de instalar;
 - conserva la versión anterior en `app\<version>` para rollback.
 
+### Verificar SHA256
+
+Cada release incluye `SHA256SUMS.txt`. Verificá el hash antes de instalar:
+
+```powershell
+Get-FileHash .\\HistoriaClinica-<version>-setup.exe -Algorithm SHA256
+```
+
+```bash
+sha256sum HistoriaClinica-<version>-setup.exe
+```
+
+Compará el resultado con el valor publicado.
+
+### SmartScreen
+
+Los binarios no están firmados. Si Windows muestra SmartScreen, elegí
+"Más información" → "Ejecutar de todas formas".
+
 ### Instalador de Windows
 
 En Windows, con .NET 10 SDK e Inno Setup 6 instalados:

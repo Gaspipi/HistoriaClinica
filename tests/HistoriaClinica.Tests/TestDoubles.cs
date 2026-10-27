@@ -97,6 +97,8 @@ internal sealed class FakeDialogService : IDialogService
 
     public string? UltimoMensajeConfirmacion { get; private set; }
 
+    public bool? UltimaConfirmacionDestructiva { get; private set; }
+
     public int PreferenciasMostradas { get; private set; }
 
     public Task<Paciente?> ShowPatientEditorAsync(Paciente paciente, bool esNuevo)
@@ -117,10 +119,16 @@ internal sealed class FakeDialogService : IDialogService
         return Task.FromResult(FichaResultado);
     }
 
-    public Task<bool> ConfirmAsync(string titulo, string mensaje, string aceptar = "Sí", string cancelar = "No")
+    public Task<bool> ConfirmAsync(
+        string titulo,
+        string mensaje,
+        string aceptar = "Sí",
+        string cancelar = "No",
+        bool esDestructiva = false)
     {
         Confirmaciones++;
         UltimoMensajeConfirmacion = mensaje;
+        UltimaConfirmacionDestructiva = esDestructiva;
         return Task.FromResult(ConfirmarResultado);
     }
 

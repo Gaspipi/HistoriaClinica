@@ -121,7 +121,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
 
     partial void OnDniChanged(string value)
     {
-        var limpio = new string((value ?? string.Empty).Where(char.IsAsciiDigit).Take(DniValidator.Length).ToArray());
+        var limpio = DniValidator.Normalizar(value);
         if (!string.Equals(value, limpio, StringComparison.Ordinal))
         {
             Dni = limpio;

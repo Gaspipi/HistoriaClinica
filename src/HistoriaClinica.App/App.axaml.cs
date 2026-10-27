@@ -12,6 +12,8 @@ namespace HistoriaClinica.App;
 
 public partial class App : Application
 {
+    private ServiceProvider? _services;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -41,10 +43,19 @@ public partial class App : Application
             services.AddTransient<PreferencesViewModel>();
 
             var provider = services.BuildServiceProvider();
+            _services = provider;
             provider.GetRequiredService<IUserPreferencesService>().Inicializar();
             provider.GetRequiredService<IAppNavigator>().ShowAuth();
+
+            desktop.ShutdownRequested += OnShutdownRequested;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void OnShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
+    {
+        _services?.Dispose();
+        _services = null;
     }
 }

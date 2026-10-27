@@ -46,6 +46,18 @@ public static class Responsive
         }
     }
 
+    // Única fuente de verdad del punto de quiebre "narrow": la usan tanto la
+    // clase de estilos como las ventanas que reacomodan controles por código.
+    public static bool EsNarrow(Window window)
+    {
+        if (!Ventanas.TryGetValue(window, out var breakpoints))
+        {
+            return false;
+        }
+
+        return window.ClientSize.Width < breakpoints.NarrowWidth * UiMetrics.Scale;
+    }
+
     private static void OnOpened(object? sender, EventArgs e)
     {
         if (sender is Window window)
@@ -91,7 +103,7 @@ public static class Responsive
             "compact",
             ancho < breakpoints.CompactWidth * escala
             || alto < breakpoints.ShortHeight * escala);
-        AplicarClase(window, "narrow", ancho < breakpoints.NarrowWidth * escala);
+        AplicarClase(window, "narrow", EsNarrow(window));
         AplicarClase(window, "short", alto < breakpoints.ShortHeight * escala);
     }
 
