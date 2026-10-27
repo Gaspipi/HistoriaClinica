@@ -2,14 +2,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:HistoriaClinica.App.ViewModels"
         xmlns:services="using:HistoriaClinica.Core.Services"
+        xmlns:automation="using:Avalonia.Automation"
         x:Class="HistoriaClinica.App.Views.DataMaintenanceWindow"
         x:DataType="vm:DataMaintenanceViewModel"
         Title="Mantenimiento de datos"
-        Width="640" Height="480">
+        Width="640" Height="480"
+        automation:AutomationProperties.Name="Mantenimiento de datos">
   <StackPanel Margin="16" Spacing="12">
     <TextBlock Text="Respaldos" FontWeight="Bold" />
     <TextBlock Text="Seleccione un respaldo para restaurar. Esta acción reemplaza la base de datos actual." />
-    <ListBox ItemsSource="{Binding Backups}" SelectedItem="{Binding BackupSeleccionado}" Height="260">
+    <ListBox ItemsSource="{Binding Backups}" SelectedItem="{Binding BackupSeleccionado}" Height="260"
+             automation:AutomationProperties.Name="Lista de respaldos">
       <ListBox.ItemTemplate>
         <DataTemplate x:DataType="services:BackupInfo">
           <StackPanel Orientation="Horizontal" Spacing="12">
@@ -21,9 +24,12 @@
       </ListBox.ItemTemplate>
     </ListBox>
     <StackPanel Orientation="Horizontal" Spacing="8">
-      <Button Content="Cargar" Command="{Binding CargarBackupsCommand}" />
-      <Button Content="Restaurar" Command="{Binding RestaurarBackupCommand}" CommandParameter="{Binding BackupSeleccionado}" />
-      <Button Content="Cerrar" Command="{Binding CerrarCommand}" />
+      <Button Content="Cargar" Command="{Binding CargarBackupsCommand}"
+              automation:AutomationProperties.Name="Cargar respaldos" />
+      <Button Content="Restaurar" Command="{Binding RestaurarBackupCommand}" CommandParameter="{Binding BackupSeleccionado}"
+              automation:AutomationProperties.Name="Restaurar respaldo seleccionado" />
+      <Button Content="Cerrar" Command="{Binding CerrarCommand}"
+              automation:AutomationProperties.Name="Cerrar mantenimiento de datos" />
     </StackPanel>
     <TextBlock Text="{Binding MensajeError}" Foreground="Red" />
     <TextBlock Text="{Binding MensajeEstado}" />

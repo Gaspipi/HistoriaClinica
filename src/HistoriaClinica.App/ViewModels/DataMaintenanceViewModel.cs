@@ -88,6 +88,7 @@ public partial class DataMaintenanceViewModel : ObservableObject
         await _maintenance.RestaurarBackupAsync(seleccionado.FullPath);
         MensajeEstado = "Respaldo restaurado correctamente.";
         await CargarBackupsAsync();
+        CloseRequested?.Invoke(this, EventArgs.Empty);
     }, "Error al restaurar el respaldo");
 
     private async Task EjecutarAsync(Func<Task> accion, string contexto)

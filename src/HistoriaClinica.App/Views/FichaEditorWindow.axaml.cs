@@ -19,7 +19,8 @@ public partial class FichaEditorWindow : Window
         DataContext = viewModel;
         Icon = AppIcons.Load();
 
-        _motivoTextBox = this.FindControl<TextBox>("MotivoTextBox")!;
+        _motivoTextBox = this.FindControl<TextBox>("MotivoTextBox")
+            ?? throw new InvalidOperationException("No se encontró el control MotivoTextBox");
 
         _viewModel.CloseRequested += OnCloseRequested;
         Closing += OnClosing;

@@ -46,11 +46,19 @@ public sealed class DataMaintenanceService : IDataMaintenanceService
         }
 
         Directory.CreateDirectory(carpeta);
-        Process.Start(new ProcessStartInfo
+        try
         {
-            FileName = carpeta,
-            UseShellExecute = true,
-        });
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = carpeta,
+                UseShellExecute = true,
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "No se pudo abrir la carpeta de datos {Carpeta}", carpeta);
+            throw new InvalidOperationException("No se pudo abrir la carpeta de datos. Verificá los permisos e intentá nuevamente.", ex);
+        }
     }
 
     public Task<string> CrearCopiaSeguridadAsync(CancellationToken cancellationToken = default)

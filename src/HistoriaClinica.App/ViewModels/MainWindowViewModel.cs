@@ -113,7 +113,7 @@ public partial class MainWindowViewModel : ObservableObject
     public string ResumenCopiable => HayPaciente ? $"{NombreCompleto} · {PacienteResumen}" : string.Empty;
 
     public string FechaNacimientoTexto =>
-        PacienteActual is null || !PacienteActual.DOB.HasValue ? string.Empty : PacienteActual.DOB.Value.ToString("dd/MM/yyyy", CultureInfo.GetCultureInfo("es-ES"));
+        PacienteActual is null || !PacienteActual.DOB.HasValue ? string.Empty : PacienteActual.DOB.Value.ToString("dd/MM/yyyy", FechaClinica.Culture);
 
     public string NombreCompleto
     {
@@ -163,8 +163,8 @@ public partial class MainWindowViewModel : ObservableObject
                 return "Sin fecha de nacimiento";
             }
 
-            var hoy = DateTime.Today;
-            var nacimiento = PacienteActual.DOB.Value.ToDateTime(TimeOnly.MinValue);
+            var hoy = DateOnly.FromDateTime(DateTime.Today);
+            var nacimiento = PacienteActual.DOB.Value;
             if (nacimiento > hoy)
             {
                 return "Fecha inválida";
@@ -293,7 +293,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private Task MostrarAcercaDeAsync() => EjecutarAsync(async () =>
     {
-        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "desconocida";
+        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString() ?? "desconocida";
         var mensaje = $"""
             Historia Clínica {version}
             Usuario: {_session.NombreUsuario}
@@ -332,13 +332,14 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PuedeBuscar))]
     private Task BuscarAsync() => EjecutarAsync(async () =>
     {
-        if (!DniValidator.IsValid(Dni))
+        var dni = DniValidator.Normalizar(Dni);
+        if (!DniValidator.IsValid(dni))
         {
             MensajeError = DniValidator.ErrorMessage;
             return;
         }
 
-        await CargarPacienteAsync(Dni, preguntarCreacion: true);
+        await CargarPacienteAsync(dni, preguntarCreacion: true);
     }, "Error al buscar el paciente");
 
     private bool PuedeCrearPaciente() => !IsBusy;
@@ -456,7 +457,12 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        await _fichaService.DeleteAsync(FichaSeleccionada.Id);
+        var borrado = await _fichaService.DeleteAsync(FichaSeleccionada.Id);
+        if (!borrado)
+        {
+            MensajeError = "No se pudo borrar la ficha.";
+            return;
+        }
         await RecargarFichasAsync(FichaSeleccionada.Dni);
         MensajeEstado = "Ficha borrada.";
     }, "Error al borrar la ficha");
@@ -508,6 +514,12 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var fichas = await _fichaService.GetByDniAsync(dni);
         Fichas.ReplaceAll(fichas);
+
+        if (Fichas.Count == 0)
+        {
+            FichaSeleccionada = null;
+            return;
+        }
 
         FichaSeleccionada = seleccionarId is int id
             ? Fichas.FirstOrDefault(f => f.Id == id)

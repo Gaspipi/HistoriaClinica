@@ -54,7 +54,7 @@ public partial class FichaEditorViewModel : EditorViewModelBase
 
     public FichaDiaria? Resultado { get; private set; }
 
-    public string FechaTexto => FechaClinica.FormatDateTime(_fecha);
+    public string FechaTexto => FechaClinica.FormatDateTime(Resultado?.Fecha ?? _fecha);
 
     [ObservableProperty]
     private string _dni = string.Empty;
@@ -127,7 +127,7 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         // En una ficha nueva la fecha se captura al guardar, no al abrir el diálogo.
         if (_esNuevo)
         {
-            ficha.Fecha = DateTime.Now;
+            ficha.Fecha = DateTime.UtcNow;
         }
 
         await _fichaService.SaveAsync(ficha);

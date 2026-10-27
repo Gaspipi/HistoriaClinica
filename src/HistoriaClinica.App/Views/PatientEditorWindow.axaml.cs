@@ -20,8 +20,10 @@ public partial class PatientEditorWindow : Window
         DataContext = viewModel;
         Icon = AppIcons.Load();
 
-        _dniTextBox = this.FindControl<TextBox>("DniTextBox")!;
-        _firstNameTextBox = this.FindControl<TextBox>("FirstNameTextBox")!;
+        _dniTextBox = this.FindControl<TextBox>("DniTextBox")
+            ?? throw new InvalidOperationException("No se encontró el control DniTextBox");
+        _firstNameTextBox = this.FindControl<TextBox>("FirstNameTextBox")
+            ?? throw new InvalidOperationException("No se encontró el control FirstNameTextBox");
 
         _viewModel.CloseRequested += OnCloseRequested;
         Closing += OnClosing;
