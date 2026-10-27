@@ -6,6 +6,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Collections.Concurrent;
 
 namespace HistoriaClinica.Core.Services;
 
@@ -13,6 +14,10 @@ public sealed class AuthService
 {
     public const int MinPasswordLength = 8;
     public const int MaxPasswordLength = 128;
+
+    private const int MaxFailedAttempts = 5;
+    private static readonly TimeSpan LockoutWindow = TimeSpan.FromMinutes(1);
+    private static readonly ConcurrentDictionary<string, (int Count, DateTime First)> _failedAttempts = new();
 
     // Códigos de SQLite para la violación del índice único de usuarios:
     // SQLITE_CONSTRAINT (19) y su código extendido SQLITE_CONSTRAINT_UNIQUE (2067).
@@ -86,6 +91,11 @@ public sealed class AuthService
             return null;
         }
 
+        if (IsRateLimited(username))
+        {
+            return null;
+        }
+
         var usuario = await _repository.GetByNormalizedUsernameAsync(
             NormalizarUsuario(username),
             cancellationToken);
@@ -116,6 +126,15 @@ public sealed class AuthService
         if (valido && usuario.PasswordIterations < PasswordHasher.Iterations)
         {
             await RegenerarHashAsync(usuario, password, cancellationToken);
+        }
+
+        if (valido)
+        {
+            _failedAttempts.TryRemove(NormalizarUsuario(username), out _);
+        }
+        else
+        {
+            RecordFailure(username);
         }
 
         return valido ? usuario : null;
@@ -158,6 +177,29 @@ public sealed class AuthService
                 && sqlite.Message.Contains(
                     "Usuarios.NormalizedUsername",
                     StringComparison.OrdinalIgnoreCase)));
+
+    private static bool IsRateLimited(string username)
+    {
+        var key = NormalizarUsuario(username);
+        if (_failedAttempts.TryGetValue(key, out var info))
+        {
+            if (DateTime.UtcNow - info.First > LockoutWindow)
+            {
+                _failedAttempts.TryRemove(key, out _);
+                return false;
+            }
+            return info.Count >= MaxFailedAttempts;
+        }
+        return false;
+    }
+
+    private static void RecordFailure(string username)
+    {
+        var key = NormalizarUsuario(username);
+        _failedAttempts.AddOrUpdate(key,
+            _ => (1, DateTime.UtcNow),
+            (_, info) => (DateTime.UtcNow - info.First > LockoutWindow) ? (1, DateTime.UtcNow) : (info.Count + 1, info.First));
+    }
 
     public static string NormalizarUsuario(string username) =>
         (username ?? string.Empty).Trim().ToUpperInvariant();

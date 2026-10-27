@@ -21,6 +21,22 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            if (e.ExceptionObject is Exception ex)
+                _services?.GetService<ILogger<App>>()?.LogError(ex, "Excepción no controlada");
+        };
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            _services?.GetService<ILogger<App>>()?.LogError(e.Exception, "Task exception no observada");
+            e.SetObserved();
+        };
+        Dispatcher.UnhandledException += (_, e) =>
+        {
+            _services?.GetService<ILogger<App>>()?.LogError(e.Exception, "Excepción no controlada en Dispatcher");
+            e.Handled = true;
+        };
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var services = new ServiceCollection();

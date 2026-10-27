@@ -51,7 +51,7 @@ public class HistoriaValidatorsTests
             Fecha = DateTime.Now,
             Motivo = " ",
             Enfermedad = "",
-            Indicaciones = null,
+            Indicaciones = null!,
         };
 
         var resultado = HistoriaValidators.ValidateFicha(ficha);
