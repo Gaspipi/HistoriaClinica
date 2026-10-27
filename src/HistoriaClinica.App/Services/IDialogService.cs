@@ -11,7 +11,12 @@ public interface IDialogService
         bool esNuevo,
         string nombrePaciente = "");
 
-    Task<bool> ConfirmAsync(string titulo, string mensaje, string aceptar = "Sí", string cancelar = "No");
+    Task<bool> ConfirmAsync(
+        string titulo,
+        string mensaje,
+        string aceptar = "Sí",
+        string cancelar = "No",
+        bool esDestructiva = false);
 
     Task ShowPreferencesAsync();
 

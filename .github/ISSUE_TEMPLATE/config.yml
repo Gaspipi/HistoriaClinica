@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentación y guía de contribución
+    url: https://github.com/Gaspipi/HistoriaClinica/blob/main/CONTRIBUTING.md
+    about: Requisitos, entorno, convenciones y flujo de pull requests.
+  - name: Preguntas y discusiones
+    url: https://github.com/Gaspipi/HistoriaClinica/discussions
+    about: Consultas de uso, ideas y conversaciones que no son un bug o una propuesta concreta.
+  - name: Reportar una vulnerabilidad
+    url: https://github.com/Gaspipi/HistoriaClinica/security/policy
+    about: No publiques problemas de seguridad en los issues.

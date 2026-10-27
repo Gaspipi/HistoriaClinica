@@ -37,4 +37,14 @@ public sealed class UsuarioRepository : IUsuarioRepository
         context.Usuarios.Add(usuario);
         await context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task ActualizarPasswordAsync(Usuario usuario, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        var entry = context.Usuarios.Attach(usuario);
+        entry.Property(u => u.PasswordHash).IsModified = true;
+        entry.Property(u => u.PasswordSalt).IsModified = true;
+        entry.Property(u => u.PasswordIterations).IsModified = true;
+        await context.SaveChangesAsync(cancellationToken);
+    }
 }

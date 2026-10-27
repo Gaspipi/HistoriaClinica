@@ -14,24 +14,33 @@ public partial class MessageDialog : Window
     private readonly TextBlock _cancelText;
     private readonly Button _acceptButton;
     private readonly Button _cancelButton;
+    private readonly bool _esDestructiva;
 
     public MessageDialog(
         string titulo,
         string mensaje,
         bool mostrarCancelar,
         string textoAceptar = "Aceptar",
-        string textoCancelar = "Cancelar")
+        string textoCancelar = "Cancelar",
+        bool esDestructiva = false)
     {
         InitializeComponent();
 
         Responsive.Attach(this, compactWidth: 400, narrowWidth: 320, shortHeight: 500);
 
-        _titleText = this.FindControl<TextBlock>("TitleText")!;
-        _messageText = this.FindControl<TextBlock>("MessageText")!;
-        _acceptText = this.FindControl<TextBlock>("AcceptText")!;
-        _cancelText = this.FindControl<TextBlock>("CancelText")!;
-        _acceptButton = this.FindControl<Button>("AcceptButton")!;
-        _cancelButton = this.FindControl<Button>("CancelButton")!;
+        _titleText = this.FindControl<TextBlock>("TitleText")
+            ?? throw new InvalidOperationException("No se encontró el control TitleText");
+        _messageText = this.FindControl<TextBlock>("MessageText")
+            ?? throw new InvalidOperationException("No se encontró el control MessageText");
+        _acceptText = this.FindControl<TextBlock>("AcceptText")
+            ?? throw new InvalidOperationException("No se encontró el control AcceptText");
+        _cancelText = this.FindControl<TextBlock>("CancelText")
+            ?? throw new InvalidOperationException("No se encontró el control CancelText");
+        _acceptButton = this.FindControl<Button>("AcceptButton")
+            ?? throw new InvalidOperationException("No se encontró el control AcceptButton");
+        _cancelButton = this.FindControl<Button>("CancelButton")
+            ?? throw new InvalidOperationException("No se encontró el control CancelButton");
+        _esDestructiva = esDestructiva;
 
         Title = titulo;
         Icon = AppIcons.Load();
@@ -53,7 +62,16 @@ public partial class MessageDialog : Window
     private void OnOpened(object? sender, EventArgs e)
     {
         WindowSizing.AjustarAlAreaDeTrabajo(this);
-        _acceptButton.Focus();
+
+        // En acciones destructivas el foco inicial va al botón seguro ("No").
+        if (_esDestructiva && _cancelButton.IsVisible)
+        {
+            _cancelButton.Focus();
+        }
+        else
+        {
+            _acceptButton.Focus();
+        }
     }
 
     private void OnAcceptClick(object? sender, RoutedEventArgs e) => Close(true);

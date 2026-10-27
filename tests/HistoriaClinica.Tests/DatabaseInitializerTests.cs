@@ -49,7 +49,7 @@ public sealed class DatabaseInitializerTests : IDisposable
         var backupPath = Assert.Single(Directory.GetFiles(
             Path.Combine(_tempDirectory, "Backups"),
             "*.db"));
-        Assert.Contains("pre-migracion-v0", Path.GetFileName(backupPath));
+        Assert.Contains("pre-migracion", Path.GetFileName(backupPath));
 
         await using var backup = new SqliteConnection(
             new SqliteConnectionStringBuilder
@@ -75,7 +75,7 @@ public sealed class DatabaseInitializerTests : IDisposable
                 Dni = "12345678",
                 FirstName = "Ana",
                 LastName = "Pérez",
-                DOB = new DateTime(1990, 5, 4),
+                DOB = new DateOnly(1990, 5, 4),
             });
             await context.SaveChangesAsync();
         }
@@ -107,7 +107,7 @@ public sealed class DatabaseInitializerTests : IDisposable
                 Dni = "12345678",
                 FirstName = "Ana",
                 LastName = "Pérez",
-                DOB = new DateTime(1990, 5, 4),
+                DOB = new DateOnly(1990, 5, 4),
             });
             await context.SaveChangesAsync();
         }
@@ -236,7 +236,7 @@ public sealed class DatabaseInitializerTests : IDisposable
               "Dni" TEXT NOT NULL CONSTRAINT "PK_Pacientes" PRIMARY KEY,
               "FirstName" TEXT NOT NULL,
               "LastName" TEXT NOT NULL,
-              "DOB" TEXT NOT NULL,
+              "DOB" TEXT NULL,
               "Phone" TEXT NOT NULL,
               "ObraSocial" TEXT NOT NULL,
               "NroSocio" TEXT NOT NULL,

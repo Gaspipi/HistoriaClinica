@@ -290,3 +290,9 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+# Artifacts y datos generados
+artifacts/
+*.exe
+*.db
+Backups/
+preferences.json

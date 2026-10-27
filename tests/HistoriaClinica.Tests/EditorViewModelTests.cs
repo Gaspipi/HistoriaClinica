@@ -174,6 +174,92 @@ public sealed class EditorViewModelTests
         Assert.True(vm.HayCambios);
     }
 
+    [Fact]
+    public async Task GuardarEnCurso_CancelarConcurrente_NoCierra()
+    {
+        var vm = new EditorViewModelPrueba { RetenerGuardado = true };
+        var cierres = new List<bool>();
+        vm.CloseRequested += (_, guardado) => cierres.Add(guardado);
+
+        var guardar = vm.GuardarCommand.ExecuteAsync(null);
+        Assert.True(vm.IsBusy);
+
+        await vm.CancelarCommand.ExecuteAsync(null);
+
+        Assert.Empty(cierres);
+        Assert.False(vm.CierreConfirmado);
+        Assert.Equal(0, vm.Dialogos.Confirmaciones);
+
+        vm.CompletarGuardado(exitoso: true);
+        await guardar;
+
+        Assert.Single(cierres);
+        Assert.True(cierres[0]);
+        Assert.True(vm.CierreConfirmado);
+    }
+
+    [Fact]
+    public async Task GuardarTrasCierreConfirmado_NoReinvocaCloseRequested()
+    {
+        var vm = new EditorViewModelPrueba();
+        var cierres = new List<bool>();
+        vm.CloseRequested += (_, guardado) => cierres.Add(guardado);
+
+        vm.CerrarPublico(false);
+        Assert.True(vm.CierreConfirmado);
+
+        await vm.GuardarCommand.ExecuteAsync(null);
+
+        Assert.True(vm.GuardadoInvocado);
+        Assert.Single(cierres);
+        Assert.False(cierres[0]);
+    }
+
+    private sealed class EditorViewModelPrueba : EditorViewModelBase
+    {
+        private TaskCompletionSource<bool>? _guardadoPendiente;
+
+        public EditorViewModelPrueba()
+            : base(new FakeDialogService(), NullLogger<EditorViewModelPrueba>.Instance)
+        {
+            Dialogos = (FakeDialogService)_dialogs;
+        }
+
+        public FakeDialogService Dialogos { get; }
+
+        public bool GuardadoInvocado { get; private set; }
+
+        public void CerrarPublico(bool guardado) => Cerrar(guardado);
+
+        public override string Titulo => "Prueba";
+
+        public override bool HayCambios => false;
+
+        public void CompletarGuardado(bool exitoso)
+        {
+            if (_guardadoPendiente is not null)
+            {
+                _guardadoPendiente.SetResult(exitoso);
+                _guardadoPendiente = null;
+            }
+        }
+
+        protected override Task<bool> GuardarCoreAsync()
+        {
+            GuardadoInvocado = true;
+
+            if (!RetenerGuardado)
+            {
+                return Task.FromResult(true);
+            }
+
+            _guardadoPendiente = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            return _guardadoPendiente.Task;
+        }
+
+        public bool RetenerGuardado { get; set; }
+    }
+
     private static PatientEditorViewModel CrearPacienteEditor(
         FakePacienteRepository? pacientes = null,
         FakeDialogService? dialogos = null,

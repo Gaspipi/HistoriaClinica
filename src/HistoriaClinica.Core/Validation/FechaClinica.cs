@@ -14,7 +14,17 @@ public static class FechaClinica
 
     public static bool HasValue(DateTime value) => value != default && value.Year > 1;
 
+    public static bool HasValue(DateOnly? value) => value.HasValue;
+
+    public static bool HasValue(DateOnly value) => value != default;
+
     public static string FormatDate(DateTime value) =>
+        HasValue(value) ? value.ToString(DateFormat, Culture) : string.Empty;
+
+    public static string FormatDate(DateOnly? value) =>
+        value.HasValue ? value.Value.ToString(DateFormat, Culture) : string.Empty;
+
+    public static string FormatDate(DateOnly value) =>
         HasValue(value) ? value.ToString(DateFormat, Culture) : string.Empty;
 
     public static string FormatDateTime(DateTime value) =>
@@ -29,6 +39,22 @@ public static class FechaClinica
         }
 
         return DateTime.TryParseExact(
+            value.Trim(),
+            DateFormats,
+            Culture,
+            DateTimeStyles.None,
+            out result);
+    }
+
+    public static bool TryParseDateOnly(string? value, out DateOnly result)
+    {
+        result = default;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        return DateOnly.TryParseExact(
             value.Trim(),
             DateFormats,
             Culture,
@@ -54,5 +80,14 @@ public static class FechaClinica
 
     public static DateTime? ToNullable(DateTime value) => HasValue(value) ? value : null;
 
+    public static DateOnly? ToNullableDateOnly(DateTime value) =>
+        HasValue(value) ? DateOnly.FromDateTime(value) : null;
+
     public static DateTime FromNullable(DateTime? value) => value ?? default;
+
+    public static DateTime? ToDateTimeNullable(DateOnly? value) =>
+        value.HasValue ? value.Value.ToDateTime(TimeOnly.MinValue) : null;
+
+    public static DateOnly? FromDateTimeNullable(DateTime? value) =>
+        value.HasValue && HasValue(value.Value) ? DateOnly.FromDateTime(value.Value) : null;
 }

@@ -1,0 +1,101 @@
+name: Reportar un error
+description: Informar un comportamiento inesperado o una falla reproducible.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por tomarte el tiempo de reportar un problema.
+
+        **No incluyas datos reales de pacientes.** Usá nombres, DNI y datos
+        ficticios, y tapá cualquier dato identificable en las capturas o logs.
+
+        Si el problema es de seguridad, no lo publiques acá: usá el reporte
+        privado indicado en `SECURITY.md`.
+
+  - type: checkboxes
+    id: confirmaciones
+    attributes:
+      label: Antes de continuar
+      options:
+        - label: Busqué issues y discusiones existentes y no encontré este problema.
+          required: true
+        - label: Estoy usando la última release o la rama `main`.
+          required: true
+        - label: La reproducción usa datos ficticios y no contiene datos reales de pacientes.
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Versión de Historia Clínica
+      description: La versión aparece en “Acerca de” o en el nombre del instalador.
+      placeholder: "2.0.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Sistema operativo
+      options:
+        - Windows 10
+        - Windows 11
+        - Linux
+        - macOS
+        - Otro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: instalacion
+    attributes:
+      label: Forma de instalación
+      options:
+        - Instalador de Windows
+        - Ejecución desde el código fuente
+        - Publicación portable
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducir
+      description: Incluí el mínimo necesario para repetir el problema.
+      placeholder: |
+        1. Abrir la aplicación con una base temporal.
+        2. Registrar un paciente ficticio.
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultado actual
+      description: Incluí el mensaje de error completo si existe.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs o capturas
+      description: Opcional. Recordá quitar cualquier dato real de pacientes.
+      render: shell
+
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto adicional
+      description: Tema, escala de texto, tamaño de ventana, si la base es nueva o migrada, etc.

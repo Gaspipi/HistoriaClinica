@@ -22,7 +22,12 @@ public sealed class DatabasePathProvider : IDatabasePathProvider
         var candidate = FirstNonEmpty(overridePath, environmentPath);
         if (candidate is not null)
         {
-            return Path.GetFullPath(candidate);
+            var fullPath = Path.GetFullPath(candidate);
+            if (!string.Equals(Path.GetExtension(fullPath), ".db", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("La ruta de base de datos debe tener extensión .db.");
+            }
+            return fullPath;
         }
 
         var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);

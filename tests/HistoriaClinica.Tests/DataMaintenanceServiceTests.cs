@@ -2,6 +2,7 @@ using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Data;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Repositories;
+using HistoriaClinica.Core.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -34,12 +35,13 @@ public sealed class DataMaintenanceServiceTests : IDisposable
             Dni = "12345678",
             FirstName = "Ana",
             LastName = "Pérez",
-            DOB = new DateTime(1990, 5, 4),
+            DOB = new DateOnly(1990, 5, 4),
         });
 
         var service = new DataMaintenanceService(
             new DatabasePathProvider(_databasePath),
-            NullLogger<DataMaintenanceService>.Instance);
+            NullLogger<DataMaintenanceService>.Instance,
+            new SqliteBackupService(NullLogger<SqliteBackupService>.Instance));
 
         var copia = await service.CrearCopiaSeguridadAsync();
 
@@ -48,6 +50,39 @@ public sealed class DataMaintenanceServiceTests : IDisposable
         Assert.Equal(
             Path.Combine(Path.GetDirectoryName(_databasePath)!, "Backups"),
             Path.GetDirectoryName(copia));
+    }
+
+    [Fact]
+    public async Task CrearCopiaSeguridad_RutaConEspacios_CopiaLosDatos()
+    {
+        var carpeta = Path.Combine(_tempDirectory, "Documentos Clinica");
+        Directory.CreateDirectory(carpeta);
+        var rutaBase = Path.Combine(carpeta, "Historia con espacios.db");
+
+        var factory = new TestDbContextFactory(rutaBase);
+        using (var context = factory.CreateDbContext())
+        {
+            context.Database.EnsureCreated();
+        }
+
+        var pacientes = new PacienteRepository(factory);
+        await pacientes.SaveAsync(new Paciente
+        {
+            Dni = "12345678",
+            FirstName = "Ana",
+            LastName = "Pérez",
+            DOB = new DateOnly(1990, 5, 4),
+        });
+
+        var service = new DataMaintenanceService(
+            new DatabasePathProvider(rutaBase),
+            NullLogger<DataMaintenanceService>.Instance,
+            new SqliteBackupService(NullLogger<SqliteBackupService>.Instance));
+
+        var copia = await service.CrearCopiaSeguridadAsync();
+
+        Assert.True(File.Exists(copia));
+        Assert.Equal(1, await ContarPacientesAsync(copia));
     }
 
     public void Dispose()

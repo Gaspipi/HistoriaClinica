@@ -33,7 +33,7 @@ public sealed record SchemaMigrationResult(int FromVersion, int ToVersion, strin
 
 public static class DatabaseSchemaMigrator
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
 
     private const string CreateUsuariosSql = """
         CREATE TABLE IF NOT EXISTS "Usuarios" (
@@ -54,9 +54,44 @@ public static class DatabaseSchemaMigrator
 
     private const string MigrationToVersion1Sql = $"{CreateUsuariosSql}\n{CreateUsuariosIndexSql}";
 
+    private const string MigrationToVersion2Sql = """
+        PRAGMA foreign_keys = OFF;
+        CREATE TABLE "Pacientes_Nuevo" (
+          "Dni" TEXT NOT NULL CONSTRAINT "PK_Pacientes" PRIMARY KEY,
+          "FirstName" TEXT NOT NULL,
+          "LastName" TEXT NOT NULL,
+          "DOB" TEXT NULL,
+          "Phone" TEXT NOT NULL,
+          "ObraSocial" TEXT NOT NULL,
+          "NroSocio" TEXT NOT NULL,
+          "AntecFam" TEXT NOT NULL,
+          "AntecPers" TEXT NOT NULL,
+          "Medicacion" TEXT NOT NULL
+        );
+        INSERT INTO "Pacientes_Nuevo" ("Dni","FirstName","LastName","DOB","Phone","ObraSocial","NroSocio","AntecFam","AntecPers","Medicacion")
+        SELECT "Dni",
+               COALESCE("FirstName", ''),
+               COALESCE("LastName", ''),
+               CASE
+                   WHEN "DOB" IS NULL OR "DOB" = '' OR "DOB" = '0001-01-01 00:00:00' OR "DOB" = '0001-01-01' THEN NULL
+                   ELSE substr("DOB", 1, 10)
+               END,
+               COALESCE("Phone", ''),
+               COALESCE("ObraSocial", ''),
+               COALESCE("NroSocio", ''),
+               COALESCE("AntecFam", ''),
+               COALESCE("AntecPers", ''),
+               COALESCE("Medicacion", '')
+        FROM "Pacientes";
+        DROP TABLE "Pacientes";
+        ALTER TABLE "Pacientes_Nuevo" RENAME TO "Pacientes";
+        PRAGMA foreign_keys = ON;
+        """;
+
     private static readonly (int Version, string Sql)[] Migrations =
     [
         (1, MigrationToVersion1Sql),
+        (2, MigrationToVersion2Sql),
     ];
 
     public static async Task<int> ReadSchemaVersionAsync(
@@ -97,7 +132,10 @@ public static class DatabaseSchemaMigrator
         var connectionString = new SqliteConnectionStringBuilder
         {
             DataSource = fullPath,
-            Mode = SqliteOpenMode.ReadWriteCreate,
+
+            // Con el archivo presente abrimos en ReadWrite para no crear una base
+            // vacía por error; ReadWriteCreate queda solo para el caso inexistente.
+            Mode = File.Exists(fullPath) ? SqliteOpenMode.ReadWrite : SqliteOpenMode.ReadWriteCreate,
             Pooling = false,
         }.ToString();
 
@@ -127,6 +165,14 @@ public static class DatabaseSchemaMigrator
             backupPath = await CreateBackupAsync(fullPath, fromVersion, logger, cancellationToken);
         }
 
+        // Desactivar claves foráneas durante la migración para poder recrear
+        // tablas referenciadas (ej. Pacientes) sin cascada destructiva.
+        await using (var fkCmd = connection.CreateCommand())
+        {
+            fkCmd.CommandText = "PRAGMA foreign_keys = OFF;";
+            await fkCmd.ExecuteNonQueryAsync(cancellationToken);
+        }
+
         var targetVersion = fromVersion;
         using var transaction = connection.BeginTransaction();
         try
@@ -150,6 +196,12 @@ public static class DatabaseSchemaMigrator
             }
 
             transaction.Commit();
+
+            await using (var fkCmd = connection.CreateCommand())
+            {
+                fkCmd.CommandText = "PRAGMA foreign_keys = ON;";
+                await fkCmd.ExecuteNonQueryAsync(cancellationToken);
+            }
         }
         catch (Exception exception)
         {
@@ -319,6 +371,8 @@ public static class DatabaseSchemaMigrator
                 source.BackupDatabase(destination);
             }, cancellationToken);
 
+            await VerifyBackupAsync(databasePath, backupPath, cancellationToken);
+
             logger.LogInformation(
                 "Copia de seguridad previa a la migración creada en {BackupPath}",
                 backupPath);
@@ -327,13 +381,96 @@ public static class DatabaseSchemaMigrator
         }
         catch
         {
-            if (File.Exists(backupPath))
+            // El borrado del backup no debe enmascarar la excepción original.
+            try
             {
-                File.Delete(backupPath);
+                if (File.Exists(backupPath))
+                {
+                    File.Delete(backupPath);
+                }
+            }
+            catch (Exception deleteException)
+            {
+                logger.LogWarning(
+                    deleteException,
+                    "No se pudo borrar el backup incompleto en {BackupPath}",
+                    backupPath);
             }
 
             throw;
         }
+    }
+
+    // Verifica que el backup sea un archivo SQLite íntegro y con la misma
+    // estructura que la base original; si algo no coincide, se descarta.
+    private static async Task VerifyBackupAsync(
+        string databasePath,
+        string backupPath,
+        CancellationToken cancellationToken)
+    {
+        int versionOrigen;
+        int tablasOrigen;
+
+        await using (var origen = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = databasePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false,
+        }.ToString()))
+        {
+            await origen.OpenAsync(cancellationToken);
+            versionOrigen = await GetUserVersionAsync(origen, cancellationToken);
+            tablasOrigen = await CountTablesAsync(origen, cancellationToken);
+        }
+
+        await using var copia = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = backupPath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false,
+        }.ToString());
+        await copia.OpenAsync(cancellationToken);
+
+        var quickCheck = await ExecuteQuickCheckAsync(copia, cancellationToken);
+        if (!string.Equals(quickCheck, "ok", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"El backup {backupPath} no pasó la verificación quick_check: {quickCheck}.");
+        }
+
+        var versionCopia = await GetUserVersionAsync(copia, cancellationToken);
+        if (versionCopia != versionOrigen)
+        {
+            throw new InvalidOperationException(
+                $"El backup {backupPath} tiene user_version {versionCopia}, pero la base original tiene {versionOrigen}.");
+        }
+
+        var tablasCopia = await CountTablesAsync(copia, cancellationToken);
+        if (tablasCopia != tablasOrigen)
+        {
+            throw new InvalidOperationException(
+                $"El backup {backupPath} tiene {tablasCopia} tablas, pero la base original tiene {tablasOrigen}.");
+        }
+    }
+
+    private static async Task<string> ExecuteQuickCheckAsync(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA quick_check;";
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        return Convert.ToString(result, CultureInfo.InvariantCulture) ?? string.Empty;
+    }
+
+    private static async Task<int> CountTablesAsync(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table';";
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        return Convert.ToInt32(result, CultureInfo.InvariantCulture);
     }
 
     private static string GetBackupPath(string directory, int fromVersion)

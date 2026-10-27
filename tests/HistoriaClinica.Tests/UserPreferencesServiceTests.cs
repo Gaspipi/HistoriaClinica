@@ -96,6 +96,24 @@ public sealed class UserPreferencesServiceTests : IDisposable
         Assert.Equal(AppTextSize.Normal, recargado.TamanoTexto);
     }
 
+    [Fact]
+    public void GuardarDosVecesSeguidas_DejaArchivoValidoSinTemporal()
+    {
+        var servicio = CrearServicio();
+        servicio.Inicializar();
+
+        Assert.True(servicio.Guardar(AppTheme.Light, AppTextSize.Grande));
+        Assert.True(servicio.Guardar(AppTheme.Dark, AppTextSize.MuyGrande));
+
+        Assert.False(File.Exists(Path.Combine(_carpeta, "preferences.json.tmp")));
+
+        var recargado = CrearServicio();
+        recargado.Inicializar();
+
+        Assert.Equal(AppTheme.Dark, recargado.Tema);
+        Assert.Equal(AppTextSize.MuyGrande, recargado.TamanoTexto);
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_carpeta))

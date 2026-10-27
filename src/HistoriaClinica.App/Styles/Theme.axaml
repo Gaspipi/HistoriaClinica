@@ -13,6 +13,7 @@
       <SolidColorBrush x:Key="AccentBrush" Color="#0F6B8A" />
       <SolidColorBrush x:Key="AccentHoverBrush" Color="#0B5A75" />
       <SolidColorBrush x:Key="AccentSoftBrush" Color="#E1F1F7" />
+      <SolidColorBrush x:Key="DatePickerFlyoutPresenterHighlightFill" Color="#E1F1F7" />
       <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
       <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="#0F6B8A" />
       <SolidColorBrush x:Key="DangerBrush" Color="#B42318" />
@@ -37,6 +38,7 @@
       <SolidColorBrush x:Key="AccentBrush" Color="#5CC0DD" />
       <SolidColorBrush x:Key="AccentHoverBrush" Color="#7AD1EA" />
       <SolidColorBrush x:Key="AccentSoftBrush" Color="#173A49" />
+      <SolidColorBrush x:Key="DatePickerFlyoutPresenterHighlightFill" Color="#173A49" />
       <SolidColorBrush x:Key="AccentForegroundBrush" Color="#06232E" />
       <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="#5CC0DD" />
       <SolidColorBrush x:Key="DangerBrush" Color="#FF8A80" />

@@ -11,7 +11,7 @@ public class Paciente
 
     public string LastName { get; set; } = string.Empty;
 
-    public DateTime DOB { get; set; }
+    public DateOnly? DOB { get; set; }
 
     public string Phone { get; set; } = string.Empty;
 

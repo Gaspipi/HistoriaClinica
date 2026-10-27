@@ -13,11 +13,11 @@ public class FichaDiaria
 
     public Paciente? Paciente { get; set; }
 
-    public string? Enfermedad { get; set; } = string.Empty;
+    public string Enfermedad { get; set; } = string.Empty;
 
-    public string? Motivo { get; set; } = string.Empty;
+    public string Motivo { get; set; } = string.Empty;
 
-    public string? Indicaciones { get; set; } = string.Empty;
+    public string Indicaciones { get; set; } = string.Empty;
 
     public DateTime Fecha { get; set; } = DateTime.Now;
 }

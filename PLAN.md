@@ -1,6 +1,10 @@
 # Plan: login, header de usuario, paquete 1 y UI responsive 2.0
 
-**Estado:** versión 2.0, migrador de esquema e instalador Windows implementados; PR #6 abierto. Quedan la firma y validación del instalador, el escaneo de vulnerabilidades y la validación visual en Windows.
+> Documento histórico de la implementación 2.0. El estado actual está en
+> [`README.md`](README.md), [`ROADMAP.md`](ROADMAP.md) y
+> [`CHANGELOG.md`](CHANGELOG.md).
+
+**Estado:** versión 2.0, migrador de esquema e instalador Windows implementados. La firma Authenticode quedó preparada pero inactiva; ver [`docs/SIGNPATH.md`](docs/SIGNPATH.md).
 
 ## Progreso de implementación (23/10/2026)
 

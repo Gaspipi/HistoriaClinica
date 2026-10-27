@@ -28,7 +28,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         Dni = paciente.Dni;
         FirstName = paciente.FirstName;
         LastName = paciente.LastName;
-        FechaNacimiento = FechaClinica.ToNullable(paciente.DOB);
+        FechaNacimiento = paciente.DOB.HasValue ? paciente.DOB.Value.ToDateTime(TimeOnly.MinValue) : null;
         Phone = paciente.Phone;
         ObraSocial = paciente.ObraSocial;
         NroSocio = paciente.NroSocio;
@@ -121,7 +121,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
 
     partial void OnDniChanged(string value)
     {
-        var limpio = new string((value ?? string.Empty).Where(char.IsAsciiDigit).Take(DniValidator.Length).ToArray());
+        var limpio = DniValidator.Normalizar(value);
         if (!string.Equals(value, limpio, StringComparison.Ordinal))
         {
             Dni = limpio;
@@ -140,7 +140,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
 
         ErrorDni = validation.IsValid ? null : DniValidator.GetError(paciente.Dni);
         ErrorFechaNacimiento =
-            FechaClinica.HasValue(paciente.DOB) && paciente.DOB.Date > DateTime.Today
+            paciente.DOB.HasValue && paciente.DOB.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Today
                 ? "La fecha de nacimiento no puede ser posterior a hoy."
                 : null;
 
@@ -181,7 +181,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         Dni = Dni.Trim(),
         FirstName = FirstName,
         LastName = LastName,
-        DOB = FechaClinica.FromNullable(FechaNacimiento),
+        DOB = FechaNacimiento.HasValue ? DateOnly.FromDateTime(FechaNacimiento.Value.Date) : null,
         Phone = Phone,
         ObraSocial = ObraSocial,
         NroSocio = NroSocio,

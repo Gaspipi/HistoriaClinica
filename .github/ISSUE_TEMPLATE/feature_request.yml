@@ -1,0 +1,73 @@
+name: Proponer una mejora
+description: Sugerir una funcionalidad, una mejora de accesibilidad o un cambio de documentación.
+title: "[Mejora]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por la propuesta. Antes de abrir el issue, revisá las
+        discusiones y los issues existentes.
+
+        **No incluyas datos reales de pacientes.**
+
+  - type: checkboxes
+    id: confirmaciones
+    attributes:
+      label: Antes de continuar
+      options:
+        - label: Busqué issues y discusiones existentes y no encontré esta propuesta.
+          required: true
+        - label: Entiendo que la propuesta puede requerir discusión antes de implementarse.
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - Interfaz y experiencia de uso
+        - Accesibilidad
+        - Datos y base SQLite
+        - Instalación y despliegue
+        - Documentación
+        - Tests y herramientas
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: Problema o necesidad
+      description: ¿Qué situación querés resolver? Evitá describir una solución antes de explicar el problema.
+    validations:
+      required: true
+
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: ¿Cómo imaginás la solución?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas consideradas
+      description: Opcional. ¿Qué otras opciones evaluaste?
+
+  - type: textarea
+    id: impacto
+    attributes:
+      label: Impacto esperado
+      description: ¿A quién beneficia? ¿Afecta datos existentes, migraciones o compatibilidad?
+    validations:
+      required: true
+
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto adicional
+      description: Capturas, referencias o ejemplos de otras herramientas, sin datos reales.

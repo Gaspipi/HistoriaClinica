@@ -32,9 +32,9 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         _nombrePaciente = nombrePaciente;
 
         Dni = ficha.Dni;
-        Motivo = ficha.Motivo ?? string.Empty;
-        Enfermedad = ficha.Enfermedad ?? string.Empty;
-        Indicaciones = ficha.Indicaciones ?? string.Empty;
+        Motivo = ficha.Motivo;
+        Enfermedad = ficha.Enfermedad;
+        Indicaciones = ficha.Indicaciones;
 
         _original = Capturar();
     }
@@ -123,6 +123,13 @@ public partial class FichaEditorViewModel : EditorViewModelBase
     protected override async Task<bool> GuardarCoreAsync()
     {
         var ficha = CrearFicha();
+
+        // En una ficha nueva la fecha se captura al guardar, no al abrir el diálogo.
+        if (_esNuevo)
+        {
+            ficha.Fecha = DateTime.Now;
+        }
+
         await _fichaService.SaveAsync(ficha);
         Resultado = ficha;
         return true;
