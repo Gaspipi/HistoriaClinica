@@ -2,6 +2,7 @@ using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Data;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Repositories;
+using HistoriaClinica.Core.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -34,12 +35,13 @@ public sealed class DataMaintenanceServiceTests : IDisposable
             Dni = "12345678",
             FirstName = "Ana",
             LastName = "Pérez",
-            DOB = new DateTime(1990, 5, 4),
+            DOB = new DateOnly(1990, 5, 4),
         });
 
         var service = new DataMaintenanceService(
             new DatabasePathProvider(_databasePath),
-            NullLogger<DataMaintenanceService>.Instance);
+            NullLogger<DataMaintenanceService>.Instance,
+            new SqliteBackupService(NullLogger<SqliteBackupService>.Instance));
 
         var copia = await service.CrearCopiaSeguridadAsync();
 
@@ -69,12 +71,13 @@ public sealed class DataMaintenanceServiceTests : IDisposable
             Dni = "12345678",
             FirstName = "Ana",
             LastName = "Pérez",
-            DOB = new DateTime(1990, 5, 4),
+            DOB = new DateOnly(1990, 5, 4),
         });
 
         var service = new DataMaintenanceService(
             new DatabasePathProvider(rutaBase),
-            NullLogger<DataMaintenanceService>.Instance);
+            NullLogger<DataMaintenanceService>.Instance,
+            new SqliteBackupService(NullLogger<SqliteBackupService>.Instance));
 
         var copia = await service.CrearCopiaSeguridadAsync();
 

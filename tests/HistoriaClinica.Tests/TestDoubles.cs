@@ -1,6 +1,7 @@
 using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Repositories;
+using HistoriaClinica.Core.Services;
 
 namespace HistoriaClinica.Tests;
 
@@ -188,4 +189,10 @@ internal sealed class FakeDataMaintenanceService : IDataMaintenanceService
         CopiaCreada = true;
         return Task.FromResult(RutaCopia);
     }
+
+    public Task<string> RestaurarBackupAsync(string backupPath, CancellationToken cancellationToken = default) =>
+        Task.FromResult(string.Empty);
+
+    public Task<IReadOnlyList<BackupInfo>> ListarBackupsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<BackupInfo>>(Array.Empty<BackupInfo>());
 }

@@ -60,7 +60,7 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\app\{#AppVersion}\{#AppExeNam
 Filename: "{app}\app\{#AppVersion}\{#AppExeName}"; Description: "Abrir {#AppName}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{app}\app"
+Type: filesandordirs; Name: "{app}\app\{#AppVersion}"
 
 [Code]
 function ShouldCreateDesktopIcon: Boolean;

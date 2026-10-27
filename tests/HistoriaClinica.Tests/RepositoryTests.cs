@@ -38,7 +38,7 @@ public sealed class RepositoryTests : IDisposable
 
         Assert.NotNull(recuperado);
         Assert.Equal("Ana", recuperado.FirstName);
-        Assert.Equal(new DateTime(1990, 5, 4), recuperado.DOB);
+        Assert.Equal(new DateOnly(1990, 5, 4), recuperado.DOB);
         Assert.Equal(new[] { "12345678" }, await _pacientes.GetDnisAsync());
     }
 
@@ -152,7 +152,7 @@ public sealed class RepositoryTests : IDisposable
         Dni = dni,
         FirstName = nombre,
         LastName = apellido,
-        DOB = new DateTime(1990, 5, 4),
+        DOB = new DateOnly(1990, 5, 4),
         Phone = "555-0000",
         ObraSocial = "OSDE",
         NroSocio = "123",

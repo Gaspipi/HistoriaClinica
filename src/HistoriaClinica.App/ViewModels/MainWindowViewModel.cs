@@ -113,7 +113,7 @@ public partial class MainWindowViewModel : ObservableObject
     public string ResumenCopiable => HayPaciente ? $"{NombreCompleto} · {PacienteResumen}" : string.Empty;
 
     public string FechaNacimientoTexto =>
-        PacienteActual is null ? string.Empty : FechaClinica.FormatDate(PacienteActual.DOB);
+        PacienteActual is null || !PacienteActual.DOB.HasValue ? string.Empty : PacienteActual.DOB.Value.ToString("dd/MM/yyyy", CultureInfo.GetCultureInfo("es-ES"));
 
     public string NombreCompleto
     {
@@ -158,13 +158,13 @@ public partial class MainWindowViewModel : ObservableObject
     {
         get
         {
-            if (PacienteActual is null || !FechaClinica.HasValue(PacienteActual.DOB))
+            if (PacienteActual is null || !PacienteActual.DOB.HasValue)
             {
                 return "Sin fecha de nacimiento";
             }
 
             var hoy = DateTime.Today;
-            var nacimiento = PacienteActual.DOB.Date;
+            var nacimiento = PacienteActual.DOB.Value.ToDateTime(TimeOnly.MinValue);
             if (nacimiento > hoy)
             {
                 return "Fecha inválida";

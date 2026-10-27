@@ -42,3 +42,20 @@ jobs:
 
       - name: Test
         run: dotnet test HistoriaClinica.sln --configuration Release --no-build
+
+      - name: Coverage
+        run: dotnet test HistoriaClinica.sln --configuration Release --no-build --collect:"XPlat Code Coverage" --logger:"console;verbosity=detailed"
+        continue-on-error: true
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.os }}
+          path: |
+            **/coverage.cobertura.xml
+            **/TestResults/**
+        if: always()
+
+      - name: Vulnerability scan
+        run: dotnet list HistoriaClinica.sln package --vulnerable --include-transitive
+        continue-on-error: true

@@ -5,6 +5,7 @@ using HistoriaClinica.App.Services;
 using HistoriaClinica.App.ViewModels;
 using HistoriaClinica.App.Views;
 using HistoriaClinica.Core;
+using HistoriaClinica.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -50,6 +51,7 @@ public partial class App : Application
             services.AddSingleton<UserSession>();
             services.AddSingleton<IAppNavigator, AppNavigator>();
             services.AddSingleton<IClipboardService, ClipboardService>();
+            services.AddSingleton<ISqliteBackupService, SqliteBackupService>();
             services.AddSingleton<IDataMaintenanceService, DataMaintenanceService>();
             services.AddSingleton<IUserPreferencesService, UserPreferencesService>();
             services.AddTransient<AuthViewModel>();
@@ -57,6 +59,8 @@ public partial class App : Application
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<MainWindow>();
             services.AddTransient<PreferencesViewModel>();
+            services.AddTransient<DataMaintenanceViewModel>();
+            services.AddTransient<DataMaintenanceWindow>();
 
             var provider = services.BuildServiceProvider();
             _services = provider;

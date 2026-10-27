@@ -1,6 +1,7 @@
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Validation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HistoriaClinica.Core.Data;
 
@@ -22,6 +23,17 @@ public class HistoriaContext : DbContext
         modelBuilder.Entity<Paciente>(entity =>
         {
             entity.HasKey(p => p.Dni);
+            var dateOnlyConverter = new ValueConverter<DateOnly?, string?>(
+                v => v.HasValue ? v.Value.ToString("yyyy-MM-dd") : null,
+                v => string.IsNullOrWhiteSpace(v) ? null : DateOnly.Parse(v));
+            var dateOnlyComparer = new Microsoft.EntityFrameworkCore.ChangeTracking.ValueComparer<DateOnly?>(
+                (d1, d2) => Nullable.Equals(d1, d2),
+                d => d.HasValue ? d.Value.GetHashCode() : 0,
+                d => d.HasValue ? d.Value : null);
+            entity.Property(p => p.DOB)
+                .HasConversion(dateOnlyConverter)
+                .HasColumnType("TEXT")
+                .Metadata.SetValueComparer(dateOnlyComparer);
             entity.HasMany(p => p.FichasDiarias)
                 .WithOne(f => f.Paciente)
                 .HasForeignKey(f => f.Dni);

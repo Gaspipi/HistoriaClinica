@@ -22,7 +22,7 @@ public class HistoriaValidatorsTests
         var paciente = new Paciente
         {
             Dni = "12345678",
-            DOB = DateTime.Today.AddDays(1),
+            DOB = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
         };
 
         var resultado = HistoriaValidators.ValidatePaciente(paciente);
@@ -36,7 +36,7 @@ public class HistoriaValidatorsTests
         var paciente = new Paciente
         {
             Dni = "12345678",
-            DOB = DateTime.MinValue,
+            DOB = null,
         };
 
         Assert.True(HistoriaValidators.ValidatePaciente(paciente).IsValid);
