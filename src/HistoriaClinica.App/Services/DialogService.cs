@@ -41,8 +41,7 @@ public sealed class DialogService : IDialogService
 
         if (owner is null)
         {
-            window.Show();
-            return null;
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
         }
 
         _owners.Push(window);
@@ -72,8 +71,7 @@ public sealed class DialogService : IDialogService
 
         if (owner is null)
         {
-            window.Show();
-            return null;
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
         }
 
         _owners.Push(window);
@@ -98,7 +96,7 @@ public sealed class DialogService : IDialogService
         var owner = Owner;
         if (owner is null)
         {
-            return false;
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
         }
 
         var dialog = new MessageDialog(titulo, mensaje, mostrarCancelar: true, aceptar, cancelar, esDestructiva);
@@ -110,7 +108,7 @@ public sealed class DialogService : IDialogService
         var owner = Owner;
         if (owner is null)
         {
-            return;
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
         }
 
         var viewModel = _services.GetRequiredService<PreferencesViewModel>();
@@ -129,7 +127,7 @@ public sealed class DialogService : IDialogService
         var owner = Owner;
         if (owner is null)
         {
-            return;
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
         }
 
         var dialog = new MessageDialog(titulo, mensaje, mostrarCancelar: false);

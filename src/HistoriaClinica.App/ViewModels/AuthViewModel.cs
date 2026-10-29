@@ -4,6 +4,7 @@ using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Data;
 using HistoriaClinica.Core.Services;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
 
 namespace HistoriaClinica.App.ViewModels;
 
@@ -210,7 +211,7 @@ public partial class AuthViewModel : ObservableObject
         }
     }
 
-    [RelayCommand(CanExecute = nameof(PuedeAutenticar))]
+    [RelayCommand(CanExecute = nameof(PuedeRegistrar))]
     private async Task RegistrarAsync()
     {
         if (IsBusy)
@@ -223,7 +224,9 @@ public partial class AuthViewModel : ObservableObject
         ErrorUsuario = AuthService.ObtenerErrorUsuario(Usuario);
         ErrorPassword = AuthService.ObtenerErrorPassword(Password);
 
-        if (Password != ConfirmacionPassword)
+        if (!CryptographicOperations.FixedTimeEquals(
+                System.Text.Encoding.UTF8.GetBytes(Password),
+                System.Text.Encoding.UTF8.GetBytes(ConfirmacionPassword)))
         {
             ErrorConfirmacion = "Las contraseñas no coinciden.";
         }
@@ -261,6 +264,8 @@ public partial class AuthViewModel : ObservableObject
     private Task ReintentarAsync() => InitializeAsync();
 
     private bool PuedeAutenticar() => BaseLista && !IsInicializando && !IsBusy;
+
+    private bool PuedeRegistrar() => PuedeAutenticar() && EsRegistro;
 
     private bool PuedeReintentar() => !BaseLista && !IsInicializando && !IsBusy && !ErrorFatal;
 

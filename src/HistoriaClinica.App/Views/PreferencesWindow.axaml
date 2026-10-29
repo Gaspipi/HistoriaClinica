@@ -42,6 +42,7 @@
             <TextBlock Text="Tema" Classes="fieldLabel" />
             <ComboBox ItemsSource="{Binding Temas}"
                       SelectedIndex="{Binding TemaSeleccionado, Mode=TwoWay}"
+                      SelectedValueBinding="{Binding}"
                       HorizontalAlignment="Stretch"
                       automation:AutomationProperties.Name="Tema de la aplicación" />
           </StackPanel>

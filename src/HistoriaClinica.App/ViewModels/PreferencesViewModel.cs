@@ -20,7 +20,17 @@ public partial class PreferencesViewModel : ObservableObject
     {
         _preferences = preferences;
         TemaSeleccionado = (int)(Enum.IsDefined(preferences.Tema) ? preferences.Tema : AppTheme.System);
-        TamanoTextoSeleccionado = Math.Max(0, Array.IndexOf(Tamanos, preferences.TamanoTexto));
+
+        var indiceTamano = Array.IndexOf(Tamanos, preferences.TamanoTexto);
+        if (indiceTamano < 0)
+        {
+            MensajeError = "El tamaño de texto guardado no es válido y se restableció al predeterminado.";
+            TamanoTextoSeleccionado = 0;
+        }
+        else
+        {
+            TamanoTextoSeleccionado = indiceTamano;
+        }
     }
 
     public IReadOnlyList<string> Temas { get; } = ["Según el sistema", "Claro", "Oscuro"];

@@ -332,13 +332,14 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PuedeBuscar))]
     private Task BuscarAsync() => EjecutarAsync(async () =>
     {
-        if (!DniValidator.IsValid(Dni))
+        var dni = DniValidator.Normalizar(Dni);
+        if (!DniValidator.IsValid(dni))
         {
             MensajeError = DniValidator.ErrorMessage;
             return;
         }
 
-        await CargarPacienteAsync(Dni, preguntarCreacion: true);
+        await CargarPacienteAsync(dni, preguntarCreacion: true);
     }, "Error al buscar el paciente");
 
     private bool PuedeCrearPaciente() => !IsBusy;
@@ -456,7 +457,12 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        await _fichaService.DeleteAsync(FichaSeleccionada.Id);
+        var borrado = await _fichaService.DeleteAsync(FichaSeleccionada.Id);
+        if (!borrado)
+        {
+            MensajeError = "No se pudo borrar la ficha.";
+            return;
+        }
         await RecargarFichasAsync(FichaSeleccionada.Dni);
         MensajeEstado = "Ficha borrada.";
     }, "Error al borrar la ficha");

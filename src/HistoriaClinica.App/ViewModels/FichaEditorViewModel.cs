@@ -54,7 +54,7 @@ public partial class FichaEditorViewModel : EditorViewModelBase
 
     public FichaDiaria? Resultado { get; private set; }
 
-    public string FechaTexto => FechaClinica.FormatDateTime(_fecha);
+    public string FechaTexto => FechaClinica.FormatDateTime(Resultado?.Fecha ?? _fecha);
 
     [ObservableProperty]
     private string _dni = string.Empty;

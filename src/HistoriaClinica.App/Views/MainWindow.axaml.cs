@@ -6,6 +6,7 @@ using Avalonia.VisualTree;
 using HistoriaClinica.App.Layout;
 using HistoriaClinica.App.Services;
 using HistoriaClinica.App.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace HistoriaClinica.App.Views;
 
@@ -13,17 +14,19 @@ public partial class MainWindow : Window
 {
     private const double NarrowWidth = 760;
     private readonly MainWindowViewModel _viewModel;
+    private readonly ILogger<MainWindow> _logger;
     private readonly AutoCompleteBox _dniBox;
     private readonly ListBox _fichasList;
     private readonly DispatcherTimer _statusTimer;
 
-    public MainWindow(MainWindowViewModel viewModel)
+    public MainWindow(MainWindowViewModel viewModel, ILogger<MainWindow> logger)
     {
         InitializeComponent();
 
         Responsive.Attach(this, compactWidth: 1020, narrowWidth: NarrowWidth);
 
         _viewModel = viewModel;
+        _logger = logger;
         DataContext = viewModel;
         Icon = AppIcons.Load();
 
@@ -47,10 +50,18 @@ public partial class MainWindow : Window
     private async void OnOpened(object? sender, EventArgs e)
     {
         Opened -= OnOpened;
-        WindowSizing.AjustarAlAreaDeTrabajo(this);
-        ActualizarHistorial();
-        await _viewModel.InitializeAsync();
-        EnfocarDni(seleccionarTodo: true);
+        try
+        {
+            WindowSizing.AjustarAlAreaDeTrabajo(this);
+            ActualizarHistorial();
+            await _viewModel.InitializeAsync();
+            EnfocarDni(seleccionarTodo: true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al abrir la ventana principal");
+            _viewModel.MensajeError = "No se pudo abrir la ventana principal. Intentá nuevamente.";
+        }
     }
 
     private void OnDniKeyDown(object? sender, KeyEventArgs e)

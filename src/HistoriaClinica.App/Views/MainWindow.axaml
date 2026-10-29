@@ -35,6 +35,9 @@
     <Style Selector="Border#FichaDetail">
       <Setter Property="Grid.Column" Value="2" />
     </Style>
+    <Style Selector="Window.narrow Border#FichaDetail">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
     <Style Selector="Window.compact TextBlock#HeaderSubtitle">
       <Setter Property="IsVisible" Value="False" />
     </Style>
@@ -154,7 +157,7 @@
                              ItemsSource="{Binding DnisSugeridos}"
                              MinimumPrefixLength="0"
                              FilterMode="Contains"
-                             IsTextCompletionEnabled="True"
+                             IsTextCompletionEnabled="False"
                              MaxLength="8"
                              MaxDropDownHeight="260"
                              PlaceholderText="Ingresá los 8 dígitos"
@@ -323,7 +326,7 @@
                           ColumnSpacing="14" RowSpacing="10">
                       <TextBlock Grid.Row="0" Text="DNI" Classes="caption" VerticalAlignment="Center" />
                       <TextBlock Grid.Row="0" Grid.Column="1"
-                                 Text="{Binding PacienteActual.Dni, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin DNI'}"
+                                 Text="{Binding PacienteActual.Dni, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin DNI', FallbackValue='Sin DNI', TargetNullValue='Sin DNI'}"
                                  Classes="strong" VerticalAlignment="Center" />
 
                       <TextBlock Grid.Row="1" Text="Nacimiento" Classes="caption" VerticalAlignment="Center" />
@@ -337,7 +340,7 @@
 
                       <TextBlock Grid.Row="3" Text="Teléfono" Classes="caption" VerticalAlignment="Center" />
                       <TextBlock Grid.Row="3" Grid.Column="1"
-                                 Text="{Binding PacienteActual.Phone, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin teléfono'}"
+                                 Text="{Binding PacienteActual.Phone, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin teléfono', FallbackValue='Sin teléfono', TargetNullValue='Sin teléfono'}"
                                  Classes="strong" VerticalAlignment="Center" />
                     </Grid>
                   </StackPanel>
@@ -354,7 +357,7 @@
 
                       <TextBlock Grid.Row="1" Text="Nro asociado" Classes="caption" VerticalAlignment="Center" />
                       <TextBlock Grid.Row="1" Grid.Column="1"
-                                 Text="{Binding PacienteActual.NroSocio, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin número'}"
+                                 Text="{Binding PacienteActual.NroSocio, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin número', FallbackValue='Sin número', TargetNullValue='Sin número'}"
                                  Classes="strong" VerticalAlignment="Center" />
                     </Grid>
                   </StackPanel>
@@ -368,13 +371,13 @@
                     <StackPanel Spacing="4">
                       <TextBlock Text="Personales" Classes="fieldLabel" />
                       <SelectableTextBlock
-                          Text="{Binding PacienteActual.AntecPers, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes personales registrados'}"
+                          Text="{Binding PacienteActual.AntecPers, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes personales registrados', FallbackValue='Sin antecedentes personales registrados', TargetNullValue='Sin antecedentes personales registrados'}"
                           Classes="valueBlock" />
                     </StackPanel>
                     <StackPanel Spacing="4">
                       <TextBlock Text="Familiares" Classes="fieldLabel" />
                       <SelectableTextBlock
-                          Text="{Binding PacienteActual.AntecFam, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes familiares registrados'}"
+                          Text="{Binding PacienteActual.AntecFam, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes familiares registrados', FallbackValue='Sin antecedentes familiares registrados', TargetNullValue='Sin antecedentes familiares registrados'}"
                           Classes="valueBlock" />
                     </StackPanel>
                   </layout:ResponsiveGrid>
@@ -385,7 +388,7 @@
                 <StackPanel Spacing="12">
                   <TextBlock Text="Medicación" Classes="sectionTitle" />
                   <SelectableTextBlock
-                      Text="{Binding PacienteActual.Medicacion, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin medicación registrada'}"
+                      Text="{Binding PacienteActual.Medicacion, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin medicación registrada', FallbackValue='Sin medicación registrada', TargetNullValue='Sin medicación registrada'}"
                       Classes="valueBlock" />
                 </StackPanel>
               </Border>

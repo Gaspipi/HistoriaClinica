@@ -138,7 +138,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         var paciente = CrearPaciente();
         var validation = HistoriaValidators.ValidatePaciente(paciente);
 
-        ErrorDni = validation.IsValid ? null : DniValidator.GetError(paciente.Dni);
+        ErrorDni = DniValidator.GetError(paciente.Dni);
         ErrorFechaNacimiento =
             paciente.DOB.HasValue && paciente.DOB.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Today
                 ? "La fecha de nacimiento no puede ser posterior a hoy."

@@ -3,22 +3,25 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using HistoriaClinica.App.Layout;
 using HistoriaClinica.App.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace HistoriaClinica.App.Views;
 
 public partial class AuthWindow : Window
 {
     private readonly AuthViewModel _viewModel;
+    private readonly ILogger<AuthWindow> _logger;
     private readonly TextBox _usuarioTextBox;
     private readonly TextBox _registroUsuarioTextBox;
 
-    public AuthWindow(AuthViewModel viewModel)
+    public AuthWindow(AuthViewModel viewModel, ILogger<AuthWindow> logger)
     {
         InitializeComponent();
 
         Responsive.Attach(this, compactWidth: 480, narrowWidth: 400, shortHeight: 500);
 
         _viewModel = viewModel;
+        _logger = logger;
         DataContext = viewModel;
         Icon = AppIcons.Load();
 
@@ -34,14 +37,22 @@ public partial class AuthWindow : Window
     private async void OnOpened(object? sender, EventArgs e)
     {
         Opened -= OnOpened;
-        WindowSizing.AjustarAlAreaDeTrabajo(this);
-        await _viewModel.InitializeAsync();
-        EnfocarUsuario();
+        try
+        {
+            WindowSizing.AjustarAlAreaDeTrabajo(this);
+            await _viewModel.InitializeAsync();
+            EnfocarUsuario();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al abrir la ventana de autenticación");
+            _viewModel.MensajeError = "No se pudo abrir la ventana de autenticación. Intentá nuevamente.";
+        }
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(AuthViewModel.HayFormulario) or nameof(AuthViewModel.EsRegistro)
+        if ((e.PropertyName is nameof(AuthViewModel.HayFormulario) or nameof(AuthViewModel.EsRegistro))
             && _viewModel.HayFormulario)
         {
             Dispatcher.UIThread.Post(EnfocarUsuario);
