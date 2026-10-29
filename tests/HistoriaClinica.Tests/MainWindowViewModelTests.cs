@@ -14,7 +14,7 @@ public sealed class MainWindowViewModelTests
     {
         var contexto = CrearViewModel();
         var paciente = CrearPaciente("12345678", "Ana", "Pérez");
-        paciente.DOB = DateTime.Today.AddYears(-30).AddDays(-1);
+        paciente.DOB = DateOnly.FromDateTime(DateTime.Today.AddYears(-30).AddDays(-1));
         paciente.ObraSocial = "OSDE";
 
         contexto.Vm.PacienteActual = paciente;
@@ -267,7 +267,7 @@ public sealed class MainWindowViewModelTests
         Dni = dni,
         FirstName = nombre,
         LastName = apellido,
-        DOB = new DateTime(1990, 5, 4),
+        DOB = new DateOnly(1990, 5, 4),
         Phone = "555-0000",
         ObraSocial = "OSDE",
         NroSocio = "123",

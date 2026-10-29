@@ -51,23 +51,29 @@ Para el flujo de firma en dos fases:
 - Aborta si ya hay una ventana de Historia Clínica abierta.
 - Al desinstalar elimina los binarios, pero no los datos.
 
-## Firma
+## Firma (preparada, inactiva)
 
-La firma Authenticode se integra con SignPath Foundation. El workflow
-`Windows signed release` firma primero `HistoriaClinica.exe`, compila el
-instalador con ese ejecutable y después firma el instalador. Cada release
-requiere dos aprobaciones manuales en SignPath.
+**No hay firma Authenticode activa.** SignPath Foundation rechazó la solicitud
+inicial por falta de adopción pública. El workflow `Windows signed release`
+quedó preparado para una futura aprobación o para un certificado comercial, pero
+no debe ejecutarse sin certificado y secretos.
+
+El flujo previsto firma primero `HistoriaClinica.exe`, compila el instalador con
+ese ejecutable y después firma el instalador. Cada release requeriría dos
+aprobaciones manuales.
 
 Inno Setup rellena `ProductName`, `ProductVersion` y `FileVersion` con espacios;
 el workflow normaliza esos campos con rcedit 2.0.0 antes de enviar el
-instalador, para que SignPath pueda exigir coincidencias exactas.
+instalador, para que las restricciones de metadatos sean exactas.
 
-- Política: [`CODE_SIGNING_POLICY.md`](../CODE_SIGNING_POLICY.md).
-- Procedimiento: [`docs/SIGNPATH.md`](../docs/SIGNPATH.md).
+- Estado y plan: [`CODE_SIGNING_POLICY.md`](../CODE_SIGNING_POLICY.md).
+- Procedimiento y reaplicación: [`docs/SIGNPATH.md`](../docs/SIGNPATH.md).
+- Mientras no haya firma, verificá el `.sha256` publicado.
 - El desinstalador que genera Inno Setup no se firma en esta etapa.
-- SmartScreen puede seguir advirtiendo hasta que el binario gane reputación.
+- SmartScreen puede advertir hasta que el binario gane reputación.
 
 ## Pendiente
 
-- Aprobación de SignPath Foundation y publicación de `v2.0.1` firmada.
+- Decidir la vía de firma y reaplicar cuando haya más adopción.
+- Publicar `v2.0.1` sin firma si se decide continuar.
 - Validación visual del asistente en Windows con DPI y tema del sistema.

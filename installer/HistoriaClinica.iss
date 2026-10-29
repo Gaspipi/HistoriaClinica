@@ -8,7 +8,7 @@
 #endif
 
 [Setup]
-AppId={{e4bc6c3c-b7d4-4122-9589-9e3bba65a1c8}
+AppId={{e4bc6c3c-b7d4-4122-9589-9e3bba65a1c8}}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
@@ -60,7 +60,7 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\app\{#AppVersion}\{#AppExeNam
 Filename: "{app}\app\{#AppVersion}\{#AppExeName}"; Description: "Abrir {#AppName}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{app}\app"
+Type: filesandordirs; Name: "{app}\app\{#AppVersion}"
 
 [Code]
 function ShouldCreateDesktopIcon: Boolean;

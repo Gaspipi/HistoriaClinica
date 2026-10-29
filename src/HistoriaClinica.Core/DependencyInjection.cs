@@ -23,6 +23,8 @@ public static class DependencyInjection
             services.AddSingleton<IDatabasePathProvider>(new DatabasePathProvider(databasePath));
         }
 
+        services.AddSingleton<SqliteBusyTimeoutInterceptor>();
+
         services.AddDbContextFactory<HistoriaContext>((provider, options) =>
         {
             var path = provider.GetRequiredService<IDatabasePathProvider>().DatabasePath;
@@ -36,9 +38,11 @@ public static class DependencyInjection
             {
                 DataSource = path,
                 Mode = SqliteOpenMode.ReadWriteCreate,
+                ForeignKeys = true,
             }.ToString();
 
             options.UseSqlite(connectionString);
+            options.AddInterceptors(provider.GetRequiredService<SqliteBusyTimeoutInterceptor>());
         });
 
         services.AddSingleton<DatabaseInitializer>();

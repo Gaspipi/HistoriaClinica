@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using HistoriaClinica.Core.Data;
+using HistoriaClinica.Core.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 
@@ -12,19 +13,26 @@ public interface IDataMaintenanceService
     void AbrirCarpetaDatos();
 
     Task<string> CrearCopiaSeguridadAsync(CancellationToken cancellationToken = default);
+
+    Task<string> RestaurarBackupAsync(string backupPath, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<BackupInfo>> ListarBackupsAsync(CancellationToken cancellationToken = default);
 }
 
 public sealed class DataMaintenanceService : IDataMaintenanceService
 {
     private readonly IDatabasePathProvider _pathProvider;
     private readonly ILogger<DataMaintenanceService> _logger;
+    private readonly ISqliteBackupService _backupService;
 
     public DataMaintenanceService(
         IDatabasePathProvider pathProvider,
-        ILogger<DataMaintenanceService> logger)
+        ILogger<DataMaintenanceService> logger,
+        ISqliteBackupService backupService)
     {
         _pathProvider = pathProvider;
         _logger = logger;
+        _backupService = backupService;
     }
 
     public string DatabasePath => _pathProvider.DatabasePath;
@@ -45,59 +53,33 @@ public sealed class DataMaintenanceService : IDataMaintenanceService
         });
     }
 
-    public async Task<string> CrearCopiaSeguridadAsync(CancellationToken cancellationToken = default)
+    public Task<string> CrearCopiaSeguridadAsync(CancellationToken cancellationToken = default)
     {
         if (!File.Exists(DatabasePath))
         {
             throw new FileNotFoundException("No se encontró la base de datos.", DatabasePath);
         }
 
+        return _backupService.CreateBackupAsync(DatabasePath, null, cancellationToken);
+    }
+
+    public async Task<string> RestaurarBackupAsync(string backupPath, CancellationToken cancellationToken = default)
+    {
+        var result = await _backupService.RestoreBackupAsync(backupPath, DatabasePath, cancellationToken);
+        if (!result.Success)
+        {
+            throw new InvalidOperationException(result.Message);
+        }
+
+        return result.PreRestoreBackupPath ?? string.Empty;
+    }
+
+    public Task<IReadOnlyList<BackupInfo>> ListarBackupsAsync(CancellationToken cancellationToken = default)
+    {
         var carpeta = Path.Combine(
             Path.GetDirectoryName(DatabasePath) ?? AppContext.BaseDirectory,
             "Backups");
         Directory.CreateDirectory(carpeta);
-
-        var destino = ObtenerRutaCopia(carpeta);
-
-        try
-        {
-            await Task.Run(() =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                using var origen = new SqliteConnection($"Data Source={DatabasePath};Mode=ReadOnly");
-                using var copia = new SqliteConnection($"Data Source={destino};Mode=ReadWriteCreate");
-                origen.Open();
-                copia.Open();
-                origen.BackupDatabase(copia);
-            }, cancellationToken);
-
-            _logger.LogInformation("Copia de seguridad creada en {BackupPath}", destino);
-            return destino;
-        }
-        catch
-        {
-            if (File.Exists(destino))
-            {
-                File.Delete(destino);
-            }
-
-            throw;
-        }
-    }
-
-    private static string ObtenerRutaCopia(string carpeta)
-    {
-        var baseNombre = $"Historia-{DateTime.Now:yyyyMMdd-HHmmss}";
-        var destino = Path.Combine(carpeta, $"{baseNombre}.db");
-
-        var indice = 1;
-        while (File.Exists(destino))
-        {
-            destino = Path.Combine(carpeta, $"{baseNombre}-{indice}.db");
-            indice++;
-        }
-
-        return destino;
+        return _backupService.ListBackupsAsync(carpeta, cancellationToken);
     }
 }

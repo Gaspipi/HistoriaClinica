@@ -1,28 +1,23 @@
-# Code signing policy
+# Política de firma de código
 
-**Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
+**Estado: la aplicación se distribuye sin firma digital (sin Authenticode).**
 
-> **Estado: la firma de código está inactiva.** El proyecto está pendiente de
-> aprobación de SignPath Foundation y la release publicada (`v2.0.0`) no está
-> firmada. Esta política describe cómo se firmarán los binarios una vez aprobada
-> la solicitud; ver [`docs/SIGNPATH.md`](docs/SIGNPATH.md).
+No hay certificado activo ni flujo de firma en uso. Los instaladores se publican
+tal como los genera Inno Setup. Windows SmartScreen puede mostrar una advertencia
+al ejecutarlos; el usuario debe elegir "Más información" → "Ejecutar de todas
+formas".
 
-Esta política se aplica a los binarios de Windows publicados desde
-[Gaspipi/HistoriaClinica](https://github.com/Gaspipi/HistoriaClinica).
+## Verificación de integridad
 
-## Alcance
+Cada release incluye un archivo `SHA256SUMS.txt`. Verificá el hash del
+instalador antes de instalarlo:
 
-- `HistoriaClinica.exe`, el ejecutable de la aplicación.
-- `HistoriaClinica-<version>-setup.exe`, el instalador de Windows.
+- Windows (PowerShell): `Get-FileHash .\HistoriaClinica-<version>-setup.exe -Algorithm SHA256`
+- Linux/macOS: `sha256sum HistoriaClinica-<version>-setup.exe`
 
-Cuando la firma esté activa, el ejecutable se firmará antes de compilar el
-instalador, de modo que la versión instalada también tenga firma Authenticode.
-El instalador se firmará después de incluir el ejecutable firmado.
+Compará el resultado con el valor publicado en `SHA256SUMS.txt`.
 
-El desinstalador que genera Inno Setup no se firma en esta etapa. La aplicación
-incluye un desinstalador estándar y no modifica la base de datos al desinstalar.
-
-## Construcción y aprobación
+## Reaplicación futura
 
 - Los binarios se construyen en GitHub Actions sobre runners oficiales de
   GitHub (`windows-latest`) desde el repositorio público.
@@ -68,3 +63,6 @@ Get-AuthenticodeSignature .\HistoriaClinica-<version>-setup.exe
 El resultado debe indicar `Status: Valid` y un firmante emitido por SignPath
 Foundation. El archivo `.sha256` publicado junto al instalador permite verificar
 la integridad de la descarga.
+
+Si en el futuro se obtiene un certificado Authenticode, se reactivará el flujo
+de firma y se actualizará este documento.

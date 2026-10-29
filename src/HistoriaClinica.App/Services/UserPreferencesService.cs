@@ -75,6 +75,7 @@ public sealed class UserPreferencesService : IUserPreferencesService
             tamanoTexto = AppTextSize.Normal;
         }
 
+        var rutaTemporal = $"{_path}.tmp";
         try
         {
             var carpeta = Path.GetDirectoryName(_path);
@@ -86,10 +87,26 @@ public sealed class UserPreferencesService : IUserPreferencesService
             var contenido = JsonSerializer.Serialize(
                 new PreferencesFile(tema.ToString(), tamanoTexto.ToString()),
                 JsonOptions);
-            File.WriteAllText(_path, contenido);
+            File.WriteAllText(rutaTemporal, contenido);
+            File.Move(rutaTemporal, _path, overwrite: true);
         }
         catch (Exception ex)
         {
+            try
+            {
+                if (File.Exists(rutaTemporal))
+                {
+                    File.Delete(rutaTemporal);
+                }
+            }
+            catch (Exception limpieza)
+            {
+                _logger.LogWarning(
+                    limpieza,
+                    "No se pudo borrar el archivo temporal de preferencias {Ruta}",
+                    rutaTemporal);
+            }
+
             _logger.LogWarning(ex, "No se pudieron guardar las preferencias en {Ruta}", _path);
             return false;
         }

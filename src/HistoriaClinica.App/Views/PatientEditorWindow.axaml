@@ -86,6 +86,9 @@
                 </Grid>
                 <Border Classes="dateField">
                   <DatePicker SelectedDate="{Binding FechaNacimiento, Mode=TwoWay, Converter={StaticResource DateTimeOffsetConverter}}"
+                              DayFormat="dd"
+                              MonthFormat="MM"
+                              YearFormat="yyyy"
                               Foreground="{DynamicResource TextPrimaryBrush}"
                               automation:AutomationProperties.Name="Fecha de nacimiento" />
                 </Border>

@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HistoriaClinica.App.Collections;
 using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Services;
@@ -46,9 +48,9 @@ public partial class MainWindowViewModel : ObservableObject
         };
     }
 
-    public ObservableCollection<string> DnisSugeridos { get; } = new();
+    public RangeObservableCollection<string> DnisSugeridos { get; } = new();
 
-    public ObservableCollection<FichaDiaria> Fichas { get; } = new();
+    public RangeObservableCollection<FichaDiaria> Fichas { get; } = new();
 
     [ObservableProperty]
     private string _dni = string.Empty;
@@ -111,7 +113,7 @@ public partial class MainWindowViewModel : ObservableObject
     public string ResumenCopiable => HayPaciente ? $"{NombreCompleto} · {PacienteResumen}" : string.Empty;
 
     public string FechaNacimientoTexto =>
-        PacienteActual is null ? string.Empty : FechaClinica.FormatDate(PacienteActual.DOB);
+        PacienteActual is null || !PacienteActual.DOB.HasValue ? string.Empty : PacienteActual.DOB.Value.ToString("dd/MM/yyyy", CultureInfo.GetCultureInfo("es-ES"));
 
     public string NombreCompleto
     {
@@ -156,13 +158,13 @@ public partial class MainWindowViewModel : ObservableObject
     {
         get
         {
-            if (PacienteActual is null || !FechaClinica.HasValue(PacienteActual.DOB))
+            if (PacienteActual is null || !PacienteActual.DOB.HasValue)
             {
                 return "Sin fecha de nacimiento";
             }
 
             var hoy = DateTime.Today;
-            var nacimiento = PacienteActual.DOB.Date;
+            var nacimiento = PacienteActual.DOB.Value.ToDateTime(TimeOnly.MinValue);
             if (nacimiento > hoy)
             {
                 return "Fecha inválida";
@@ -203,7 +205,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     partial void OnDniChanged(string value)
     {
-        var limpio = new string((value ?? string.Empty).Where(char.IsAsciiDigit).Take(DniValidator.Length).ToArray());
+        var limpio = DniValidator.Normalizar(value);
         if (!string.Equals(value, limpio, StringComparison.Ordinal))
         {
             Dni = limpio;
@@ -291,7 +293,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private Task MostrarAcercaDeAsync() => EjecutarAsync(async () =>
     {
-        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "2.0.1";
+        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "desconocida";
         var mensaje = $"""
             Historia Clínica {version}
             Usuario: {_session.NombreUsuario}
@@ -343,7 +345,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     [RelayCommand(CanExecute = nameof(PuedeCrearPaciente))]
     private Task NuevoPacienteAsync() => EjecutarAsync(
-        () => AbrirNuevoPacienteAsync(DniValidator.IsValid(Dni) ? Dni : string.Empty),
+        () => AbrirNuevoPacienteAsync(DniValidator.Normalizar(Dni)),
         "Error al crear el paciente");
 
     private bool PuedeEditarPaciente() => PacienteActual is not null && !IsBusy;
@@ -378,10 +380,10 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
+        // La fecha de la ficha nueva la captura el editor al guardar.
         var nueva = new FichaDiaria
         {
             Dni = PacienteActual.Dni,
-            Fecha = DateTime.Now,
         };
 
         var guardada = await _dialogs.ShowFichaEditorAsync(
@@ -437,14 +439,17 @@ public partial class MainWindowViewModel : ObservableObject
                 ['\r', '\n'],
                 StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
 
-        if (motivo.Length > 90)
+        // Se trunca por elementos de texto para no partir emojis ni surrogates.
+        var info = new StringInfo(motivo);
+        if (info.LengthInTextElements > 90)
         {
-            motivo = $"{motivo[..87]}...";
+            motivo = $"{info.SubstringByTextElements(0, 87)}...";
         }
 
         var confirmado = await _dialogs.ConfirmAsync(
             "Borrar ficha",
-            $"¿Borrar la ficha del {fecha}?\nMotivo: {motivo}\n\nEsta acción no se puede deshacer.");
+            $"¿Borrar la ficha del {fecha}?\nMotivo: {motivo}\n\nEsta acción no se puede deshacer.",
+            esDestructiva: true);
 
         if (!confirmado)
         {
@@ -502,12 +507,7 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task RecargarFichasAsync(string dni, int? seleccionarId = null)
     {
         var fichas = await _fichaService.GetByDniAsync(dni);
-
-        Fichas.Clear();
-        foreach (var ficha in fichas)
-        {
-            Fichas.Add(ficha);
-        }
+        Fichas.ReplaceAll(fichas);
 
         FichaSeleccionada = seleccionarId is int id
             ? Fichas.FirstOrDefault(f => f.Id == id)
@@ -517,12 +517,7 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task CargarDnisAsync()
     {
         var dnis = await _pacienteService.GetDnisAsync();
-
-        DnisSugeridos.Clear();
-        foreach (var dni in dnis)
-        {
-            DnisSugeridos.Add(dni);
-        }
+        DnisSugeridos.ReplaceAll(dnis);
     }
 
     private async Task EjecutarAsync(Func<Task> accion, string contexto)

@@ -22,8 +22,10 @@ public partial class AuthWindow : Window
         DataContext = viewModel;
         Icon = AppIcons.Load();
 
-        _usuarioTextBox = this.FindControl<TextBox>("UsuarioTextBox")!;
-        _registroUsuarioTextBox = this.FindControl<TextBox>("RegistroUsuarioTextBox")!;
+        _usuarioTextBox = this.FindControl<TextBox>("UsuarioTextBox")
+            ?? throw new InvalidOperationException("No se encontró el control UsuarioTextBox");
+        _registroUsuarioTextBox = this.FindControl<TextBox>("RegistroUsuarioTextBox")
+            ?? throw new InvalidOperationException("No se encontró el control RegistroUsuarioTextBox");
 
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         Opened += OnOpened;

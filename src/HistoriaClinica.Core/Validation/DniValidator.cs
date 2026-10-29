@@ -10,5 +10,10 @@ public static class DniValidator
         && dni.Length == Length
         && dni.All(char.IsAsciiDigit);
 
+    // Conserva solo los dígitos ASCII y corta en la longitud máxima del DNI;
+    // la validez completa se valida aparte al guardar.
+    public static string Normalizar(string? dni) =>
+        new string((dni ?? string.Empty).Where(char.IsAsciiDigit).Take(Length).ToArray());
+
     public static string? GetError(string? dni) => IsValid(dni) ? null : ErrorMessage;
 }

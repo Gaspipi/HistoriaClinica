@@ -1,6 +1,7 @@
 using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Repositories;
+using HistoriaClinica.Core.Services;
 
 namespace HistoriaClinica.Tests;
 
@@ -97,6 +98,8 @@ internal sealed class FakeDialogService : IDialogService
 
     public string? UltimoMensajeConfirmacion { get; private set; }
 
+    public bool? UltimaConfirmacionDestructiva { get; private set; }
+
     public int PreferenciasMostradas { get; private set; }
 
     public Task<Paciente?> ShowPatientEditorAsync(Paciente paciente, bool esNuevo)
@@ -117,10 +120,16 @@ internal sealed class FakeDialogService : IDialogService
         return Task.FromResult(FichaResultado);
     }
 
-    public Task<bool> ConfirmAsync(string titulo, string mensaje, string aceptar = "Sí", string cancelar = "No")
+    public Task<bool> ConfirmAsync(
+        string titulo,
+        string mensaje,
+        string aceptar = "Sí",
+        string cancelar = "No",
+        bool esDestructiva = false)
     {
         Confirmaciones++;
         UltimoMensajeConfirmacion = mensaje;
+        UltimaConfirmacionDestructiva = esDestructiva;
         return Task.FromResult(ConfirmarResultado);
     }
 
@@ -180,4 +189,10 @@ internal sealed class FakeDataMaintenanceService : IDataMaintenanceService
         CopiaCreada = true;
         return Task.FromResult(RutaCopia);
     }
+
+    public Task<string> RestaurarBackupAsync(string backupPath, CancellationToken cancellationToken = default) =>
+        Task.FromResult(string.Empty);
+
+    public Task<IReadOnlyList<BackupInfo>> ListarBackupsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<BackupInfo>>(Array.Empty<BackupInfo>());
 }

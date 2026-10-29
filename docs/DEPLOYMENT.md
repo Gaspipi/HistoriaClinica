@@ -2,7 +2,7 @@
 
 Este documento define cómo distribuir Historia Clínica, cómo reemplazar versiones anteriores sin perder datos y cómo evolucionar el esquema SQLite.
 
-**Estado:** migrador de esquema e instalador Inno Setup implementados y publicados en `v2.0.0`. La `v2.0.1` está preparada para firma Authenticode con SignPath Foundation; falta la aprobación de SignPath, la validación en Windows y la publicación firmada.
+**Estado:** migrador de esquema e instalador Inno Setup implementados y publicados en `v2.0.0`. La `v2.0.1` no está publicada. El flujo de firma Authenticode está preparado, pero SignPath Foundation rechazó la solicitud inicial por falta de adopción pública; por ahora los binarios se distribuyen sin firma. Falta la validación visual en Windows y decidir la vía de firma.
 
 ## 1. Objetivos
 
@@ -85,24 +85,31 @@ Archivos implementados:
 - `installer/HistoriaClinica.iss`: definición de Inno Setup.
 - `installer/build-installer.ps1`: publica `win-x64`, compila el instalador y genera el checksum SHA-256. Admite `-SkipPublish` y `-SkipInstaller` para el flujo de firma en dos fases.
 - `.github/workflows/windows-installer.yml`: tests y build sin firma en Windows.
-- `.github/workflows/windows-signed-release.yml`: firma, verificación, checksum y publicación de la release.
+- `.github/workflows/windows-signed-release.yml`: workflow preparado para firma, verificación, checksum y publicación de la release; inactivo hasta tener certificado.
 
-### Firma Authenticode
+### Firma Authenticode (preparada, inactiva)
 
-La firma se realiza con SignPath Foundation en dos fases:
+**No hay firma activa.** SignPath Foundation rechazó la solicitud inicial por
+falta de señales públicas de adopción. El workflow quedó preparado para una
+futura aprobación o para un certificado comercial, pero no debe ejecutarse sin un
+certificado y los secretos correspondientes.
+
+Cuando haya certificado, la firma se hará en dos fases:
 
 1. Se publica y firma `HistoriaClinica.exe`.
 2. Se compila el instalador usando ese ejecutable firmado y se firma el instalador.
 
-Cada fase espera una aprobación manual en SignPath. El workflow verifica ambas
-firmas y regenera el SHA-256 antes de publicar. Antes de enviar el instalador,
-normaliza `ProductName`, `ProductVersion` y `FileVersion` con rcedit 2.0.0 para
-que las restricciones de metadatos de SignPath sean exactas. El desinstalador
-de Inno Setup queda sin firma en esta etapa. SmartScreen puede seguir advirtiendo
+Cada fase esperará una aprobación manual en SignPath. El workflow verificará
+ambas firmas y regenerará el SHA-256 antes de publicar. Antes de enviar el
+instalador, normaliza `ProductName`, `ProductVersion` y `FileVersion` con rcedit
+2.0.0 para que las restricciones de metadatos sean exactas. El desinstalador de
+Inno Setup queda sin firma en esta etapa. SmartScreen puede seguir advirtiendo
 hasta que el binario acumule reputación.
 
-La configuración y la solicitud están en [`SIGNPATH.md`](SIGNPATH.md); la
-política pública, en [`CODE_SIGNING_POLICY.md`](../CODE_SIGNING_POLICY.md).
+Mientras no haya firma, la integridad se verifica con el `.sha256` publicado. La
+configuración, el rechazo y el plan de reaplicación están en
+[`SIGNPATH.md`](SIGNPATH.md); la política objetivo, en
+[`CODE_SIGNING_POLICY.md`](../CODE_SIGNING_POLICY.md).
 
 ### Linux
 
@@ -310,13 +317,14 @@ No se debe ejecutar una versión anterior contra una base migrada sin restaurar 
 - [ ] El instalador detecta la app abierta.
 - [x] El release incluye checksums y versión visible en “Acerca de”.
 - [x] Tests de migración en CI.
-- [ ] Firma Authenticode válida del ejecutable y del instalador.
-- [ ] Validación del instalador y de la firma en Windows real.
+- [ ] Firma Authenticode válida del ejecutable y del instalador (bloqueada hasta tener certificado).
+- [ ] Validación del instalador en Windows real.
 - [ ] SmartScreen sin advertencia (depende de la reputación acumulada).
 
 ## 8. Decisiones pendientes
 
-- Fecha de aprobación y publicación de la `v2.0.1` firmada por SignPath Foundation.
+- Vía de firma: reaplicar a SignPath Foundation o comprar un certificado Authenticode.
+- Fecha de publicación de `v2.0.1` sin firma.
 - Firma del desinstalador de Inno Setup, que queda fuera del alcance inicial.
 - Si se publicará una versión portable oficial además del instalador.
 - Si el backup previo a la migración se conserva indefinidamente o se rota.
