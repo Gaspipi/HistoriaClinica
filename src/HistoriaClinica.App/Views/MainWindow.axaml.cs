@@ -117,7 +117,7 @@ public partial class MainWindow : Window
     private void ActualizarHistorial()
     {
         var angosto = Responsive.EsNarrow(this);
-        HistoryLayout.ColumnDefinitions = new ColumnDefinitions(angosto ? "240,*" : "320,6,*");
+        HistoryLayout.ColumnDefinitions = new ColumnDefinitions(angosto ? "240,0,*" : "320,6,*");
     }
 
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)

@@ -127,7 +127,7 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         // En una ficha nueva la fecha se captura al guardar, no al abrir el diálogo.
         if (_esNuevo)
         {
-            ficha.Fecha = DateTime.UtcNow;
+            ficha.Fecha = DateTime.Now;
         }
 
         await _fichaService.SaveAsync(ficha);

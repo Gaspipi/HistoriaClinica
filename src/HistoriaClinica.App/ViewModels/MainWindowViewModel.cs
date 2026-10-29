@@ -113,7 +113,7 @@ public partial class MainWindowViewModel : ObservableObject
     public string ResumenCopiable => HayPaciente ? $"{NombreCompleto} · {PacienteResumen}" : string.Empty;
 
     public string FechaNacimientoTexto =>
-        PacienteActual is null || !PacienteActual.DOB.HasValue ? string.Empty : PacienteActual.DOB.Value.ToString("dd/MM/yyyy", FechaClinica.Culture);
+        PacienteActual is null || !PacienteActual.DOB.HasValue ? string.Empty : PacienteActual.DOB.Value.ToString("dd/MM/yyyy", CultureInfo.GetCultureInfo("es-ES"));
 
     public string NombreCompleto
     {
@@ -163,8 +163,8 @@ public partial class MainWindowViewModel : ObservableObject
                 return "Sin fecha de nacimiento";
             }
 
-            var hoy = DateOnly.FromDateTime(DateTime.Today);
-            var nacimiento = PacienteActual.DOB.Value;
+            var hoy = DateTime.Today;
+            var nacimiento = PacienteActual.DOB.Value.ToDateTime(TimeOnly.MinValue);
             if (nacimiento > hoy)
             {
                 return "Fecha inválida";
@@ -293,7 +293,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private Task MostrarAcercaDeAsync() => EjecutarAsync(async () =>
     {
-        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString() ?? "desconocida";
+        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "desconocida";
         var mensaje = $"""
             Historia Clínica {version}
             Usuario: {_session.NombreUsuario}
@@ -514,12 +514,6 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var fichas = await _fichaService.GetByDniAsync(dni);
         Fichas.ReplaceAll(fichas);
-
-        if (Fichas.Count == 0)
-        {
-            FichaSeleccionada = null;
-            return;
-        }
 
         FichaSeleccionada = seleccionarId is int id
             ? Fichas.FirstOrDefault(f => f.Id == id)
