@@ -20,6 +20,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly IAppNavigator _navigator;
     private readonly IClipboardService _clipboard;
     private readonly IDataMaintenanceService _maintenance;
+    private readonly IHtmlExportService? _htmlExport;
     private readonly ILogger<MainWindowViewModel> _logger;
 
     public MainWindowViewModel(
@@ -39,6 +40,7 @@ public partial class MainWindowViewModel : ObservableObject
         _navigator = navigator;
         _clipboard = clipboard;
         _maintenance = maintenance;
+        _htmlExport = null;
         _logger = logger;
 
         Fichas.CollectionChanged += (_, _) =>
@@ -48,12 +50,51 @@ public partial class MainWindowViewModel : ObservableObject
         };
     }
 
+    public MainWindowViewModel(
+        PacienteService pacienteService,
+        FichaService fichaService,
+        IDialogService dialogs,
+        UserSession session,
+        IAppNavigator navigator,
+        IClipboardService clipboard,
+        IDataMaintenanceService maintenance,
+        IHtmlExportService htmlExport,
+        ILogger<MainWindowViewModel> logger)
+        : this(pacienteService, fichaService, dialogs, session, navigator, clipboard, maintenance, logger)
+    {
+        _htmlExport = htmlExport;
+    }
+
+    public MainWindowViewModel(
+        PacienteService pacienteService,
+        FichaService fichaService,
+        IDialogService dialogs,
+        UserSession session,
+        IAppNavigator navigator,
+        IClipboardService clipboard,
+        IDataMaintenanceService maintenance,
+        ILogger<MainWindowViewModel> logger,
+        IHtmlExportService htmlExport)
+        : this(pacienteService, fichaService, dialogs, session, navigator, clipboard, maintenance, logger)
+    {
+        _htmlExport = htmlExport;
+    }
+
+    private IHtmlExportService ServicioHtml => _htmlExport ?? new HtmlExportService(_dialogs);
+
     public RangeObservableCollection<string> DnisSugeridos { get; } = new();
+
+    public RangeObservableCollection<Paciente> ResultadosBusqueda { get; } = new();
+
+    public bool TieneResultados => ResultadosBusqueda.Count > 0;
 
     public RangeObservableCollection<FichaDiaria> Fichas { get; } = new();
 
     [ObservableProperty]
     private string _dni = string.Empty;
+
+    [ObservableProperty]
+    private string _busquedaTexto = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayError))]
@@ -78,12 +119,14 @@ public partial class MainWindowViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(CopiarResumenCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopiarDniCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopiarTelefonoCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportarHtmlCommand))]
     private Paciente? _pacienteActual;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayFichaSeleccionada))]
     [NotifyCanExecuteChangedFor(nameof(EditarFichaCommand))]
     [NotifyCanExecuteChangedFor(nameof(BorrarFichaCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportarHtmlCommand))]
     private FichaDiaria? _fichaSeleccionada;
 
     [ObservableProperty]
@@ -94,6 +137,7 @@ public partial class MainWindowViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(EditarFichaCommand))]
     [NotifyCanExecuteChangedFor(nameof(BorrarFichaCommand))]
     [NotifyCanExecuteChangedFor(nameof(CerrarSesionCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportarHtmlCommand))]
     private bool _isBusy;
 
     public bool HayError => !string.IsNullOrWhiteSpace(MensajeError);
@@ -212,7 +256,49 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
+        if (limpio.Length == 0)
+        {
+            ResultadosBusqueda.Clear();
+            OnPropertyChanged(nameof(TieneResultados));
+        }
+
         MensajeError = null;
+    }
+
+    partial void OnBusquedaTextoChanged(string value)
+    {
+        _ = BuscarPorNombreConManejoAsync();
+    }
+
+    private async Task BuscarPorNombreConManejoAsync()
+    {
+        try
+        {
+            await BuscarPorNombreAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al buscar pacientes por nombre");
+            ResultadosBusqueda.Clear();
+            OnPropertyChanged(nameof(TieneResultados));
+        }
+    }
+
+    private bool PuedeSeleccionarPaciente() => !IsBusy;
+
+    [RelayCommand(CanExecute = nameof(PuedeSeleccionarPaciente))]
+    private async Task SeleccionarPacienteAsync(Paciente? paciente)
+    {
+        if (paciente is null)
+        {
+            return;
+        }
+
+        Dni = paciente.Dni;
+        await CargarPacienteAsync(paciente.Dni, preguntarCreacion: false);
+        BusquedaTexto = string.Empty;
+        ResultadosBusqueda.Clear();
+        OnPropertyChanged(nameof(TieneResultados));
     }
 
     [RelayCommand]
@@ -291,6 +377,23 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task MostrarMantenimientoAsync()
+    {
+        MensajeError = null;
+        MensajeEstado = null;
+
+        try
+        {
+            await _dialogs.ShowDataMaintenanceAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al mostrar el mantenimiento de datos");
+            MensajeError = "No se pudo abrir el mantenimiento de datos. Intente nuevamente.";
+        }
+    }
+
+    [RelayCommand]
     private Task MostrarAcercaDeAsync() => EjecutarAsync(async () =>
     {
         var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString() ?? "desconocida";
@@ -341,6 +444,21 @@ public partial class MainWindowViewModel : ObservableObject
 
         await CargarPacienteAsync(dni, preguntarCreacion: true);
     }, "Error al buscar el paciente");
+
+    private Task BuscarPorNombreAsync() => EjecutarAsync(async () =>
+    {
+        var query = BusquedaTexto?.Trim() ?? string.Empty;
+        if (query.Length == 0)
+        {
+            ResultadosBusqueda.Clear();
+            OnPropertyChanged(nameof(TieneResultados));
+            return;
+        }
+
+        var resultados = await _pacienteService.SearchAsync(query);
+        ResultadosBusqueda.ReplaceAll(resultados);
+        OnPropertyChanged(nameof(TieneResultados));
+    }, "Error al buscar pacientes por nombre");
 
     private bool PuedeCrearPaciente() => !IsBusy;
 
@@ -400,7 +518,7 @@ public partial class MainWindowViewModel : ObservableObject
         MensajeEstado = "Ficha creada.";
     }, "Error al crear la ficha");
 
-    private bool PuedeEditarFicha() => FichaSeleccionada is not null && !IsBusy;
+    private bool PuedeEditarFicha() => FichaSeleccionada is not null && !IsBusy && !(FichaSeleccionada.Cerrada);
 
     [RelayCommand(CanExecute = nameof(PuedeEditarFicha))]
     private Task EditarFichaAsync() => EjecutarAsync(async () =>
@@ -466,6 +584,31 @@ public partial class MainWindowViewModel : ObservableObject
         await RecargarFichasAsync(FichaSeleccionada.Dni);
         MensajeEstado = "Ficha borrada.";
     }, "Error al borrar la ficha");
+
+    private bool PuedeExportarHtml() => PacienteActual is not null && FichaSeleccionada is not null && !IsBusy;
+
+    [RelayCommand(CanExecute = nameof(PuedeExportarHtml))]
+    private Task ExportarHtmlAsync() => EjecutarAsync(async () =>
+    {
+        if (PacienteActual is null || FichaSeleccionada is null)
+        {
+            return;
+        }
+
+        var nombreSugerido = $"Ficha_{PacienteActual.Dni}_{FichaSeleccionada.Id}.html";
+        var ruta = await _dialogs.ShowSaveFileDialogAsync(
+            "Exportar a HTML",
+            nombreSugerido,
+            ".html");
+
+        if (string.IsNullOrWhiteSpace(ruta))
+        {
+            return;
+        }
+
+        await ServicioHtml.ExportarAsync(PacienteActual, FichaSeleccionada, ruta);
+        MensajeEstado = $"Ficha exportada: {Path.GetFileName(ruta)}.";
+    }, "Error al exportar la ficha a HTML");
 
     private async Task AbrirNuevoPacienteAsync(string dniInicial)
     {

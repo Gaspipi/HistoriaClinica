@@ -31,6 +31,38 @@ public sealed class PacienteRepository : IPacienteRepository
             .FirstOrDefaultAsync(p => p.Dni == dni, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Paciente>> SearchAsync(string query, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        var term = (query ?? string.Empty).Trim();
+        if (term.Length == 0)
+        {
+            return Array.Empty<Paciente>();
+        }
+
+        return await context.Pacientes
+            .AsNoTracking()
+            .Where(p => p.FirstName.Contains(term) || p.LastName.Contains(term))
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .Select(p => new Paciente
+            {
+                Dni = p.Dni,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                DOB = p.DOB,
+                Phone = p.Phone,
+                ObraSocial = p.ObraSocial,
+                NroSocio = p.NroSocio,
+                AntecFam = p.AntecFam,
+                AntecPers = p.AntecPers,
+                Medicacion = p.Medicacion,
+                Alergias = p.Alergias,
+                ProblemasActivos = p.ProblemasActivos,
+            })
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task SaveAsync(Paciente paciente, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);

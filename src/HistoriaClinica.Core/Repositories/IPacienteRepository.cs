@@ -8,5 +8,7 @@ public interface IPacienteRepository
 
     Task<Paciente?> GetByDniAsync(string dni, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<Paciente>> SearchAsync(string query, CancellationToken cancellationToken = default);
+
     Task SaveAsync(Paciente paciente, CancellationToken cancellationToken = default);
 }
