@@ -166,10 +166,28 @@
                          AcceptsReturn="True"
                          TextWrapping="Wrap"
                          Classes="multiline"
-                         automation:AutomationProperties.Name="Medicación" />
-              </StackPanel>
-            </layout:ResponsiveGrid>
-          </StackPanel>
+                          automation:AutomationProperties.Name="Medicación" />
+               </StackPanel>
+             </layout:ResponsiveGrid>
+             <StackPanel Spacing="12">
+               <StackPanel>
+                 <TextBlock Text="Alergias" Classes="fieldLabel" />
+                 <TextBox Text="{Binding Alergias, Mode=TwoWay}"
+                          AcceptsReturn="True"
+                          TextWrapping="Wrap"
+                          Classes="multiline"
+                          automation:AutomationProperties.Name="Alergias" />
+               </StackPanel>
+               <StackPanel>
+                 <TextBlock Text="Problemas activos" Classes="fieldLabel" />
+                 <TextBox Text="{Binding ProblemasActivos, Mode=TwoWay}"
+                          AcceptsReturn="True"
+                          TextWrapping="Wrap"
+                          Classes="multiline"
+                          automation:AutomationProperties.Name="Problemas activos" />
+               </StackPanel>
+             </StackPanel>
+           </StackPanel>
         </Border>
 
         <Border Classes="errorBanner" IsVisible="{Binding HayError}">

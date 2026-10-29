@@ -35,6 +35,8 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         AntecFam = paciente.AntecFam;
         AntecPers = paciente.AntecPers;
         Medicacion = paciente.Medicacion;
+        Alergias = paciente.Alergias;
+        ProblemasActivos = paciente.ProblemasActivos;
 
         _original = Capturar();
     }
@@ -105,6 +107,12 @@ public partial class PatientEditorViewModel : EditorViewModelBase
 
     [ObservableProperty]
     private string _medicacion = string.Empty;
+
+    [ObservableProperty]
+    private string _alergias = string.Empty;
+
+    [ObservableProperty]
+    private string _problemasActivos = string.Empty;
 
     public bool TieneErrorDni => !string.IsNullOrWhiteSpace(ErrorDni);
 
@@ -188,6 +196,8 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         AntecFam = AntecFam,
         AntecPers = AntecPers,
         Medicacion = Medicacion,
+        Alergias = Alergias,
+        ProblemasActivos = ProblemasActivos,
     };
 
     private Snapshot Capturar() => new(
@@ -200,8 +210,9 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         NroSocio,
         AntecFam,
         AntecPers,
-        Medicacion);
-
+        Medicacion,
+        Alergias,
+        ProblemasActivos);
     private sealed record Snapshot(
         string Dni,
         string FirstName,
@@ -212,5 +223,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         string NroSocio,
         string AntecFam,
         string AntecPers,
-        string Medicacion);
+        string Medicacion,
+        string Alergias,
+        string ProblemasActivos);
 }

@@ -17,6 +17,7 @@
   <Window.Resources>
     <converters:FechaConverter x:Key="FechaConverter" />
     <converters:EmptyTextConverter x:Key="EmptyTextConverter" />
+    <converters:PacienteDisplayConverter x:Key="PacienteDisplayConverter" />
   </Window.Resources>
 
   <Window.Styles>
@@ -71,6 +72,9 @@
     <Style Selector="Window.narrow GridSplitter#HistorySplitter">
       <Setter Property="IsVisible" Value="False" />
     </Style>
+    <Style Selector="Border#ResultadosBusqueda">
+      <Setter Property="IsVisible" Value="{Binding TieneResultados}" />
+    </Style>
   </Window.Styles>
 
   <Window.KeyBindings>
@@ -118,6 +122,11 @@
             <MenuItem Header="Crear copia de seguridad" Command="{Binding CrearCopiaSeguridadCommand}">
               <MenuItem.Icon>
                 <Path Classes="icon small" Data="{x:Static icons:LucideIcons.DatabaseBackup}" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Mantenimiento" Command="{Binding MostrarMantenimientoCommand}">
+              <MenuItem.Icon>
+                <Path Classes="icon small" Data="{x:Static icons:LucideIcons.Settings}" />
               </MenuItem.Icon>
             </MenuItem>
             <Separator />
@@ -172,6 +181,37 @@
               </StackPanel>
             </Button>
           </Grid>
+          <StackPanel Spacing="4">
+            <TextBlock Text="Nombre o apellido" Classes="fieldLabel" />
+            <TextBox x:Name="BusquedaTextoBox"
+                     Text="{Binding BusquedaTexto, Mode=TwoWay}"
+                     PlaceholderText="Ej: Juan Pérez"
+                     automation:AutomationProperties.Name="Nombre o apellido del paciente" />
+            <Border x:Name="ResultadosBusqueda" Classes="card">
+              <ItemsControl x:Name="ResultadosList"
+                            ItemsSource="{Binding ResultadosBusqueda}"
+                            automation:AutomationProperties.Name="Resultados de búsqueda">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Button Classes="secondary"
+                             Command="{Binding Path=DataContext.SeleccionarPacienteCommand, ElementName=ResultadosList}"
+                            CommandParameter="{Binding}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,2,0,2"
+                            Padding="6">
+                      <StackPanel Spacing="2">
+                        <TextBlock Text="{Binding Converter={StaticResource PacienteDisplayConverter}}"
+                                   Classes="strong"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding Dni}"
+                                   Classes="caption" />
+                      </StackPanel>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Border>
+          </StackPanel>
         </StackPanel>
 
         <StackPanel x:Name="SearchActions"
@@ -384,14 +424,34 @@
                 </StackPanel>
               </Border>
 
-              <Border Classes="card">
-                <StackPanel Spacing="12">
-                  <TextBlock Text="Medicación" Classes="sectionTitle" />
-                  <SelectableTextBlock
-                      Text="{Binding PacienteActual.Medicacion, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin medicación registrada', FallbackValue='Sin medicación registrada', TargetNullValue='Sin medicación registrada'}"
-                      Classes="valueBlock" />
-                </StackPanel>
-              </Border>
+               <Border Classes="card">
+                 <StackPanel Spacing="12">
+                   <TextBlock Text="Medicación" Classes="sectionTitle" />
+                   <SelectableTextBlock
+                       Text="{Binding PacienteActual.Medicacion, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin medicación registrada', FallbackValue='Sin medicación registrada', TargetNullValue='Sin medicación registrada'}"
+                       Classes="valueBlock" />
+                 </StackPanel>
+               </Border>
+
+               <Border Classes="card">
+                 <StackPanel Spacing="12">
+                   <TextBlock Text="Alergias y problemas activos" Classes="sectionTitle" />
+                   <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="300" ColumnSpacing="20" RowSpacing="12">
+                     <StackPanel Spacing="4">
+                       <TextBlock Text="Alergias" Classes="fieldLabel" />
+                       <SelectableTextBlock
+                           Text="{Binding PacienteActual.Alergias, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin alergias registradas', FallbackValue='Sin alergias registradas', TargetNullValue='Sin alergias registradas'}"
+                           Classes="valueBlock" />
+                     </StackPanel>
+                     <StackPanel Spacing="4">
+                       <TextBlock Text="Problemas activos" Classes="fieldLabel" />
+                       <SelectableTextBlock
+                           Text="{Binding PacienteActual.ProblemasActivos, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin problemas activos registrados', FallbackValue='Sin problemas activos registrados', TargetNullValue='Sin problemas activos registrados'}"
+                           Classes="valueBlock" />
+                     </StackPanel>
+                   </layout:ResponsiveGrid>
+                 </StackPanel>
+               </Border>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
@@ -447,12 +507,18 @@
                         <DataTemplate x:DataType="models:FichaDiaria">
                           <Border Classes="fichaItem">
                             <StackPanel Spacing="2">
-                              <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+                              <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
                                 <TextBlock Text="{Binding Fecha, Converter={StaticResource FechaConverter}, ConverterParameter=date}"
                                            Classes="strong" />
                                 <TextBlock Grid.Column="1"
                                            Text="{Binding Fecha, Converter={StaticResource FechaConverter}, ConverterParameter=time}"
                                            Classes="caption" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="3"
+                                           Text="Cerrada"
+                                           Classes="caption"
+                                           Foreground="{DynamicResource DangerBrush}"
+                                           IsVisible="{Binding Cerrada}"
+                                           VerticalAlignment="Center" />
                               </Grid>
                               <TextBlock Text="{Binding Motivo, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin motivo'}"
                                          Classes="listPreview" />
@@ -481,7 +547,7 @@
 
               <Border x:Name="FichaDetail" Classes="card">
                 <Grid>
-                  <Grid IsVisible="{Binding HayFichaSeleccionada}" RowDefinitions="Auto,*" RowSpacing="12">
+                  <Grid IsVisible="{Binding HayFichaSeleccionada}" RowDefinitions="Auto,Auto,*" RowSpacing="12">
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                       <StackPanel Spacing="2">
                         <TextBlock Text="Detalle de la ficha" Classes="sectionTitle" />
@@ -506,10 +572,24 @@
                             <TextBlock Text="Borrar" />
                           </StackPanel>
                         </Button>
+                        <Button Classes="secondary small"
+                                Command="{Binding ExportarHtmlCommand}"
+                                automation:AutomationProperties.Name="Exportar ficha">
+                          <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Path Classes="icon small onSecondary" Data="{x:Static icons:LucideIcons.FileText}" />
+                            <TextBlock Text="Exportar" />
+                          </StackPanel>
+                        </Button>
                       </StackPanel>
                     </Grid>
 
-                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+                    <Border Classes="errorBanner" IsVisible="{Binding FichaSeleccionada.Cerrada}" Grid.Row="1">
+                      <TextBlock Text="Esta ficha está cerrada: solo consulta."
+                                 TextWrapping="Wrap"
+                                 Foreground="{DynamicResource DangerBrush}" />
+                    </Border>
+
+                    <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled">
                       <StackPanel Spacing="16">
                         <StackPanel Spacing="4">
                           <TextBlock Text="Motivo" Classes="fieldLabel" />
@@ -525,13 +605,41 @@
                               Classes="valueBlock" />
                         </StackPanel>
 
-                        <StackPanel Spacing="4">
-                          <TextBlock Text="Indicaciones" Classes="fieldLabel" />
-                          <SelectableTextBlock
-                              Text="{Binding FichaSeleccionada.Indicaciones, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin indicaciones'}"
-                              Classes="valueBlock" />
-                        </StackPanel>
-                      </StackPanel>
+                         <StackPanel Spacing="4">
+                           <TextBlock Text="Indicaciones" Classes="fieldLabel" />
+                           <SelectableTextBlock
+                               Text="{Binding FichaSeleccionada.Indicaciones, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin indicaciones'}"
+                               Classes="valueBlock" />
+                         </StackPanel>
+
+                         <Border Classes="card">
+                           <StackPanel Spacing="8">
+                             <TextBlock Text="Signos vitales" Classes="sectionTitle" />
+                             <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="160" ColumnSpacing="16" RowSpacing="8">
+                               <StackPanel Spacing="2">
+                                 <TextBlock Text="Presión arterial" Classes="caption" />
+                                 <TextBlock Text="{Binding FichaSeleccionada.PresionArterial, Converter={StaticResource EmptyTextConverter}, ConverterParameter='—'}"
+                                            Classes="strong" />
+                               </StackPanel>
+                               <StackPanel Spacing="2">
+                                 <TextBlock Text="Frecuencia cardíaca" Classes="caption" />
+                                 <TextBlock Text="{Binding FichaSeleccionada.FrecuenciaCardiaca, Converter={StaticResource EmptyTextConverter}, ConverterParameter='—'}"
+                                            Classes="strong" />
+                               </StackPanel>
+                               <StackPanel Spacing="2">
+                                 <TextBlock Text="Temperatura" Classes="caption" />
+                                 <TextBlock Text="{Binding FichaSeleccionada.Temperatura, Converter={StaticResource EmptyTextConverter}, ConverterParameter='—'}"
+                                            Classes="strong" />
+                               </StackPanel>
+                               <StackPanel Spacing="2">
+                                 <TextBlock Text="Peso" Classes="caption" />
+                                 <TextBlock Text="{Binding FichaSeleccionada.Peso, Converter={StaticResource EmptyTextConverter}, ConverterParameter='—'}"
+                                            Classes="strong" />
+                               </StackPanel>
+                             </layout:ResponsiveGrid>
+                           </StackPanel>
+                         </Border>
+                       </StackPanel>
                     </ScrollViewer>
                   </Grid>
 

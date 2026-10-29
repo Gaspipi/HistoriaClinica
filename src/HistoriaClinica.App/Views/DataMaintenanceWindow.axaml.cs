@@ -18,6 +18,10 @@ public partial class DataMaintenanceWindow : Window
         DataContext = viewModel;
         Icon = AppIcons.Load();
         _viewModel.CloseRequested += (_, _) => Close();
-        Opened += (_, _) => WindowSizing.AjustarAlAreaDeTrabajo(this);
+        Opened += async (_, _) =>
+        {
+            WindowSizing.AjustarAlAreaDeTrabajo(this);
+            await _viewModel.CargarBackupsCommand.ExecuteAsync(null);
+        };
     }
 }

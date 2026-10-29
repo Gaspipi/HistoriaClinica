@@ -21,6 +21,28 @@ public static class HistoriaValidators
         return errors.Count == 0 ? ValidationResult.Success : ValidationResult.Fail(errors);
     }
 
+    public static ValidationResult ValidatePlantilla(Plantilla plantilla)
+    {
+        var errors = new List<string>();
+
+        if (string.IsNullOrWhiteSpace(plantilla.Nombre))
+        {
+            errors.Add("El campo Nombre es obligatorio.");
+        }
+
+        if (string.IsNullOrWhiteSpace(plantilla.Motivo))
+        {
+            errors.Add("El campo Motivo es obligatorio.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(plantilla.CreadorDni) && !DniValidator.IsValid(plantilla.CreadorDni))
+        {
+            errors.Add(DniValidator.ErrorMessage);
+        }
+
+        return errors.Count == 0 ? ValidationResult.Success : ValidationResult.Fail(errors);
+    }
+
     public static ValidationResult ValidateFicha(FichaDiaria ficha)
     {
         var errors = new List<string>();
@@ -48,6 +70,19 @@ public static class HistoriaValidators
         if (!FechaClinica.HasValue(ficha.Fecha))
         {
             errors.Add("La fecha de la ficha no es válida.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(ficha.PresionArterial))
+        {
+            var partes = ficha.PresionArterial.Split('/');
+            if (partes.Length != 2
+                || !int.TryParse(partes[0], out var sistolica)
+                || !int.TryParse(partes[1], out var diastolica)
+                || sistolica < 40 || sistolica > 300
+                || diastolica < 20 || diastolica > 200)
+            {
+                errors.Add("El formato de la presión arterial no es válido (ej: 120/80).");
+            }
         }
 
         return errors.Count == 0 ? ValidationResult.Success : ValidationResult.Fail(errors);

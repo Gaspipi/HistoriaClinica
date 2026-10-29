@@ -25,5 +25,9 @@ public class Paciente
 
     public string Medicacion { get; set; } = string.Empty;
 
+    public string Alergias { get; set; } = string.Empty;
+
+    public string ProblemasActivos { get; set; } = string.Empty;
+
     public List<FichaDiaria> FichasDiarias { get; set; } = new();
 }

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Services;
@@ -10,6 +11,7 @@ namespace HistoriaClinica.App.ViewModels;
 public partial class FichaEditorViewModel : EditorViewModelBase
 {
     private readonly FichaService _fichaService;
+    private readonly PlantillaService? _plantillaService;
     private readonly bool _esNuevo;
     private readonly int _id;
     private readonly DateTime _fecha;
@@ -22,10 +24,12 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         ILogger<FichaEditorViewModel> logger,
         FichaDiaria ficha,
         bool esNuevo,
-        string nombrePaciente = "")
+        string nombrePaciente = "",
+        PlantillaService? plantillaService = null)
         : base(dialogs, logger)
     {
         _fichaService = fichaService;
+        _plantillaService = plantillaService;
         _esNuevo = esNuevo;
         _id = ficha.Id;
         _fecha = ficha.Fecha;
@@ -35,6 +39,16 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         Motivo = ficha.Motivo;
         Enfermedad = ficha.Enfermedad;
         Indicaciones = ficha.Indicaciones;
+        FechaCreacion = esNuevo ? DateTime.Now : ficha.Fecha;
+
+        Cerrada = ficha.Cerrada;
+
+        PresionArterial = ficha.PresionArterial;
+        FrecuenciaCardiaca = ficha.FrecuenciaCardiaca;
+        Temperatura = ficha.Temperatura;
+        Peso = ficha.Peso;
+
+        PlantillasDisponibles = new List<Plantilla>();
 
         _original = Capturar();
     }
@@ -54,7 +68,31 @@ public partial class FichaEditorViewModel : EditorViewModelBase
 
     public FichaDiaria? Resultado { get; private set; }
 
+    public bool EsNuevo => _esNuevo;
+
+    public bool Cerrada { get; }
+
+    protected override bool PuedeGuardarCore() => !Cerrada;
+
     public string FechaTexto => FechaClinica.FormatDateTime(Resultado?.Fecha ?? _fecha);
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HoraCreacionTime))]
+    private DateTime? _fechaCreacion;
+
+    public TimeSpan? HoraCreacionTime
+    {
+        get => FechaCreacion?.TimeOfDay;
+        set
+        {
+            if (value is { } t)
+            {
+                var baseFecha = FechaCreacion?.Date ?? DateTime.Today;
+                FechaCreacion = baseFecha + t;
+            }
+            OnPropertyChanged(nameof(HoraCreacionTime));
+        }
+    }
 
     [ObservableProperty]
     private string _dni = string.Empty;
@@ -80,11 +118,35 @@ public partial class FichaEditorViewModel : EditorViewModelBase
     [ObservableProperty]
     private string _indicaciones = string.Empty;
 
+    [ObservableProperty]
+    private List<Plantilla> _plantillasDisponibles = new();
+
+    [ObservableProperty]
+    private Plantilla? _plantillaSeleccionada;
+
+    [ObservableProperty]
+    private string? _presionArterial;
+
+    [ObservableProperty]
+    private int? _frecuenciaCardiaca;
+
+    [ObservableProperty]
+    private decimal? _temperatura;
+
+    [ObservableProperty]
+    private decimal? _peso;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TieneErrorPresionArterial))]
+    private string? _errorPresionArterial;
+
     public bool TieneErrorMotivo => !string.IsNullOrWhiteSpace(ErrorMotivo);
 
     public bool TieneErrorEnfermedad => !string.IsNullOrWhiteSpace(ErrorEnfermedad);
 
     public bool TieneErrorIndicaciones => !string.IsNullOrWhiteSpace(ErrorIndicaciones);
+
+    public bool TieneErrorPresionArterial => !string.IsNullOrWhiteSpace(ErrorPresionArterial);
 
     partial void OnMotivoChanged(string value) => ErrorMotivo = null;
 
@@ -92,8 +154,53 @@ public partial class FichaEditorViewModel : EditorViewModelBase
 
     partial void OnIndicacionesChanged(string value) => ErrorIndicaciones = null;
 
+    partial void OnPresionArterialChanged(string? value) => ErrorPresionArterial = null;
+
+    public Plantilla? SelectedPlantilla
+    {
+        get => PlantillaSeleccionada;
+        set => PlantillaSeleccionada = value;
+    }
+
+    public Plantilla? PlantillaActual
+    {
+        get => PlantillaSeleccionada;
+        set => PlantillaSeleccionada = value;
+    }
+
+    public async Task InitializeAsync()
+    {
+        if (_plantillaService is null)
+        {
+            PlantillasDisponibles = new List<Plantilla>();
+            return;
+        }
+
+        PlantillasDisponibles = (await _plantillaService.GetAllAsync()).ToList();
+    }
+
+    [RelayCommand]
+    public void AplicarPlantilla(Plantilla? plantilla = null)
+    {
+        var seleccionada = plantilla ?? PlantillaSeleccionada;
+        if (seleccionada is null)
+        {
+            return;
+        }
+
+        Motivo = seleccionada.Motivo ?? string.Empty;
+        Enfermedad = seleccionada.Enfermedad ?? string.Empty;
+        Indicaciones = seleccionada.Indicaciones ?? string.Empty;
+    }
+
     protected override bool Validar()
     {
+        if (Cerrada)
+        {
+            MensajeError = "La ficha está cerrada y no puede modificarse.";
+            return false;
+        }
+
         var ficha = CrearFicha();
         var validation = HistoriaValidators.ValidateFicha(ficha);
 
@@ -106,13 +213,14 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         ErrorIndicaciones = string.IsNullOrWhiteSpace(ficha.Indicaciones)
             ? "El campo Indicaciones es obligatorio."
             : null;
+        ErrorPresionArterial = ValidarPresionArterial(ficha.PresionArterial);
 
-        if (validation.IsValid)
+        if (validation.IsValid && ErrorPresionArterial is null)
         {
             return true;
         }
 
-        if (!TieneErrorMotivo && !TieneErrorEnfermedad && !TieneErrorIndicaciones)
+        if (!TieneErrorMotivo && !TieneErrorEnfermedad && !TieneErrorIndicaciones && !TieneErrorPresionArterial)
         {
             MensajeError = validation.ErrorMessage;
         }
@@ -120,14 +228,46 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         return false;
     }
 
+    private static string? ValidarPresionArterial(string? valor)
+    {
+        if (string.IsNullOrWhiteSpace(valor))
+        {
+            return null;
+        }
+
+        var partes = valor.Trim().Split('/');
+        if (partes.Length != 2
+            || !int.TryParse(partes[0], out var sistolica)
+            || !int.TryParse(partes[1], out var diastolica)
+            || sistolica < 40 || sistolica > 300
+            || diastolica < 20 || diastolica > 200)
+        {
+            return "Formato de presión arterial inválido (ej: 120/80).";
+        }
+
+        return null;
+    }
+
     protected override async Task<bool> GuardarCoreAsync()
     {
+        if (Cerrada)
+        {
+            MensajeError = "La ficha está cerrada y no puede modificarse.";
+            return false;
+        }
+
         var ficha = CrearFicha();
 
-        // En una ficha nueva la fecha se captura al guardar, no al abrir el diálogo.
+        // En una ficha nueva la fecha se toma del selector (FechaCreacion).
         if (_esNuevo)
         {
-            ficha.Fecha = DateTime.UtcNow;
+            if (FechaCreacion is null)
+            {
+                MensajeError = "La fecha de creación es obligatoria.";
+                return false;
+            }
+
+            ficha.Fecha = FechaCreacion.Value;
         }
 
         await _fichaService.SaveAsync(ficha);
@@ -143,13 +283,23 @@ public partial class FichaEditorViewModel : EditorViewModelBase
         Motivo = Motivo,
         Enfermedad = Enfermedad,
         Indicaciones = Indicaciones,
+        Cerrada = Cerrada,
+        PresionArterial = string.IsNullOrWhiteSpace(PresionArterial) ? null : PresionArterial.Trim(),
+        FrecuenciaCardiaca = FrecuenciaCardiaca,
+        Temperatura = Temperatura,
+        Peso = Peso,
     };
 
-    private Snapshot Capturar() => new(Dni, Motivo, Enfermedad, Indicaciones);
+    private Snapshot Capturar() => new(Dni, Motivo, Enfermedad, Indicaciones, FechaCreacion, PresionArterial, FrecuenciaCardiaca, Temperatura, Peso);
 
     private sealed record Snapshot(
         string Dni,
         string Motivo,
         string Enfermedad,
-        string Indicaciones);
+        string Indicaciones,
+        DateTime? FechaCreacion,
+        string? PresionArterial,
+        int? FrecuenciaCardiaca,
+        decimal? Temperatura,
+        decimal? Peso);
 }
