@@ -119,6 +119,13 @@ Se puede indicar otra ruta:
 HISTORIA_DB_PATH=/ruta/a/Historia.db dotnet run --project src/HistoriaClinica.App
 ```
 
+En Windows (PowerShell):
+
+```powershell
+$env:HISTORIA_DB_PATH = "C:\ruta\a\Historia.db"
+dotnet run --project src/HistoriaClinica.App
+```
+
 El archivo `preferences.json` se guarda en la misma carpeta que la base. Las copias de seguridad se crean en `Backups/`, también junto a la base.
 
 El archivo `Data/Historia.db` del repositorio está vacío y es solo una referencia de ruta; **no** debe usarse como base de producción.

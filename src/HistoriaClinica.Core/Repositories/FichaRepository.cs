@@ -59,16 +59,10 @@ public sealed class FichaRepository : IFichaRepository
     public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        var ficha = await context.FichasDiarias
-            .FirstOrDefaultAsync(f => f.Id == id, cancellationToken);
+        var borradas = await context.FichasDiarias
+            .Where(f => f.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
 
-        if (ficha is null)
-        {
-            return false;
-        }
-
-        context.FichasDiarias.Remove(ficha);
-        var borradas = await context.SaveChangesAsync(cancellationToken);
         return borradas > 0;
     }
 }

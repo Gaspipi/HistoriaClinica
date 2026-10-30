@@ -117,6 +117,8 @@ public partial class MainWindow : Window
     private void ActualizarHistorial()
     {
         var angosto = Responsive.EsNarrow(this);
+        // En narrow el detalle va a la columna 1 (ver estilo Window.narrow Border#FichaDetail),
+        // por eso se usan solo dos columnas: lista fija + detalle.
         HistoryLayout.ColumnDefinitions = new ColumnDefinitions(angosto ? "240,*" : "320,6,*");
     }
 

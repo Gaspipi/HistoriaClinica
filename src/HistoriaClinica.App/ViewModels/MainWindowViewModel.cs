@@ -396,7 +396,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private Task MostrarAcercaDeAsync() => EjecutarAsync(async () =>
     {
-        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString() ?? "desconocida";
+        var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "desconocida";
         var mensaje = $"""
             Historia Clínica {version}
             Usuario: {_session.NombreUsuario}
@@ -657,12 +657,6 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var fichas = await _fichaService.GetByDniAsync(dni);
         Fichas.ReplaceAll(fichas);
-
-        if (Fichas.Count == 0)
-        {
-            FichaSeleccionada = null;
-            return;
-        }
 
         FichaSeleccionada = seleccionarId is int id
             ? Fichas.FirstOrDefault(f => f.Id == id)
