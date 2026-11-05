@@ -1,3 +1,4 @@
+using Avalonia.Platform.Storage;
 using HistoriaClinica.Core.Models;
 
 namespace HistoriaClinica.App.Services;
@@ -20,7 +21,20 @@ public interface IDialogService
 
     Task ShowPreferencesAsync();
 
+    Task ShowDataMaintenanceAsync();
+
     Task ShowErrorAsync(string titulo, string mensaje);
 
     Task ShowInfoAsync(string titulo, string mensaje);
+
+    Task<string?> ShowSaveFileDialogAsync(
+        string titulo,
+        string nombreSugerido,
+        string extension = ".html",
+        CancellationToken cancellationToken = default);
+
+    Task<string?> ShowOpenFileDialogAsync(
+        string titulo,
+        IReadOnlyList<FilePickerFileType>? fileTypes = null,
+        CancellationToken cancellationToken = default);
 }

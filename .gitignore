@@ -296,3 +296,4 @@ artifacts/
 *.db
 Backups/
 preferences.json
+Data/

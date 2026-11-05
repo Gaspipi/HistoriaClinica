@@ -1,7 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:HistoriaClinica.App.ViewModels"
-        xmlns:icons="using:HistoriaClinica.App.Icons"
+         xmlns:vm="using:HistoriaClinica.App.ViewModels"
+         xmlns:converters="using:HistoriaClinica.App.Converters"
+         xmlns:icons="using:HistoriaClinica.App.Icons"
         xmlns:automation="using:Avalonia.Automation"
         xmlns:layout="using:HistoriaClinica.App.Layout"
         x:Class="HistoriaClinica.App.Views.FichaEditorWindow"
@@ -12,6 +13,10 @@
         MinWidth="460"
         MinHeight="420"
         WindowStartupLocation="CenterOwner">
+  <Window.Resources>
+    <converters:DateTimeOffsetConverter x:Key="DateTimeOffsetConverter" />
+  </Window.Resources>
+
   <Window.Styles>
     <Style Selector="Grid#PageRoot">
       <Setter Property="Margin" Value="22" />
@@ -52,9 +57,44 @@
             </StackPanel>
             <StackPanel>
               <TextBlock Text="Fecha" Classes="fieldLabel" />
-              <TextBlock Text="{Binding FechaTexto}" Classes="strong" />
+              <Border Classes="dateField">
+                <DatePicker SelectedDate="{Binding FechaCreacion, Mode=OneWay, Converter={StaticResource DateTimeOffsetConverter}}"
+                            DayFormat="dd"
+                            MonthFormat="MM"
+                            YearFormat="yyyy"
+                            IsEnabled="{Binding EsNuevo}"
+                            SelectedDateChanged="FechaDatePicker_SelectedDateChanged"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            automation:AutomationProperties.Name="Fecha de la ficha" />
+              </Border>
+              <TimePicker SelectedTime="{Binding HoraCreacionTime, Mode=TwoWay}"
+                          MinuteIncrement="15"
+                          IsEnabled="{Binding EsNuevo}"
+                          automation:AutomationProperties.Name="Hora de la ficha" />
             </StackPanel>
           </layout:ResponsiveGrid>
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Plantilla" Classes="sectionTitle" />
+            <StackPanel Spacing="8">
+              <ComboBox ItemsSource="{Binding PlantillasDisponibles}"
+                        SelectedItem="{Binding PlantillaSeleccionada, Mode=TwoWay}"
+                        DisplayMemberBinding="{Binding Nombre}"
+                        HorizontalAlignment="Stretch"
+                        automation:AutomationProperties.Name="Plantilla de consulta" />
+              <Button Classes="secondary"
+                      Command="{Binding AplicarPlantillaCommand}"
+                      CommandParameter="{Binding PlantillaSeleccionada}"
+                      MinWidth="140"
+                      automation:AutomationProperties.Name="Aplicar plantilla">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <TextBlock Text="Aplicar plantilla" />
+                </StackPanel>
+              </Button>
+            </StackPanel>
+          </StackPanel>
         </Border>
 
         <Border Classes="card">
@@ -103,6 +143,42 @@
                          IsVisible="{Binding TieneErrorIndicaciones}"
                          Classes="errorText" />
             </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Signos vitales" Classes="sectionTitle" />
+            <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="180" ColumnSpacing="16" RowSpacing="8">
+              <StackPanel>
+                <TextBlock Text="Presión arterial" Classes="fieldLabel" />
+                <TextBox Text="{Binding PresionArterial, Mode=TwoWay}"
+                         Classes.invalid="{Binding TieneErrorPresionArterial}"
+                         automation:AutomationProperties.Name="Presión arterial" />
+                <TextBlock Text="{Binding ErrorPresionArterial}"
+                           IsVisible="{Binding TieneErrorPresionArterial}"
+                           Classes="errorText" />
+              </StackPanel>
+              <StackPanel>
+                <TextBlock Text="Frecuencia cardíaca (lpm)" Classes="fieldLabel" />
+                <TextBox Text="{Binding FrecuenciaCardiaca, Mode=TwoWay}"
+                         automation:AutomationProperties.Name="Frecuencia cardíaca" />
+              </StackPanel>
+              <StackPanel>
+                <TextBlock Text="Temperatura (°C)" Classes="fieldLabel" />
+                <NumericUpDown Value="{Binding Temperatura, Mode=TwoWay}"
+                               Minimum="0" Maximum="50"
+                               Increment="0.1"
+                               automation:AutomationProperties.Name="Temperatura" />
+              </StackPanel>
+              <StackPanel>
+                <TextBlock Text="Peso (kg)" Classes="fieldLabel" />
+                <NumericUpDown Value="{Binding Peso, Mode=TwoWay}"
+                               Minimum="0" Maximum="500"
+                               Increment="0.1"
+                               automation:AutomationProperties.Name="Peso" />
+              </StackPanel>
+            </layout:ResponsiveGrid>
           </StackPanel>
         </Border>
 

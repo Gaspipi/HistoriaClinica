@@ -1,3 +1,4 @@
+using Avalonia.Platform.Storage;
 using HistoriaClinica.App.Services;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Repositories;
@@ -11,6 +12,12 @@ internal sealed class FakePacienteRepository : IPacienteRepository
 
     public IReadOnlyCollection<Paciente> Pacientes => _pacientes.Values;
 
+    public string? UltimaConsulta { get; private set; }
+
+    public bool FallarBusqueda { get; set; }
+
+    public TaskCompletionSource? BusquedaPendiente { get; set; }
+
     public void Agregar(Paciente paciente) => _pacientes[paciente.Dni] = paciente;
 
     public Task<IReadOnlyList<string>> GetDnisAsync(CancellationToken cancellationToken = default) =>
@@ -18,6 +25,29 @@ internal sealed class FakePacienteRepository : IPacienteRepository
 
     public Task<Paciente?> GetByDniAsync(string dni, CancellationToken cancellationToken = default) =>
         Task.FromResult(_pacientes.TryGetValue(dni, out var paciente) ? paciente : null);
+
+    public async Task<IReadOnlyList<Paciente>> SearchAsync(string query, CancellationToken cancellationToken = default)
+    {
+        UltimaConsulta = query;
+
+        if (FallarBusqueda)
+        {
+            throw new InvalidOperationException("falla de búsqueda");
+        }
+
+        if (BusquedaPendiente is { } pendiente)
+        {
+            await pendiente.Task;
+        }
+
+        return _pacientes.Values
+            .Where(p => p.Nombre.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        p.Apellido.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        p.Dni.StartsWith(query, StringComparison.Ordinal))
+            .OrderBy(p => p.Apellido)
+            .ThenBy(p => p.Nombre)
+            .ToList();
+    }
 
     public Task SaveAsync(Paciente paciente, CancellationToken cancellationToken = default)
     {
@@ -32,6 +62,12 @@ internal sealed class FakeFichaRepository : IFichaRepository
     private int _siguienteId = 1;
 
     public IReadOnlyCollection<FichaDiaria> Fichas => _fichas;
+
+    public FichaDiaria? UltimaGuardada { get; private set; }
+
+    public int? UltimoIdEliminado { get; private set; }
+
+    public bool FallarBorrado { get; set; }
 
     public FichaDiaria Agregar(FichaDiaria ficha)
     {
@@ -71,11 +107,20 @@ internal sealed class FakeFichaRepository : IFichaRepository
             _fichas.Add(ficha);
         }
 
+        UltimaGuardada = ficha;
         return Task.CompletedTask;
     }
 
-    public Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default) =>
-        Task.FromResult(_fichas.RemoveAll(ficha => ficha.Id == id) > 0);
+    public Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        if (FallarBorrado)
+        {
+            throw new InvalidOperationException("falla de borrado");
+        }
+
+        UltimoIdEliminado = id;
+        return Task.FromResult(_fichas.RemoveAll(ficha => ficha.Id == id) > 0);
+    }
 }
 
 internal sealed class FakeDialogService : IDialogService
@@ -139,6 +184,25 @@ internal sealed class FakeDialogService : IDialogService
         return Task.CompletedTask;
     }
 
+    public int DataMaintenanceMostrados { get; private set; }
+
+    public int MantenimientosMostrados { get; private set; }
+
+    public Exception? ErrorAlMostrarMantenimiento { get; set; }
+
+    public Task ShowDataMaintenanceAsync()
+    {
+        DataMaintenanceMostrados++;
+        MantenimientosMostrados++;
+
+        if (ErrorAlMostrarMantenimiento is not null)
+        {
+            throw ErrorAlMostrarMantenimiento;
+        }
+
+        return Task.CompletedTask;
+    }
+
     public List<(string Titulo, string Mensaje)> MensajesInfo { get; } = new();
 
     public Task ShowErrorAsync(string titulo, string mensaje) => Task.CompletedTask;
@@ -147,6 +211,48 @@ internal sealed class FakeDialogService : IDialogService
     {
         MensajesInfo.Add((titulo, mensaje));
         return Task.CompletedTask;
+    }
+
+    public string? RutaGuardado { get; set; }
+
+    public int GuardadosSolicitados { get; private set; }
+
+    public string? UltimoTituloGuardado { get; private set; }
+
+    public string? UltimoNombreSugerido { get; private set; }
+
+    public string? UltimaExtension { get; private set; }
+
+    public Task<string?> ShowSaveFileDialogAsync(
+        string titulo,
+        string nombreSugerido,
+        string extension = ".html",
+        CancellationToken cancellationToken = default)
+    {
+        GuardadosSolicitados++;
+        UltimoTituloGuardado = titulo;
+        UltimoNombreSugerido = nombreSugerido;
+        UltimaExtension = extension;
+        return Task.FromResult(RutaGuardado);
+    }
+
+    public string? RutaApertura { get; set; }
+
+    public int AperturasSolicitadas { get; private set; }
+
+    public string? UltimoTituloApertura { get; private set; }
+
+    public IReadOnlyList<FilePickerFileType>? UltimosTiposArchivo { get; private set; }
+
+    public Task<string?> ShowOpenFileDialogAsync(
+        string titulo,
+        IReadOnlyList<FilePickerFileType>? fileTypes = null,
+        CancellationToken cancellationToken = default)
+    {
+        AperturasSolicitadas++;
+        UltimoTituloApertura = titulo;
+        UltimosTiposArchivo = fileTypes;
+        return Task.FromResult(RutaApertura);
     }
 }
 
@@ -195,4 +301,32 @@ internal sealed class FakeDataMaintenanceService : IDataMaintenanceService
 
     public Task<IReadOnlyList<BackupInfo>> ListarBackupsAsync(CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<BackupInfo>>(Array.Empty<BackupInfo>());
+}
+
+internal sealed class FakePdfExportService : IPdfExportService
+{
+    public string? UltimaRuta { get; private set; }
+
+    public int Exportaciones { get; private set; }
+
+    public byte[] GenerarPdf(Paciente paciente, FichaDiaria? ficha) => Array.Empty<byte>();
+
+    public Task<byte[]> GenerarPdfAsync(Paciente paciente, FichaDiaria? ficha, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Array.Empty<byte>());
+
+    public Task ExportarAsync(Paciente paciente, FichaDiaria? ficha, string rutaArchivo, CancellationToken cancellationToken = default)
+    {
+        Exportaciones++;
+        UltimaRuta = rutaArchivo;
+        return Task.CompletedTask;
+    }
+
+    public Task<string?> ExportarAsync(Paciente paciente, FichaDiaria? ficha, CancellationToken cancellationToken = default) =>
+        Task.FromResult<string?>(null);
+
+    public Task ExportarPdfAsync(Paciente paciente, FichaDiaria? ficha, string rutaArchivo, CancellationToken cancellationToken = default) =>
+        ExportarAsync(paciente, ficha, rutaArchivo, cancellationToken);
+
+    public Task<string?> ExportarPdfAsync(Paciente paciente, FichaDiaria? ficha, CancellationToken cancellationToken = default) =>
+        Task.FromResult<string?>(null);
 }

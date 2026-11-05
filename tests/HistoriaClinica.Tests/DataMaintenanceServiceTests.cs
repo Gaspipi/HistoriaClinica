@@ -33,9 +33,9 @@ public sealed class DataMaintenanceServiceTests : IDisposable
         await pacientes.SaveAsync(new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
-            DOB = new DateOnly(1990, 5, 4),
+            Nombre = "Ana",
+            Apellido = "Pérez",
+            FechaNacimiento = new DateOnly(1990, 5, 4),
         });
 
         var service = new DataMaintenanceService(
@@ -69,9 +69,9 @@ public sealed class DataMaintenanceServiceTests : IDisposable
         await pacientes.SaveAsync(new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
-            DOB = new DateOnly(1990, 5, 4),
+            Nombre = "Ana",
+            Apellido = "Pérez",
+            FechaNacimiento = new DateOnly(1990, 5, 4),
         });
 
         var service = new DataMaintenanceService(

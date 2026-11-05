@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using HistoriaClinica.Core.Data;
 using HistoriaClinica.Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +33,42 @@ public sealed class PacienteRepository : IPacienteRepository
             .FirstOrDefaultAsync(p => p.Dni == dni, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Paciente>> SearchAsync(string query, CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        var term = (query ?? string.Empty).Trim();
+        if (term.Length == 0)
+        {
+            return Array.Empty<Paciente>();
+        }
+
+        var normalizedTerm = RemoveDiacritics(term);
+
+        var pacientes = await context.Pacientes
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return pacientes
+            .Where(p => RemoveDiacritics(p.Nombre).Contains(normalizedTerm, StringComparison.OrdinalIgnoreCase)
+                     || RemoveDiacritics(p.Apellido).Contains(normalizedTerm, StringComparison.OrdinalIgnoreCase)
+                     || p.Dni.StartsWith(normalizedTerm, StringComparison.Ordinal))
+            .OrderBy(p => p.Apellido)
+            .ThenBy(p => p.Nombre)
+            .Select(p => new Paciente
+            {
+                Dni = p.Dni,
+                Nombre = p.Nombre,
+                Apellido = p.Apellido,
+                FechaNacimiento = p.FechaNacimiento,
+                Telefono = p.Telefono,
+                ObraSocial = p.ObraSocial,
+                NumeroSocio = p.NumeroSocio,
+                AntecedentesFamiliares = p.AntecedentesFamiliares,
+                AntecedentesPersonales = p.AntecedentesPersonales,
+            })
+            .ToList();
+    }
+
     public async Task SaveAsync(Paciente paciente, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
@@ -47,5 +85,25 @@ public sealed class PacienteRepository : IPacienteRepository
         }
 
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private static string RemoveDiacritics(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return value;
+        }
+
+        var normalized = value.Normalize(NormalizationForm.FormD);
+        var builder = new StringBuilder(normalized.Length);
+        foreach (var character in normalized)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
+            {
+                builder.Append(character);
+            }
+        }
+
+        return builder.ToString().Normalize(NormalizationForm.FormC);
     }
 }

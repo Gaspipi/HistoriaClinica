@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Controls.ApplicationLifetimes;
 using HistoriaClinica.App.ViewModels;
 using HistoriaClinica.App.Views;
@@ -116,6 +117,27 @@ public sealed class DialogService : IDialogService
         await window.ShowDialog(owner);
     }
 
+    public async Task ShowDataMaintenanceAsync()
+    {
+        var owner = Owner;
+        if (owner is null)
+        {
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
+        }
+
+        var viewModel = _services.GetRequiredService<DataMaintenanceViewModel>();
+        var window = new DataMaintenanceWindow(viewModel);
+        _owners.Push(window);
+        try
+        {
+            await window.ShowDialog(owner);
+        }
+        finally
+        {
+            _owners.Pop();
+        }
+    }
+
     public Task ShowErrorAsync(string titulo, string mensaje) =>
         ShowMessageAsync(titulo, mensaje);
 
@@ -132,5 +154,64 @@ public sealed class DialogService : IDialogService
 
         var dialog = new MessageDialog(titulo, mensaje, mostrarCancelar: false);
         await dialog.ShowDialog<bool>(owner);
+    }
+
+    public async Task<string?> ShowOpenFileDialogAsync(
+        string titulo,
+        IReadOnlyList<FilePickerFileType>? fileTypes = null,
+        CancellationToken cancellationToken = default)
+    {
+        var owner = Owner;
+        if (owner is null)
+        {
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
+        }
+
+        var topLevel = TopLevel.GetTopLevel(owner);
+        if (topLevel?.StorageProvider is null)
+        {
+            return null;
+        }
+
+        var result = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = titulo,
+            AllowMultiple = false,
+            FileTypeFilter = fileTypes,
+        });
+
+        return result?.FirstOrDefault()?.Path.LocalPath;
+    }
+
+    public async Task<string?> ShowSaveFileDialogAsync(
+        string titulo,
+        string nombreSugerido,
+        string extension = ".html",
+        CancellationToken cancellationToken = default)
+    {
+        var owner = Owner;
+        if (owner is null)
+        {
+            throw new InvalidOperationException("No hay ventana propietaria disponible para mostrar el diálogo.");
+        }
+
+        var topLevel = TopLevel.GetTopLevel(owner);
+        if (topLevel?.StorageProvider is null)
+        {
+            return null;
+        }
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = titulo,
+            SuggestedFileName = nombreSugerido,
+            DefaultExtension = extension.TrimStart('.'),
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType(extension.TrimStart('.').ToUpperInvariant()) { Patterns = new[] { $"*{extension}" } },
+            },
+        });
+
+        return file?.Path.LocalPath;
     }
 }

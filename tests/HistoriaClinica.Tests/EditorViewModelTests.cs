@@ -13,9 +13,9 @@ public sealed class EditorViewModelTests
         var vm = CrearPacienteEditor();
 
         Assert.False(vm.HayCambios);
-        vm.FirstName = "Ana";
+        vm.Nombre = "Ana";
         Assert.True(vm.HayCambios);
-        vm.FirstName = string.Empty;
+        vm.Nombre = string.Empty;
         Assert.False(vm.HayCambios);
     }
 
@@ -40,8 +40,8 @@ public sealed class EditorViewModelTests
         var pacientes = new FakePacienteRepository();
         var vm = CrearPacienteEditor(pacientes: pacientes);
         vm.Dni = "12345678";
-        vm.FirstName = "Ana";
-        vm.LastName = "Pérez";
+        vm.Nombre = "Ana";
+        vm.Apellido = "Pérez";
         vm.FechaNacimiento = new DateTime(1990, 5, 4);
 
         bool? resultadoCierre = null;
@@ -50,7 +50,7 @@ public sealed class EditorViewModelTests
         await vm.GuardarCommand.ExecuteAsync(null);
 
         Assert.NotNull(vm.Resultado);
-        Assert.Equal("Ana", vm.Resultado.FirstName);
+        Assert.Equal("Ana", vm.Resultado.Nombre);
         Assert.True(vm.CierreConfirmado);
         Assert.True(resultadoCierre);
         Assert.Single(pacientes.Pacientes);
@@ -74,7 +74,7 @@ public sealed class EditorViewModelTests
     public async Task Paciente_NuevoConDniDuplicado_RechazaGuardar()
     {
         var pacientes = new FakePacienteRepository();
-        pacientes.Agregar(new Paciente { Dni = "12345678", FirstName = "Juan" });
+        pacientes.Agregar(new Paciente { Dni = "12345678", Nombre = "Juan" });
 
         var vm = CrearPacienteEditor(pacientes: pacientes, dni: "12345678");
 
@@ -116,7 +116,7 @@ public sealed class EditorViewModelTests
     {
         var dialogos = new FakeDialogService { ConfirmarResultado = false };
         var vm = CrearPacienteEditor(dialogos: dialogos);
-        vm.FirstName = "Ana";
+        vm.Nombre = "Ana";
 
         await vm.CancelarCommand.ExecuteAsync(null);
 

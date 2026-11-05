@@ -31,9 +31,16 @@ public sealed class DatabaseMigrationException : InvalidOperationException
 
 public sealed record SchemaMigrationResult(int FromVersion, int ToVersion, string? BackupPath);
 
+// Migrador propio de esquema (legacy): ya no recibe cambios. Solo se usa para
+// llevar bases anteriores al esquema 8 (el punto donde toma el relevo EF Core
+// Migrations). Para evolucionar el modelo a partir del esquema 8, agregá una
+// migración con "dotnet dotnet-ef migrations add" (manifiesto en
+// .config/dotnet-tools.json).
 public static class DatabaseSchemaMigrator
 {
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 8;
+
+    private static readonly SemaphoreSlim _migrationLock = new(1, 1);
 
     private const string CreateUsuariosSql = """
         CREATE TABLE IF NOT EXISTS "Usuarios" (
@@ -88,10 +95,91 @@ public static class DatabaseSchemaMigrator
         PRAGMA foreign_keys = ON;
         """;
 
+    private const string MigrationToVersion3Sql = """
+        ALTER TABLE "FichasDiarias" ADD COLUMN "Cerrada" INTEGER NOT NULL DEFAULT 0;
+        """;
+
+    private const string MigrationToVersion4Sql = """
+        ALTER TABLE "Pacientes" ADD COLUMN "Alergias" TEXT NOT NULL DEFAULT '';
+        ALTER TABLE "Pacientes" ADD COLUMN "ProblemasActivos" TEXT NOT NULL DEFAULT '';
+        """;
+
+    private const string MigrationToVersion5Sql = """
+        ALTER TABLE "FichasDiarias" ADD COLUMN "PresionArterial" TEXT NULL;
+        ALTER TABLE "FichasDiarias" ADD COLUMN "FrecuenciaCardiaca" INTEGER NULL;
+        ALTER TABLE "FichasDiarias" ADD COLUMN "Temperatura" REAL NULL;
+        ALTER TABLE "FichasDiarias" ADD COLUMN "Peso" REAL NULL;
+        """;
+
+    private const string MigrationToVersion6Sql = """
+        CREATE TABLE IF NOT EXISTS "Plantillas" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK_Plantillas" PRIMARY KEY AUTOINCREMENT,
+          "Nombre" TEXT NOT NULL,
+          "Motivo" TEXT NOT NULL,
+          "Enfermedad" TEXT NOT NULL DEFAULT '',
+          "Indicaciones" TEXT NOT NULL DEFAULT '',
+          "CreadorDni" TEXT NULL,
+          CONSTRAINT "FK_Plantillas_Pacientes_CreadorDni"
+            FOREIGN KEY ("CreadorDni") REFERENCES "Pacientes" ("Dni") ON DELETE SET NULL
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS "IX_Plantillas_Nombre"
+        ON "Plantillas" ("Nombre");
+        """;
+
+    private const string MigrationToVersion7Sql = """
+        CREATE TABLE IF NOT EXISTS "AuditLogs" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK_AuditLogs" PRIMARY KEY AUTOINCREMENT,
+          "Username" TEXT NOT NULL,
+          "Timestamp" TEXT NOT NULL,
+          "Entity" TEXT NOT NULL,
+          "Action" TEXT NOT NULL,
+          "Details" TEXT NULL
+        );
+        """;
+
+    // Reconstruye "Pacientes" con columnas en español y sin las columnas
+    // "Medicacion", "Alergias" y "ProblemasActivos". Conserva todos los datos,
+    // normalizando "DOB" para no heredar valores '0001-01-01' de bases viejas.
+    private const string MigrationToVersion8Sql = """
+        CREATE TABLE "Pacientes_Nuevo" (
+          "Dni" TEXT NOT NULL CONSTRAINT "PK_Pacientes" PRIMARY KEY,
+          "Nombre" TEXT NOT NULL,
+          "Apellido" TEXT NOT NULL,
+          "FechaNacimiento" TEXT NULL,
+          "Telefono" TEXT NOT NULL,
+          "ObraSocial" TEXT NOT NULL,
+          "NumeroSocio" TEXT NOT NULL,
+          "AntecedentesFamiliares" TEXT NOT NULL,
+          "AntecedentesPersonales" TEXT NOT NULL
+        );
+        INSERT INTO "Pacientes_Nuevo" ("Dni","Nombre","Apellido","FechaNacimiento","Telefono","ObraSocial","NumeroSocio","AntecedentesFamiliares","AntecedentesPersonales")
+        SELECT "Dni",
+               COALESCE("FirstName", ''),
+               COALESCE("LastName", ''),
+               CASE
+                   WHEN "DOB" IS NULL OR "DOB" = '' OR "DOB" = '0001-01-01 00:00:00' OR "DOB" = '0001-01-01' THEN NULL
+                   ELSE substr("DOB", 1, 10)
+               END,
+               COALESCE("Phone", ''),
+               COALESCE("ObraSocial", ''),
+               COALESCE("NroSocio", ''),
+               COALESCE("AntecFam", ''),
+               COALESCE("AntecPers", '')
+        FROM "Pacientes";
+        DROP TABLE "Pacientes";
+        ALTER TABLE "Pacientes_Nuevo" RENAME TO "Pacientes";
+        """;
+
     private static readonly (int Version, string Sql)[] Migrations =
     [
         (1, MigrationToVersion1Sql),
         (2, MigrationToVersion2Sql),
+        (3, MigrationToVersion3Sql),
+        (4, MigrationToVersion4Sql),
+        (5, MigrationToVersion5Sql),
+        (6, MigrationToVersion6Sql),
+        (7, MigrationToVersion7Sql),
+        (8, MigrationToVersion8Sql),
     ];
 
     public static async Task<int> ReadSchemaVersionAsync(
@@ -100,21 +188,29 @@ public static class DatabaseSchemaMigrator
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);
 
-        var fullPath = Path.GetFullPath(databasePath);
-        if (!File.Exists(fullPath))
+        await _migrationLock.WaitAsync(cancellationToken);
+        try
         {
-            return 0;
-        }
+            var fullPath = Path.GetFullPath(databasePath);
+            if (!File.Exists(fullPath))
+            {
+                return 0;
+            }
 
-        await using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+            await using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+            {
+                DataSource = fullPath,
+                Mode = SqliteOpenMode.ReadWrite,
+                Pooling = false,
+            }.ToString());
+            await connection.OpenAsync(cancellationToken);
+            await ConfigureConnectionAsync(connection, cancellationToken);
+            return await GetUserVersionAsync(connection, cancellationToken);
+        }
+        finally
         {
-            DataSource = fullPath,
-            Mode = SqliteOpenMode.ReadWrite,
-            Pooling = false,
-        }.ToString());
-        await connection.OpenAsync(cancellationToken);
-        await ConfigureConnectionAsync(connection, cancellationToken);
-        return await GetUserVersionAsync(connection, cancellationToken);
+            _migrationLock.Release();
+        }
     }
 
     public static async Task<SchemaMigrationResult> MigrateAsync(
@@ -126,6 +222,9 @@ public static class DatabaseSchemaMigrator
         ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);
         ArgumentNullException.ThrowIfNull(logger);
 
+        await _migrationLock.WaitAsync(cancellationToken);
+        try
+        {
         ValidateMigrations();
 
         var fullPath = Path.GetFullPath(databasePath);
@@ -184,6 +283,54 @@ public static class DatabaseSchemaMigrator
                     continue;
                 }
 
+                // Bases creadas con EnsureCreated sobre el modelo nuevo ya tienen
+                // las columnas en español ("Nombre"), por lo que las migraciones
+                // que modifican la estructura de "Pacientes" (2, 4 y 8) solo deben
+                // actualizar la versión del esquema.
+                if (migration.Version is 2 or 4 or 8
+                    && await EsquemaPacientesNuevoAsync(connection, cancellationToken))
+                {
+                    await SetUserVersionAsync(connection, transaction, migration.Version, cancellationToken);
+                    targetVersion = migration.Version;
+                    continue;
+                }
+
+                // La migración 3 añade la columna "Cerrada" a "FichasDiarias".
+                // En bases recién creadas con EnsureCreated la columna ya existe,
+                // por lo que se omite la ejecución para evitar un error de columna duplicada.
+                if (migration.Version == 3
+                    && await ColumnExistsAsync(connection, "FichasDiarias", "Cerrada", cancellationToken))
+                {
+                    await SetUserVersionAsync(connection, transaction, migration.Version, cancellationToken);
+                    targetVersion = migration.Version;
+                    continue;
+                }
+
+                // La migración 4 añade las columnas "Alergias" y "ProblemasActivos"
+                // a "Pacientes". En bases recién creadas con EnsureCreated ya existen,
+                // por lo que se omite la ejecución para evitar columnas duplicadas.
+                if (migration.Version == 4
+                    && await ColumnExistsAsync(connection, "Pacientes", "Alergias", cancellationToken)
+                    && await ColumnExistsAsync(connection, "Pacientes", "ProblemasActivos", cancellationToken))
+                {
+                    await SetUserVersionAsync(connection, transaction, migration.Version, cancellationToken);
+                    targetVersion = migration.Version;
+                    continue;
+                }
+
+                // La migración 5 añade los signos vitales a "FichasDiarias".
+                // En bases recién creadas con EnsureCreated ya existen,
+                // por lo que se omite la ejecución para evitar columnas duplicadas.
+                if (migration.Version == 5
+                    && await ColumnExistsAsync(connection, "FichasDiarias", "PresionArterial", cancellationToken)
+                    && await ColumnExistsAsync(connection, "FichasDiarias", "FrecuenciaCardiaca", cancellationToken)
+                    && await ColumnExistsAsync(connection, "FichasDiarias", "Temperatura", cancellationToken)
+                    && await ColumnExistsAsync(connection, "FichasDiarias", "Peso", cancellationToken))
+                {
+                    await SetUserVersionAsync(connection, transaction, migration.Version, cancellationToken);
+                    targetVersion = migration.Version;
+                    continue;
+                }
                 await ExecuteAsync(connection, transaction, migration.Sql, cancellationToken);
                 await SetUserVersionAsync(connection, transaction, migration.Version, cancellationToken);
                 targetVersion = migration.Version;
@@ -238,6 +385,11 @@ public static class DatabaseSchemaMigrator
             backupPath ?? "no requerido");
 
         return new SchemaMigrationResult(fromVersion, targetVersion, backupPath);
+        }
+        finally
+        {
+            _migrationLock.Release();
+        }
     }
 
     private static void ValidateMigrations()
@@ -298,6 +450,36 @@ public static class DatabaseSchemaMigrator
         command.Parameters.AddWithValue("$name", tableName);
         var result = await command.ExecuteScalarAsync(cancellationToken);
         return result is not null;
+    }
+
+    private static async Task<bool> ColumnExistsAsync(
+        SqliteConnection connection,
+        string tableName,
+        string columnName,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = $"PRAGMA table_info(\"{tableName}\");";
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            if (string.Equals(reader.GetString(1), columnName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Detecta bases creadas con EnsureCreated sobre el modelo actual: si ya
+    // tienen columnas en español y no queda ninguna con los nombres viejos.
+    private static async Task<bool> EsquemaPacientesNuevoAsync(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        return !await ColumnExistsAsync(connection, "Pacientes", "FirstName", cancellationToken)
+            && await ColumnExistsAsync(connection, "Pacientes", "Nombre", cancellationToken);
     }
 
     private static async Task<int> GetUserVersionAsync(

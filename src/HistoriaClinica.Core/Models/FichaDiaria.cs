@@ -20,4 +20,14 @@ public class FichaDiaria
     public string Indicaciones { get; set; } = string.Empty;
 
     public DateTime Fecha { get; set; } = DateTime.Now;
+
+    public bool Cerrada { get; set; } = false;
+
+    public string? PresionArterial { get; set; }
+
+    public int? FrecuenciaCardiaca { get; set; }
+
+    public decimal? Temperatura { get; set; }
+
+    public decimal? Peso { get; set; }
 }

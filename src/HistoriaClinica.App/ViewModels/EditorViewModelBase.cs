@@ -48,7 +48,9 @@ public abstract partial class EditorViewModelBase : ObservableObject
 
     public Task SolicitarCancelacionAsync() => CancelarAsync();
 
-    private bool PuedeGuardar() => !IsBusy;
+    private bool PuedeGuardar() => !IsBusy && PuedeGuardarCore();
+
+    protected virtual bool PuedeGuardarCore() => true;
 
     [RelayCommand(CanExecute = nameof(PuedeGuardar))]
     private async Task GuardarAsync()

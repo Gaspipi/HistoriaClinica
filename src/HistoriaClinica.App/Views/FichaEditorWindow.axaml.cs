@@ -27,10 +27,28 @@ public partial class FichaEditorWindow : Window
         Opened += OnOpened;
     }
 
-    private void OnOpened(object? sender, EventArgs e)
+    private async void OnOpened(object? sender, EventArgs e)
     {
-        WindowSizing.AjustarAlAreaDeTrabajo(this);
-        _motivoTextBox.Focus();
+        Opened -= OnOpened;
+        try
+        {
+            WindowSizing.AjustarAlAreaDeTrabajo(this);
+            await _viewModel.InitializeAsync();
+            _motivoTextBox.Focus();
+        }
+        catch (Exception)
+        {
+            _viewModel.MensajeError = "No se pudieron cargar las plantillas. Intentá nuevamente.";
+        }
+    }
+
+    private void FechaDatePicker_SelectedDateChanged(object? sender, DatePickerSelectedValueChangedEventArgs e)
+    {
+        if (e.NewDate is DateTimeOffset nuevaFecha)
+        {
+            var hora = _viewModel.FechaCreacion?.TimeOfDay ?? TimeSpan.Zero;
+            _viewModel.FechaCreacion = nuevaFecha.Date + hora;
+        }
     }
 
     private async void OnClosing(object? sender, WindowClosingEventArgs e)

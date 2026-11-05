@@ -14,7 +14,7 @@ public sealed class MainWindowViewModelTests
     {
         var contexto = CrearViewModel();
         var paciente = CrearPaciente("12345678", "Ana", "Pérez");
-        paciente.DOB = DateOnly.FromDateTime(DateTime.Today.AddYears(-30).AddDays(-1));
+        paciente.FechaNacimiento = DateOnly.FromDateTime(DateTime.Today.AddYears(-30).AddDays(-1));
         paciente.ObraSocial = "OSDE";
 
         contexto.Vm.PacienteActual = paciente;
@@ -68,7 +68,7 @@ public sealed class MainWindowViewModelTests
     public async Task BuscarConDniInvalido_MuestraErrorDeValidacion()
     {
         var contexto = CrearViewModel();
-        contexto.Vm.Dni = "123";
+        contexto.Vm.BusquedaTexto = "123";
 
         await contexto.Vm.BuscarCommand.ExecuteAsync(null);
 
@@ -198,14 +198,14 @@ public sealed class MainWindowViewModelTests
         var contexto = CrearViewModel();
         contexto.Vm.PacienteActual = CrearPaciente("12345678", "Ana", "Pérez");
         contexto.Vm.Fichas.Add(new FichaDiaria { Id = 1, Dni = "12345678" });
-        contexto.Vm.Dni = "12345678";
+        contexto.Vm.BusquedaTexto = "12345678";
 
         contexto.Vm.CerrarSesionCommand.Execute(null);
 
         Assert.False(contexto.Sesion.EstaAutenticada);
         Assert.Null(contexto.Vm.PacienteActual);
         Assert.Empty(contexto.Vm.Fichas);
-        Assert.Equal(string.Empty, contexto.Vm.Dni);
+        Assert.Equal(string.Empty, contexto.Vm.BusquedaTexto);
         Assert.Equal(1, contexto.Navigator.VecesAuth);
     }
 
@@ -257,6 +257,7 @@ public sealed class MainWindowViewModelTests
             navigator,
             clipboard,
             maintenance,
+            new FakePdfExportService(),
             NullLogger<MainWindowViewModel>.Instance);
 
         return new Contexto(vm, pacientes, fichas, dialogos, session, navigator, clipboard, maintenance);
@@ -265,15 +266,14 @@ public sealed class MainWindowViewModelTests
     private static Paciente CrearPaciente(string dni, string nombre, string apellido) => new()
     {
         Dni = dni,
-        FirstName = nombre,
-        LastName = apellido,
-        DOB = new DateOnly(1990, 5, 4),
-        Phone = "555-0000",
+        Nombre = nombre,
+        Apellido = apellido,
+        FechaNacimiento = new DateOnly(1990, 5, 4),
+        Telefono = "555-0000",
         ObraSocial = "OSDE",
-        NroSocio = "123",
-        AntecFam = "Sin antecedentes",
-        AntecPers = "Sin antecedentes",
-        Medicacion = "Ninguna",
+        NumeroSocio = "123",
+        AntecedentesFamiliares = "Sin antecedentes",
+        AntecedentesPersonales = "Sin antecedentes",
     };
 
     private sealed record Contexto(

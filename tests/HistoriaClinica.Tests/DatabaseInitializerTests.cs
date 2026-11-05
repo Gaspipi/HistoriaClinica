@@ -73,9 +73,9 @@ public sealed class DatabaseInitializerTests : IDisposable
             context.Pacientes.Add(new()
             {
                 Dni = "12345678",
-                FirstName = "Ana",
-                LastName = "Pérez",
-                DOB = new DateOnly(1990, 5, 4),
+                Nombre = "Ana",
+                Apellido = "Pérez",
+                FechaNacimiento = new DateOnly(1990, 5, 4),
             });
             await context.SaveChangesAsync();
         }
@@ -105,9 +105,9 @@ public sealed class DatabaseInitializerTests : IDisposable
             context.Pacientes.Add(new()
             {
                 Dni = "12345678",
-                FirstName = "Ana",
-                LastName = "Pérez",
-                DOB = new DateOnly(1990, 5, 4),
+                Nombre = "Ana",
+                Apellido = "Pérez",
+                FechaNacimiento = new DateOnly(1990, 5, 4),
             });
             await context.SaveChangesAsync();
         }

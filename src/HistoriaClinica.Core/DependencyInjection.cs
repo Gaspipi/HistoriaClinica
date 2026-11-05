@@ -48,9 +48,19 @@ public static class DependencyInjection
         services.AddSingleton<DatabaseInitializer>();
         services.AddSingleton<IPacienteRepository, PacienteRepository>();
         services.AddSingleton<IFichaRepository, FichaRepository>();
+        services.AddSingleton<IPlantillaRepository, PlantillaRepository>();
         services.AddSingleton<IUsuarioRepository, UsuarioRepository>();
-        services.AddSingleton<PacienteService>();
-        services.AddSingleton<FichaService>();
+        services.AddSingleton<IAuditLogRepository, AuditLogRepository>();
+        services.AddSingleton<IAuditService, AuditService>();
+        services.AddSingleton<PacienteService>(sp =>
+            new PacienteService(
+                sp.GetRequiredService<IPacienteRepository>(),
+                sp.GetRequiredService<IAuditService>()));
+        services.AddSingleton<FichaService>(sp =>
+            new FichaService(
+                sp.GetRequiredService<IFichaRepository>(),
+                sp.GetRequiredService<IAuditService>()));
+        services.AddSingleton<PlantillaService>();
         services.AddSingleton<AuthService>();
 
         return services;

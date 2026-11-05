@@ -12,25 +12,15 @@ public sealed class SqliteBusyTimeoutInterceptor : DbConnectionInterceptor
 {
     private const string BusyTimeoutSql = "PRAGMA busy_timeout = 5000;";
 
-    public override InterceptionResult ConnectionOpening(
-        DbConnection connection,
-        ConnectionEventData eventData,
-        InterceptionResult result)
+    public override void ConnectionOpened(DbConnection connection, ConnectionEndEventData eventData)
     {
-        if (connection is SqliteConnection)
-        {
-            using var command = connection.CreateCommand();
-            command.CommandText = BusyTimeoutSql;
-            command.ExecuteNonQuery();
-        }
-
-        return base.ConnectionOpening(connection, eventData, result);
+        Configurar(connection);
+        base.ConnectionOpened(connection, eventData);
     }
 
-    public override async ValueTask<InterceptionResult> ConnectionOpeningAsync(
+    public override async Task ConnectionOpenedAsync(
         DbConnection connection,
-        ConnectionEventData eventData,
-        InterceptionResult result,
+        ConnectionEndEventData eventData,
         CancellationToken cancellationToken = default)
     {
         if (connection is SqliteConnection)
@@ -40,6 +30,18 @@ public sealed class SqliteBusyTimeoutInterceptor : DbConnectionInterceptor
             await command.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        return await base.ConnectionOpeningAsync(connection, eventData, result, cancellationToken);
+        await base.ConnectionOpenedAsync(connection, eventData, cancellationToken);
+    }
+
+    private static void Configurar(DbConnection connection)
+    {
+        if (connection is not SqliteConnection)
+        {
+            return;
+        }
+
+        using var command = connection.CreateCommand();
+        command.CommandText = BusyTimeoutSql;
+        command.ExecuteNonQuery();
     }
 }

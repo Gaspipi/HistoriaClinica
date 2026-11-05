@@ -13,6 +13,8 @@ namespace HistoriaClinica.App.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
+    private const int DebounceBusquedaMs = 250;
+
     private readonly PacienteService _pacienteService;
     private readonly FichaService _fichaService;
     private readonly IDialogService _dialogs;
@@ -20,7 +22,13 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly IAppNavigator _navigator;
     private readonly IClipboardService _clipboard;
     private readonly IDataMaintenanceService _maintenance;
+    private readonly IPdfExportService _pdfExport;
     private readonly ILogger<MainWindowViewModel> _logger;
+    private CancellationTokenSource? _busquedaCts;
+
+    // true cuando el texto del buscador son solo dígitos: en ese modo no se
+    // admiten letras y el DNI se corta a los 8 dígitos máximo.
+    private bool _modoDni;
 
     public MainWindowViewModel(
         PacienteService pacienteService,
@@ -30,6 +38,7 @@ public partial class MainWindowViewModel : ObservableObject
         IAppNavigator navigator,
         IClipboardService clipboard,
         IDataMaintenanceService maintenance,
+        IPdfExportService pdfExport,
         ILogger<MainWindowViewModel> logger)
     {
         _pacienteService = pacienteService;
@@ -39,6 +48,7 @@ public partial class MainWindowViewModel : ObservableObject
         _navigator = navigator;
         _clipboard = clipboard;
         _maintenance = maintenance;
+        _pdfExport = pdfExport;
         _logger = logger;
 
         Fichas.CollectionChanged += (_, _) =>
@@ -48,12 +58,14 @@ public partial class MainWindowViewModel : ObservableObject
         };
     }
 
-    public RangeObservableCollection<string> DnisSugeridos { get; } = new();
+    public RangeObservableCollection<Paciente> ResultadosBusqueda { get; } = new();
+
+    public bool TieneResultados => ResultadosBusqueda.Count > 0;
 
     public RangeObservableCollection<FichaDiaria> Fichas { get; } = new();
 
     [ObservableProperty]
-    private string _dni = string.Empty;
+    private string _busquedaTexto = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayError))]
@@ -64,26 +76,29 @@ public partial class MainWindowViewModel : ObservableObject
     private string? _mensajeEstado;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(FechaNacimientoTexto))]
     [NotifyPropertyChangedFor(nameof(HayPaciente))]
     [NotifyPropertyChangedFor(nameof(NombreCompleto))]
-    [NotifyPropertyChangedFor(nameof(InicialesPaciente))]
-    [NotifyPropertyChangedFor(nameof(DniPacienteTexto))]
+    [NotifyPropertyChangedFor(nameof(FechaNacimientoTexto))]
     [NotifyPropertyChangedFor(nameof(EdadTexto))]
     [NotifyPropertyChangedFor(nameof(ObraSocialTexto))]
+    [NotifyPropertyChangedFor(nameof(InicialesPaciente))]
+    [NotifyPropertyChangedFor(nameof(DniPacienteTexto))]
     [NotifyPropertyChangedFor(nameof(PacienteResumen))]
     [NotifyPropertyChangedFor(nameof(ResumenCopiable))]
+    [NotifyCanExecuteChangedFor(nameof(NuevoPacienteCommand))]
     [NotifyCanExecuteChangedFor(nameof(EditarPacienteCommand))]
-    [NotifyCanExecuteChangedFor(nameof(NuevaFichaCommand))]
-    [NotifyCanExecuteChangedFor(nameof(CopiarResumenCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopiarDniCommand))]
     [NotifyCanExecuteChangedFor(nameof(CopiarTelefonoCommand))]
+    [NotifyCanExecuteChangedFor(nameof(NuevaFichaCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopiarResumenCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportarPdfCommand))]
     private Paciente? _pacienteActual;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayFichaSeleccionada))]
     [NotifyCanExecuteChangedFor(nameof(EditarFichaCommand))]
     [NotifyCanExecuteChangedFor(nameof(BorrarFichaCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportarPdfCommand))]
     private FichaDiaria? _fichaSeleccionada;
 
     [ObservableProperty]
@@ -94,6 +109,7 @@ public partial class MainWindowViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(EditarFichaCommand))]
     [NotifyCanExecuteChangedFor(nameof(BorrarFichaCommand))]
     [NotifyCanExecuteChangedFor(nameof(CerrarSesionCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportarPdfCommand))]
     private bool _isBusy;
 
     public bool HayError => !string.IsNullOrWhiteSpace(MensajeError);
@@ -113,7 +129,7 @@ public partial class MainWindowViewModel : ObservableObject
     public string ResumenCopiable => HayPaciente ? $"{NombreCompleto} · {PacienteResumen}" : string.Empty;
 
     public string FechaNacimientoTexto =>
-        PacienteActual is null || !PacienteActual.DOB.HasValue ? string.Empty : PacienteActual.DOB.Value.ToString("dd/MM/yyyy", CultureInfo.GetCultureInfo("es-ES"));
+        PacienteActual is null || !PacienteActual.FechaNacimiento.HasValue ? string.Empty : PacienteActual.FechaNacimiento.Value.ToString("dd/MM/yyyy", FechaClinica.Culture);
 
     public string NombreCompleto
     {
@@ -124,7 +140,7 @@ public partial class MainWindowViewModel : ObservableObject
                 return "Paciente sin nombre";
             }
 
-            var partes = new[] { PacienteActual.FirstName, PacienteActual.LastName }
+            var partes = new[] { PacienteActual.Nombre, PacienteActual.Apellido }
                 .Where(parte => !string.IsNullOrWhiteSpace(parte));
 
             return partes.Any() ? string.Join(" ", partes) : "Paciente sin nombre";
@@ -140,7 +156,7 @@ public partial class MainWindowViewModel : ObservableObject
                 return "?";
             }
 
-            var iniciales = new[] { PacienteActual.FirstName, PacienteActual.LastName }
+            var iniciales = new[] { PacienteActual.Nombre, PacienteActual.Apellido }
                 .Where(parte => !string.IsNullOrWhiteSpace(parte))
                 .Select(parte => char.ToUpperInvariant(parte.Trim()[0]))
                 .ToArray();
@@ -158,13 +174,13 @@ public partial class MainWindowViewModel : ObservableObject
     {
         get
         {
-            if (PacienteActual is null || !PacienteActual.DOB.HasValue)
+            if (PacienteActual is null || !PacienteActual.FechaNacimiento.HasValue)
             {
                 return "Sin fecha de nacimiento";
             }
 
-            var hoy = DateTime.Today;
-            var nacimiento = PacienteActual.DOB.Value.ToDateTime(TimeOnly.MinValue);
+            var hoy = DateOnly.FromDateTime(DateTime.Today);
+            var nacimiento = PacienteActual.FechaNacimiento.Value;
             if (nacimiento > hoy)
             {
                 return "Fecha inválida";
@@ -199,20 +215,102 @@ public partial class MainWindowViewModel : ObservableObject
         _ => $"{Fichas.Count} fichas",
     };
 
-    public Task InitializeAsync() => EjecutarAsync(
-        () => CargarDnisAsync(),
-        "Error al inicializar la aplicación");
+    public Task InitializeAsync() => Task.CompletedTask;
 
-    partial void OnDniChanged(string value)
+    private static bool EsSoloDigitos(string texto) =>
+        texto.Length > 0 && texto.All(char.IsAsciiDigit);
+
+    partial void OnBusquedaTextoChanged(string value)
     {
-        var limpio = DniValidator.Normalizar(value);
-        if (!string.Equals(value, limpio, StringComparison.Ordinal))
+        // El setter no puede ser async: se cancela la búsqueda pendiente y se
+        // lanza la nueva con debounce; los errores se manejan adentro.
+        CancelarBusquedaPendiente();
+
+        // En modo DNI (el texto anterior eran solo dígitos) se descartan las
+        // letras y se corta al máximo de 8; en modo nombre se tipea libre, con
+        // el mismo tope solo si lo pegado termina siendo puro dígito.
+        var texto = value ?? string.Empty;
+        var limpio = texto;
+        if (_modoDni || EsSoloDigitos(texto))
         {
-            Dni = limpio;
+            limpio = DniValidator.Normalizar(texto);
+        }
+
+        if (!string.Equals(limpio, texto, StringComparison.Ordinal))
+        {
+            // Hubo caracteres de más o letras en modo DNI: se vuelve a asignar
+            // y el reingreso por el setter continúa el flujo.
+            BusquedaTexto = limpio;
             return;
         }
 
+        _modoDni = EsSoloDigitos(texto);
         MensajeError = null;
+
+        _busquedaCts = new CancellationTokenSource();
+        _ = BuscarPorNombreAsync(_busquedaCts.Token);
+    }
+
+    private void CancelarBusquedaPendiente()
+    {
+        _busquedaCts?.Cancel();
+        _busquedaCts?.Dispose();
+        _busquedaCts = null;
+    }
+
+    private async Task BuscarPorNombreAsync(
+        CancellationToken cancellationToken,
+        bool inmediata = false)
+    {
+        try
+        {
+            if (!inmediata)
+            {
+                await Task.Delay(DebounceBusquedaMs, cancellationToken);
+            }
+
+            var query = BusquedaTexto?.Trim() ?? string.Empty;
+            if (query.Length == 0)
+            {
+                ResultadosBusqueda.Clear();
+                OnPropertyChanged(nameof(TieneResultados));
+                return;
+            }
+
+            var resultados = await _pacienteService.SearchAsync(query, cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            ResultadosBusqueda.ReplaceAll(resultados);
+            OnPropertyChanged(nameof(TieneResultados));
+        }
+        catch (OperationCanceledException)
+        {
+            // La búsqueda fue reemplazada por una más nueva.
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al buscar pacientes por nombre");
+            ResultadosBusqueda.Clear();
+            OnPropertyChanged(nameof(TieneResultados));
+        }
+    }
+
+    private bool PuedeSeleccionarPaciente() => !IsBusy;
+
+    [RelayCommand(CanExecute = nameof(PuedeSeleccionarPaciente))]
+    private async Task SeleccionarPacienteAsync(Paciente? paciente)
+    {
+        if (paciente is null)
+        {
+            return;
+        }
+
+        // El buscador unificado muestra el DNI del paciente seleccionado.
+        BusquedaTexto = paciente.Dni;
+        await CargarPacienteAsync(paciente.Dni, preguntarCreacion: false);
     }
 
     [RelayCommand]
@@ -224,7 +322,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void LimpiarBusqueda()
     {
-        Dni = string.Empty;
+        BusquedaTexto = string.Empty;
         MensajeError = null;
         MensajeEstado = null;
     }
@@ -249,12 +347,12 @@ public partial class MainWindowViewModel : ObservableObject
     }, "Error al copiar el DNI");
 
     private bool PuedeCopiarTelefono() =>
-        !IsBusy && !string.IsNullOrWhiteSpace(PacienteActual?.Phone);
+        !IsBusy && !string.IsNullOrWhiteSpace(PacienteActual?.Telefono);
 
     [RelayCommand(CanExecute = nameof(PuedeCopiarTelefono))]
     private Task CopiarTelefonoAsync() => EjecutarAsync(async () =>
     {
-        await _clipboard.CopiarAsync(PacienteActual!.Phone);
+        await _clipboard.CopiarAsync(PacienteActual!.Telefono);
         MensajeEstado = "Teléfono copiado.";
     }, "Error al copiar el teléfono");
 
@@ -291,6 +389,23 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task MostrarMantenimientoAsync()
+    {
+        MensajeError = null;
+        MensajeEstado = null;
+
+        try
+        {
+            await _dialogs.ShowDataMaintenanceAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al mostrar el mantenimiento de datos");
+            MensajeError = "No se pudo abrir el mantenimiento de datos. Intente nuevamente.";
+        }
+    }
+
+    [RelayCommand]
     private Task MostrarAcercaDeAsync() => EjecutarAsync(async () =>
     {
         var version = typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "desconocida";
@@ -301,7 +416,7 @@ public partial class MainWindowViewModel : ObservableObject
 
             Atajos:
             Enter: buscar paciente
-            Ctrl+F: enfocar el DNI
+            Ctrl+F: enfocar el buscador
             Ctrl+N: nuevo paciente
             Ctrl+E: editar paciente
             Ctrl+Shift+N: nueva ficha
@@ -318,7 +433,7 @@ public partial class MainWindowViewModel : ObservableObject
     private void CerrarSesion()
     {
         _session.Cerrar();
-        Dni = string.Empty;
+        BusquedaTexto = string.Empty;
         PacienteActual = null;
         Fichas.Clear();
         FichaSeleccionada = null;
@@ -332,7 +447,18 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PuedeBuscar))]
     private Task BuscarAsync() => EjecutarAsync(async () =>
     {
-        var dni = DniValidator.Normalizar(Dni);
+        var texto = BusquedaTexto.Trim();
+        if (!EsSoloDigitos(texto))
+        {
+            // Búsqueda por nombre inmediata, sin esperar el debounce.
+            CancelarBusquedaPendiente();
+            var cts = new CancellationTokenSource();
+            _busquedaCts = cts;
+            await BuscarPorNombreAsync(cts.Token, inmediata: true);
+            return;
+        }
+
+        var dni = DniValidator.Normalizar(texto);
         if (!DniValidator.IsValid(dni))
         {
             MensajeError = DniValidator.ErrorMessage;
@@ -346,7 +472,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     [RelayCommand(CanExecute = nameof(PuedeCrearPaciente))]
     private Task NuevoPacienteAsync() => EjecutarAsync(
-        () => AbrirNuevoPacienteAsync(DniValidator.Normalizar(Dni)),
+        () => AbrirNuevoPacienteAsync(
+            EsSoloDigitos(BusquedaTexto.Trim()) ? DniValidator.Normalizar(BusquedaTexto) : string.Empty),
         "Error al crear el paciente");
 
     private bool PuedeEditarPaciente() => PacienteActual is not null && !IsBusy;
@@ -365,9 +492,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        Dni = guardado.Dni;
         await CargarPacienteAsync(guardado.Dni, preguntarCreacion: false);
-        await CargarDnisAsync();
         MensajeEstado = "Paciente actualizado.";
     }, "Error al editar el paciente");
 
@@ -400,7 +525,7 @@ public partial class MainWindowViewModel : ObservableObject
         MensajeEstado = "Ficha creada.";
     }, "Error al crear la ficha");
 
-    private bool PuedeEditarFicha() => FichaSeleccionada is not null && !IsBusy;
+    private bool PuedeEditarFicha() => FichaSeleccionada is not null && !IsBusy && !(FichaSeleccionada.Cerrada);
 
     [RelayCommand(CanExecute = nameof(PuedeEditarFicha))]
     private Task EditarFichaAsync() => EjecutarAsync(async () =>
@@ -467,6 +592,31 @@ public partial class MainWindowViewModel : ObservableObject
         MensajeEstado = "Ficha borrada.";
     }, "Error al borrar la ficha");
 
+    private bool PuedeExportarPdf() => PacienteActual is not null && FichaSeleccionada is not null && !IsBusy;
+
+    [RelayCommand(CanExecute = nameof(PuedeExportarPdf))]
+    private Task ExportarPdfAsync() => EjecutarAsync(async () =>
+    {
+        if (PacienteActual is null || FichaSeleccionada is null)
+        {
+            return;
+        }
+
+        var nombreSugerido = $"Ficha_{PacienteActual.Dni}_{FichaSeleccionada.Id}.pdf";
+        var ruta = await _dialogs.ShowSaveFileDialogAsync(
+            "Exportar a PDF",
+            nombreSugerido,
+            ".pdf");
+
+        if (string.IsNullOrWhiteSpace(ruta))
+        {
+            return;
+        }
+
+        await _pdfExport.ExportarAsync(PacienteActual, FichaSeleccionada, ruta);
+        MensajeEstado = $"Ficha exportada: {Path.GetFileName(ruta)}.";
+    }, "Error al exportar la ficha a PDF");
+
     private async Task AbrirNuevoPacienteAsync(string dniInicial)
     {
         var nuevo = new Paciente { Dni = dniInicial };
@@ -476,9 +626,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        Dni = guardado.Dni;
         await CargarPacienteAsync(guardado.Dni, preguntarCreacion: false);
-        await CargarDnisAsync();
         MensajeEstado = "Paciente creado.";
     }
 
@@ -518,12 +666,6 @@ public partial class MainWindowViewModel : ObservableObject
         FichaSeleccionada = seleccionarId is int id
             ? Fichas.FirstOrDefault(f => f.Id == id)
             : Fichas.FirstOrDefault();
-    }
-
-    private async Task CargarDnisAsync()
-    {
-        var dnis = await _pacienteService.GetDnisAsync();
-        DnisSugeridos.ReplaceAll(dnis);
     }
 
     private async Task EjecutarAsync(Func<Task> accion, string contexto)
