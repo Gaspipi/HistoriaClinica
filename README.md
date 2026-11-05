@@ -8,14 +8,14 @@ Si querés contribuir, empezá por [`CONTRIBUTING.md`](CONTRIBUTING.md).
 - **Plataforma:** .NET 10 · Windows, Linux y macOS
 - **Datos:** EF Core 10 + SQLite local
 - **Seguridad:** login local con PBKDF2-SHA256; la base SQLite **no** está cifrada
-- **Versión en desarrollo:** 2.0.1
-- **Última release publicada:** 2.0.0
+- **Versión en desarrollo:** 2.1.0
+- **Última release publicada:** 2.1.0
 
 ## Funcionalidad
 
 - Alta y edición de pacientes.
-- Búsqueda por DNI con autocompletado.
-- Datos personales, obra social, antecedentes y medicación.
+- Búsqueda por DNI o nombre/apellido con resultados unificados.
+- Datos personales, obra social, antecedentes familiares/personales.
 - Fichas diarias con motivo, enfermedad actual e indicaciones.
 - Edición y eliminación de fichas.
 - Copia rápida del resumen, DNI o teléfono del paciente.
@@ -23,6 +23,16 @@ Si querés contribuir, empezá por [`CONTRIBUTING.md`](CONTRIBUTING.md).
 - Preferencias de tema (sistema, claro u oscuro) y tamaño de texto (100, 115, 130 o 150 %).
 - Copias de seguridad SQLite desde el menú de usuario.
 - Interfaz adaptable a ventanas chicas, pantallas de poca altura y escalas de texto grandes.
+
+## Capturas de pantalla
+
+> *Las capturas se irán agregando a medida que se actualicen las versiones. Podés ver los [lanzamientos](https://github.com/Gaspipi/HistoriaClinica/releases) para más detalles.*
+
+| Vista | Descripción |
+| --- | --- |
+| ![Icono de Historia Clínica](src/HistoriaClinica.App/Assets/Icons/historia-clinica-256.png) | Aplicación de escritorio para consultorios con base local en SQLite. |
+
+*Demostración breve:* iniciá sesión o registrá el primer usuario, buscá o creá un paciente y agregá una ficha diaria desde la ventana principal.
 
 ## Requisitos
 
