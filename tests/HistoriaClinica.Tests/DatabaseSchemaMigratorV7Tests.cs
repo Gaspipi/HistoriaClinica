@@ -140,10 +140,17 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
     public async Task MigrateAsync_VersionFutura_LanzaYNoModificaNiCreaBackup()
     {
         await CrearBaseHeredadaAsync(version: 99);
+        SqliteConnection.ClearAllPools();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
         var contenidoAntes = await File.ReadAllBytesAsync(_databasePath);
 
         var exception = await Assert.ThrowsAsync<DatabaseSchemaVersionException>(
             () => DatabaseSchemaMigrator.MigrateAsync(_databasePath, createBackup: true, NullLogger.Instance));
+
+        SqliteConnection.ClearAllPools();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
 
         Assert.Equal(99, exception.DatabaseVersion);
         Assert.Equal(DatabaseSchemaMigrator.CurrentVersion, exception.SupportedVersion);

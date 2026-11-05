@@ -5,6 +5,7 @@ using HistoriaClinica.Core.Data;
 using HistoriaClinica.Core.Models;
 using HistoriaClinica.Core.Repositories;
 using HistoriaClinica.Core.Services;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -24,9 +25,19 @@ public sealed class DependencyInjectionTests : IDisposable
 
     public void Dispose()
     {
-        if (Directory.Exists(_tempDirectory))
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        try
         {
-            Directory.Delete(_tempDirectory, recursive: true);
+            if (Directory.Exists(_tempDirectory))
+            {
+                Directory.Delete(_tempDirectory, recursive: true);
+            }
+        }
+        catch
+        {
+            // Ignorar en entornos con bloqueo de archivos (Windows).
         }
     }
 
