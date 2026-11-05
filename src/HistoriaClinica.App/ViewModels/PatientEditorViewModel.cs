@@ -26,17 +26,14 @@ public partial class PatientEditorViewModel : EditorViewModelBase
         _esNuevo = esNuevo;
 
         Dni = paciente.Dni;
-        FirstName = paciente.FirstName;
-        LastName = paciente.LastName;
-        FechaNacimiento = paciente.DOB.HasValue ? paciente.DOB.Value.ToDateTime(TimeOnly.MinValue) : null;
-        Phone = paciente.Phone;
+        Nombre = paciente.Nombre;
+        Apellido = paciente.Apellido;
+        FechaNacimiento = paciente.FechaNacimiento.HasValue ? paciente.FechaNacimiento.Value.ToDateTime(TimeOnly.MinValue) : null;
+        Telefono = paciente.Telefono;
         ObraSocial = paciente.ObraSocial;
-        NroSocio = paciente.NroSocio;
-        AntecFam = paciente.AntecFam;
-        AntecPers = paciente.AntecPers;
-        Medicacion = paciente.Medicacion;
-        Alergias = paciente.Alergias;
-        ProblemasActivos = paciente.ProblemasActivos;
+        NumeroSocio = paciente.NumeroSocio;
+        AntecedentesFamiliares = paciente.AntecedentesFamiliares;
+        AntecedentesPersonales = paciente.AntecedentesPersonales;
 
         _original = Capturar();
     }
@@ -52,7 +49,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
 
             var nombre = string.Join(
                 " ",
-                new[] { FirstName, LastName }.Where(parte => !string.IsNullOrWhiteSpace(parte)));
+                new[] { Nombre, Apellido }.Where(parte => !string.IsNullOrWhiteSpace(parte)));
 
             return string.IsNullOrWhiteSpace(nombre)
                 ? "Editar paciente"
@@ -75,11 +72,11 @@ public partial class PatientEditorViewModel : EditorViewModelBase
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Titulo))]
-    private string _firstName = string.Empty;
+    private string _nombre = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Titulo))]
-    private string _lastName = string.Empty;
+    private string _apellido = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TieneErrorFechaNacimiento))]
@@ -91,28 +88,19 @@ public partial class PatientEditorViewModel : EditorViewModelBase
     private string? _errorFechaNacimiento;
 
     [ObservableProperty]
-    private string _phone = string.Empty;
+    private string _telefono = string.Empty;
 
     [ObservableProperty]
     private string _obraSocial = string.Empty;
 
     [ObservableProperty]
-    private string _nroSocio = string.Empty;
+    private string _numeroSocio = string.Empty;
 
     [ObservableProperty]
-    private string _antecFam = string.Empty;
+    private string _antecedentesFamiliares = string.Empty;
 
     [ObservableProperty]
-    private string _antecPers = string.Empty;
-
-    [ObservableProperty]
-    private string _medicacion = string.Empty;
-
-    [ObservableProperty]
-    private string _alergias = string.Empty;
-
-    [ObservableProperty]
-    private string _problemasActivos = string.Empty;
+    private string _antecedentesPersonales = string.Empty;
 
     public bool TieneErrorDni => !string.IsNullOrWhiteSpace(ErrorDni);
 
@@ -148,7 +136,7 @@ public partial class PatientEditorViewModel : EditorViewModelBase
 
         ErrorDni = DniValidator.GetError(paciente.Dni);
         ErrorFechaNacimiento =
-            paciente.DOB.HasValue && paciente.DOB.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Today
+            paciente.FechaNacimiento.HasValue && paciente.FechaNacimiento.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Today
                 ? "La fecha de nacimiento no puede ser posterior a hoy."
                 : null;
 
@@ -187,43 +175,34 @@ public partial class PatientEditorViewModel : EditorViewModelBase
     private Paciente CrearPaciente() => new()
     {
         Dni = Dni.Trim(),
-        FirstName = FirstName,
-        LastName = LastName,
-        DOB = FechaNacimiento.HasValue ? DateOnly.FromDateTime(FechaNacimiento.Value.Date) : null,
-        Phone = Phone,
+        Nombre = Nombre,
+        Apellido = Apellido,
+        FechaNacimiento = FechaNacimiento.HasValue ? DateOnly.FromDateTime(FechaNacimiento.Value.Date) : null,
+        Telefono = Telefono,
         ObraSocial = ObraSocial,
-        NroSocio = NroSocio,
-        AntecFam = AntecFam,
-        AntecPers = AntecPers,
-        Medicacion = Medicacion,
-        Alergias = Alergias,
-        ProblemasActivos = ProblemasActivos,
+        NumeroSocio = NumeroSocio,
+        AntecedentesFamiliares = AntecedentesFamiliares,
+        AntecedentesPersonales = AntecedentesPersonales,
     };
 
     private Snapshot Capturar() => new(
         Dni,
-        FirstName,
-        LastName,
+        Nombre,
+        Apellido,
         FechaNacimiento,
-        Phone,
+        Telefono,
         ObraSocial,
-        NroSocio,
-        AntecFam,
-        AntecPers,
-        Medicacion,
-        Alergias,
-        ProblemasActivos);
+        NumeroSocio,
+        AntecedentesFamiliares,
+        AntecedentesPersonales);
     private sealed record Snapshot(
         string Dni,
-        string FirstName,
-        string LastName,
+        string Nombre,
+        string Apellido,
         DateTime? FechaNacimiento,
-        string Phone,
+        string Telefono,
         string ObraSocial,
-        string NroSocio,
-        string AntecFam,
-        string AntecPers,
-        string Medicacion,
-        string Alergias,
-        string ProblemasActivos);
+        string NumeroSocio,
+        string AntecedentesFamiliares,
+        string AntecedentesPersonales);
 }

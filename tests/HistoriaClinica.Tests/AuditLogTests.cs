@@ -72,8 +72,8 @@ public sealed class AuditLogTests : IDisposable
         await service.SaveAsync(new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
+            Nombre = "Ana",
+            Apellido = "Pérez",
         });
 
         var logs = await auditRepo.GetAllAsync();

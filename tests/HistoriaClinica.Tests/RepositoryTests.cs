@@ -37,8 +37,8 @@ public sealed class RepositoryTests : IDisposable
         var recuperado = await _pacientes.GetByDniAsync("12345678");
 
         Assert.NotNull(recuperado);
-        Assert.Equal("Ana", recuperado.FirstName);
-        Assert.Equal(new DateOnly(1990, 5, 4), recuperado.DOB);
+        Assert.Equal("Ana", recuperado.Nombre);
+        Assert.Equal(new DateOnly(1990, 5, 4), recuperado.FechaNacimiento);
         Assert.Equal(new[] { "12345678" }, await _pacientes.GetDnisAsync());
     }
 
@@ -48,14 +48,14 @@ public sealed class RepositoryTests : IDisposable
         await _pacientes.SaveAsync(CrearPaciente("12345678", "Ana", "Pérez"));
 
         var actualizado = CrearPaciente("12345678", "Ana María", "Pérez");
-        actualizado.Phone = "555-1234";
+        actualizado.Telefono = "555-1234";
         await _pacientes.SaveAsync(actualizado);
 
         var recuperado = await _pacientes.GetByDniAsync("12345678");
 
         Assert.NotNull(recuperado);
-        Assert.Equal("Ana María", recuperado.FirstName);
-        Assert.Equal("555-1234", recuperado.Phone);
+        Assert.Equal("Ana María", recuperado.Nombre);
+        Assert.Equal("555-1234", recuperado.Telefono);
         Assert.Single(await _pacientes.GetDnisAsync());
     }
 
@@ -150,15 +150,14 @@ public sealed class RepositoryTests : IDisposable
     private static Paciente CrearPaciente(string dni, string nombre, string apellido) => new()
     {
         Dni = dni,
-        FirstName = nombre,
-        LastName = apellido,
-        DOB = new DateOnly(1990, 5, 4),
-        Phone = "555-0000",
+        Nombre = nombre,
+        Apellido = apellido,
+        FechaNacimiento = new DateOnly(1990, 5, 4),
+        Telefono = "555-0000",
         ObraSocial = "OSDE",
-        NroSocio = "123",
-        AntecFam = "Sin antecedentes",
-        AntecPers = "Sin antecedentes",
-        Medicacion = "Ninguna",
+        NumeroSocio = "123",
+        AntecedentesFamiliares = "Sin antecedentes",
+        AntecedentesPersonales = "Sin antecedentes",
     };
 
     private static FichaDiaria CrearFicha(string dni, DateTime fecha) => new()

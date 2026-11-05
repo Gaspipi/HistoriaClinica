@@ -6,8 +6,16 @@ versionado semántico.
 
 ## [Unreleased]
 
-### Added
+### Agregado
+- Migraciones con EF Core para gestionar la evolución del esquema a partir del esquema 8.
+- Buscador unificado en la ventana principal: acepta DNI (solo números, hasta 8 dígitos) o nombres/apellidos, con filtrado por prefijo en búsquedas por DNI y tarjetas de resultados compactas.
 
+### Cambiado
+- Esquema y modelo `Paciente` simplificados a campos en español (`Nombre`, `Apellido`, `FechaNacimiento`, `Telefono`, `ObraSocial`, `NumeroSocio`, `AntecedentesFamiliares`, `AntecedentesPersonales`); se eliminaron `Medicacion`, `Alergias` y `ProblemasActivos`.
+- Migrador propio marcado como heredado: solo se utiliza para llevar bases anteriores al esquema 8; a partir de ahí el esquema evoluciona con migraciones de EF Core.
+- `Data/` deja de estar versionado.
+
+### Mantenido/limpieza
 - Instalador sin firma digital: aviso SmartScreen y verificación SHA256 en README.
 - Limpieza de referencias a SignPath y workflow firmado.
 - Guía de contribución, código de conducta y política de seguridad.
@@ -15,11 +23,7 @@ versionado semántico.
 - Validación de build y tests en Linux y Windows para pull requests.
 - Dependabot para NuGet y GitHub Actions.
 - Documentación de arquitectura y hoja de ruta pública.
-
-### Changed
-
-- La documentación de firma ahora refleja el rechazo de SignPath Foundation y
-  el plan de reaplicación; no se anuncia una firma activa.
+- La documentación de firma refleja el rechazo de SignPath Foundation y el plan de reaplicación; no se anuncia una firma activa.
 
 ## [2.0.0] - 2026-10-24
 

@@ -75,8 +75,8 @@ public sealed class PlantillaServiceTests : IDisposable
         await pacientes.SaveAsync(new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
+            Nombre = "Ana",
+            Apellido = "Pérez",
         });
 
         var conEspacios = new Plantilla

@@ -41,10 +41,11 @@ internal sealed class FakePacienteRepository : IPacienteRepository
         }
 
         return _pacientes.Values
-            .Where(p => p.FirstName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                        p.LastName.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .OrderBy(p => p.LastName)
-            .ThenBy(p => p.FirstName)
+            .Where(p => p.Nombre.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        p.Apellido.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        p.Dni.StartsWith(query, StringComparison.Ordinal))
+            .OrderBy(p => p.Apellido)
+            .ThenBy(p => p.Nombre)
             .ToList();
     }
 
@@ -300,4 +301,32 @@ internal sealed class FakeDataMaintenanceService : IDataMaintenanceService
 
     public Task<IReadOnlyList<BackupInfo>> ListarBackupsAsync(CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<BackupInfo>>(Array.Empty<BackupInfo>());
+}
+
+internal sealed class FakePdfExportService : IPdfExportService
+{
+    public string? UltimaRuta { get; private set; }
+
+    public int Exportaciones { get; private set; }
+
+    public byte[] GenerarPdf(Paciente paciente, FichaDiaria? ficha) => Array.Empty<byte>();
+
+    public Task<byte[]> GenerarPdfAsync(Paciente paciente, FichaDiaria? ficha, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Array.Empty<byte>());
+
+    public Task ExportarAsync(Paciente paciente, FichaDiaria? ficha, string rutaArchivo, CancellationToken cancellationToken = default)
+    {
+        Exportaciones++;
+        UltimaRuta = rutaArchivo;
+        return Task.CompletedTask;
+    }
+
+    public Task<string?> ExportarAsync(Paciente paciente, FichaDiaria? ficha, CancellationToken cancellationToken = default) =>
+        Task.FromResult<string?>(null);
+
+    public Task ExportarPdfAsync(Paciente paciente, FichaDiaria? ficha, string rutaArchivo, CancellationToken cancellationToken = default) =>
+        ExportarAsync(paciente, ficha, rutaArchivo, cancellationToken);
+
+    public Task<string?> ExportarPdfAsync(Paciente paciente, FichaDiaria? ficha, CancellationToken cancellationToken = default) =>
+        Task.FromResult<string?>(null);
 }

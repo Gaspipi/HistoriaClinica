@@ -7,27 +7,21 @@ public class Paciente
     [Key, Required, StringLength(8)]
     public string Dni { get; set; } = string.Empty;
 
-    public string FirstName { get; set; } = string.Empty;
+    public string Nombre { get; set; } = string.Empty;
 
-    public string LastName { get; set; } = string.Empty;
+    public string Apellido { get; set; } = string.Empty;
 
-    public DateOnly? DOB { get; set; }
+    public DateOnly? FechaNacimiento { get; set; }
 
-    public string Phone { get; set; } = string.Empty;
+    public string Telefono { get; set; } = string.Empty;
 
     public string ObraSocial { get; set; } = string.Empty;
 
-    public string NroSocio { get; set; } = string.Empty;
+    public string NumeroSocio { get; set; } = string.Empty;
 
-    public string AntecFam { get; set; } = string.Empty;
+    public string AntecedentesFamiliares { get; set; } = string.Empty;
 
-    public string AntecPers { get; set; } = string.Empty;
-
-    public string Medicacion { get; set; } = string.Empty;
-
-    public string Alergias { get; set; } = string.Empty;
-
-    public string ProblemasActivos { get; set; } = string.Empty;
+    public string AntecedentesPersonales { get; set; } = string.Empty;
 
     public List<FichaDiaria> FichasDiarias { get; set; } = new();
 }

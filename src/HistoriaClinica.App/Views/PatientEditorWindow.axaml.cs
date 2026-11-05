@@ -8,7 +8,7 @@ public partial class PatientEditorWindow : Window
 {
     private readonly PatientEditorViewModel _viewModel;
     private readonly TextBox _dniTextBox;
-    private readonly TextBox _firstNameTextBox;
+    private readonly TextBox _nombreTextBox;
 
     public PatientEditorWindow(PatientEditorViewModel viewModel)
     {
@@ -22,8 +22,8 @@ public partial class PatientEditorWindow : Window
 
         _dniTextBox = this.FindControl<TextBox>("DniTextBox")
             ?? throw new InvalidOperationException("No se encontró el control DniTextBox");
-        _firstNameTextBox = this.FindControl<TextBox>("FirstNameTextBox")
-            ?? throw new InvalidOperationException("No se encontró el control FirstNameTextBox");
+        _nombreTextBox = this.FindControl<TextBox>("NombreTextBox")
+            ?? throw new InvalidOperationException("No se encontró el control NombreTextBox");
 
         _viewModel.CloseRequested += OnCloseRequested;
         Closing += OnClosing;
@@ -40,7 +40,7 @@ public partial class PatientEditorWindow : Window
         }
         else
         {
-            _firstNameTextBox.Focus();
+            _nombreTextBox.Focus();
         }
     }
 

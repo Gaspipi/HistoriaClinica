@@ -12,7 +12,7 @@ public sealed class PacienteDisplayConverter : IValueConverter
         {
             null => "—",
             Paciente p => string.Join(" ",
-                new[] { $"DNI {p.Dni}", p.FirstName, p.LastName }
+                new[] { p.Nombre, p.Apellido }
                     .Where(s => !string.IsNullOrWhiteSpace(s))),
             _ => value.ToString() ?? "—",
         };

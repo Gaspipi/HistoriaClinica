@@ -208,7 +208,7 @@ public sealed class DialogService : IDialogService
             DefaultExtension = extension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("HTML") { Patterns = new[] { "*.html", "*.htm" } },
+                new FilePickerFileType(extension.TrimStart('.').ToUpperInvariant()) { Patterns = new[] { $"*{extension}" } },
             },
         });
 

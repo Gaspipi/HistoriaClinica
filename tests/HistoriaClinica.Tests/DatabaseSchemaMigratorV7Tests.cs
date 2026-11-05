@@ -28,7 +28,7 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
     }
 
     [Fact]
-    public async Task MigrateAsync_BaseV2_MigraAVersion7YCreaEstructuras()
+    public async Task MigrateAsync_BaseV2_MigraHastaVersionActualYCreaEstructuras()
     {
         await CrearBaseHeredadaAsync(version: 2);
 
@@ -40,11 +40,21 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
         Assert.Equal(2, resultado.FromVersion);
         Assert.Equal(DatabaseSchemaMigrator.CurrentVersion, resultado.ToVersion);
         Assert.Null(resultado.BackupPath);
-        Assert.Equal(7, await ObtenerVersionAsync(_databasePath));
+        Assert.Equal(DatabaseSchemaMigrator.CurrentVersion, await ObtenerVersionAsync(_databasePath));
 
         var columnasPacientes = await ObtenerColumnasAsync("Pacientes");
-        Assert.Contains("Alergias", columnasPacientes);
-        Assert.Contains("ProblemasActivos", columnasPacientes);
+        Assert.Contains("Nombre", columnasPacientes);
+        Assert.Contains("Apellido", columnasPacientes);
+        Assert.Contains("FechaNacimiento", columnasPacientes);
+        Assert.Contains("Telefono", columnasPacientes);
+        Assert.Contains("NumeroSocio", columnasPacientes);
+        Assert.Contains("AntecedentesFamiliares", columnasPacientes);
+        Assert.Contains("AntecedentesPersonales", columnasPacientes);
+        Assert.DoesNotContain("FirstName", columnasPacientes);
+        Assert.DoesNotContain("DOB", columnasPacientes);
+        Assert.DoesNotContain("Medicacion", columnasPacientes);
+        Assert.DoesNotContain("Alergias", columnasPacientes);
+        Assert.DoesNotContain("ProblemasActivos", columnasPacientes);
 
         var columnasFichas = await ObtenerColumnasAsync("FichasDiarias");
         Assert.Contains("Cerrada", columnasFichas);
@@ -68,14 +78,12 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
         Assert.Equal(2L, await ContarFilasAsync("Pacientes"));
         Assert.Equal(2L, await ContarFilasAsync("FichasDiarias"));
         Assert.Equal(0L, await ScalarAsync(
-            "SELECT COUNT(*) FROM Pacientes WHERE Alergias <> '' OR ProblemasActivos <> '';"));
+            "SELECT COUNT(*) FROM Pacientes WHERE AntecedentesFamiliares <> '' OR AntecedentesPersonales <> '';"));
         Assert.Equal(0L, await ScalarAsync("SELECT COUNT(*) FROM FichasDiarias WHERE Cerrada <> 0;"));
 
-        // La migración 2 (que normaliza DOB) no se ejecuta en una base que ya
-        // declara la versión 2; el valor heredado se conserva tal cual.
-        Assert.Equal(
-            "0001-01-01 00:00:00",
-            await ScalarAsync("SELECT DOB FROM Pacientes WHERE Dni = '12345678';"));
+        // La migración 8 reconstruye "Pacientes" normalizando la fecha, por lo
+        // que el valor heredado '0001-01-01' termina como NULL (sin fecha).
+        Assert.Null(await ScalarAsync("SELECT FechaNacimiento FROM Pacientes WHERE Dni = '12345678';"));
     }
 
     [Fact]
@@ -88,10 +96,10 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
         Assert.Equal(DatabaseSchemaMigrator.CurrentVersion, await ObtenerVersionAsync(_databasePath));
         Assert.Equal(2L, await ContarFilasAsync("Pacientes"));
         Assert.Equal(2L, await ContarFilasAsync("FichasDiarias"));
-        Assert.Null(await ScalarAsync("SELECT DOB FROM Pacientes WHERE Dni = '12345678';"));
+        Assert.Null(await ScalarAsync("SELECT FechaNacimiento FROM Pacientes WHERE Dni = '12345678';"));
         Assert.Equal(
             "1990-05-04",
-            await ScalarAsync("SELECT DOB FROM Pacientes WHERE Dni = '23456789';"));
+            await ScalarAsync("SELECT FechaNacimiento FROM Pacientes WHERE Dni = '23456789';"));
         Assert.Equal(
             "Consulta",
             await ScalarAsync("SELECT Motivo FROM FichasDiarias WHERE Dni = '12345678';"));
@@ -107,9 +115,9 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
             context.Pacientes.Add(new Paciente
             {
                 Dni = "12345678",
-                FirstName = "Ana",
-                LastName = "Pérez",
-                DOB = new DateOnly(1990, 5, 4),
+                Nombre = "Ana",
+                Apellido = "Pérez",
+                FechaNacimiento = new DateOnly(1990, 5, 4),
             });
             await context.SaveChangesAsync();
         }
@@ -123,7 +131,7 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
 
         Assert.Equal(0, resultado.FromVersion);
         Assert.Equal(DatabaseSchemaMigrator.CurrentVersion, resultado.ToVersion);
-        Assert.Equal(7, await ObtenerVersionAsync(_databasePath));
+        Assert.Equal(DatabaseSchemaMigrator.CurrentVersion, await ObtenerVersionAsync(_databasePath));
         Assert.Equal(1L, await ScalarAsync("SELECT COUNT(*) FROM Pacientes WHERE Dni = '12345678';"));
         Assert.Equal(1L, await ContarEsquemaAsync("table", "AuditLogs"));
     }
@@ -160,7 +168,7 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
         Assert.True(File.Exists(resultado.BackupPath));
         Assert.Equal(2, await ObtenerVersionAsync(resultado.BackupPath));
         Assert.Equal("ok", await ScalarAsync("PRAGMA quick_check;", resultado.BackupPath));
-        Assert.Equal(7, await ObtenerVersionAsync(_databasePath));
+        Assert.Equal(DatabaseSchemaMigrator.CurrentVersion, await ObtenerVersionAsync(_databasePath));
     }
 
     [Fact]
@@ -213,12 +221,12 @@ public sealed class DatabaseSchemaMigratorV7Tests : IDisposable
 
         var paciente = await pacientes.GetByDniAsync("12345678");
         Assert.NotNull(paciente);
-        Assert.Equal(string.Empty, paciente.Alergias);
-        paciente.Alergias = "Penicilina";
+        Assert.Equal(string.Empty, paciente.AntecedentesFamiliares);
+        paciente.AntecedentesFamiliares = "Diabetes familiar";
         await pacientes.SaveAsync(paciente);
         var actualizado = await pacientes.GetByDniAsync("12345678");
         Assert.NotNull(actualizado);
-        Assert.Equal("Penicilina", actualizado.Alergias);
+        Assert.Equal("Diabetes familiar", actualizado.AntecedentesFamiliares);
 
         var ficha = Assert.Single(await fichas.GetByDniAsync("12345678"));
         Assert.Equal("Consulta", ficha.Motivo);

@@ -2,7 +2,6 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using HistoriaClinica.App.Layout;
 using HistoriaClinica.App.Services;
 using HistoriaClinica.App.ViewModels;
@@ -15,7 +14,7 @@ public partial class MainWindow : Window
     private const double NarrowWidth = 760;
     private readonly MainWindowViewModel _viewModel;
     private readonly ILogger<MainWindow> _logger;
-    private readonly AutoCompleteBox _dniBox;
+    private readonly TextBox _buscador;
     private readonly ListBox _fichasList;
     private readonly DispatcherTimer _statusTimer;
 
@@ -30,15 +29,15 @@ public partial class MainWindow : Window
         DataContext = viewModel;
         Icon = AppIcons.Load();
 
-        _dniBox = this.FindControl<AutoCompleteBox>("DniBox")
-            ?? throw new InvalidOperationException("No se encontró el control DniBox");
+        _buscador = this.FindControl<TextBox>("BuscadorBox")
+            ?? throw new InvalidOperationException("No se encontró el control BuscadorBox");
         _fichasList = this.FindControl<ListBox>("FichasList")
             ?? throw new InvalidOperationException("No se encontró el control FichasList");
         _statusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
         _statusTimer.Tick += OnStatusTimerTick;
 
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
-        _dniBox.KeyDown += OnDniKeyDown;
+        _buscador.KeyDown += OnBuscadorKeyDown;
         _fichasList.KeyDown += OnFichasKeyDown;
         _fichasList.DoubleTapped += OnFichaDoubleTapped;
         KeyDown += OnWindowKeyDown;
@@ -55,7 +54,7 @@ public partial class MainWindow : Window
             WindowSizing.AjustarAlAreaDeTrabajo(this);
             ActualizarHistorial();
             await _viewModel.InitializeAsync();
-            EnfocarDni(seleccionarTodo: true);
+            EnfocarBuscador(seleccionarTodo: true);
         }
         catch (Exception ex)
         {
@@ -64,10 +63,9 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnDniKeyDown(object? sender, KeyEventArgs e)
+    private void OnBuscadorKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter
-            && !_dniBox.IsDropDownOpen
             && _viewModel.BuscarCommand.CanExecute(null))
         {
             _viewModel.BuscarCommand.Execute(null);
@@ -77,16 +75,8 @@ public partial class MainWindow : Window
 
         if (e.Key == Key.Escape)
         {
-            if (_dniBox.IsDropDownOpen)
-            {
-                _dniBox.IsDropDownOpen = false;
-            }
-            else
-            {
-                _viewModel.LimpiarBusquedaCommand.Execute(null);
-                EnfocarDni(seleccionarTodo: true);
-            }
-
+            _viewModel.LimpiarBusquedaCommand.Execute(null);
+            EnfocarBuscador(seleccionarTodo: true);
             e.Handled = true;
         }
     }
@@ -126,7 +116,7 @@ public partial class MainWindow : Window
     {
         if (e.Key == Key.F && e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
-            EnfocarDni(seleccionarTodo: true);
+            EnfocarBuscador(seleccionarTodo: true);
             e.Handled = true;
             return;
         }
@@ -134,25 +124,19 @@ public partial class MainWindow : Window
         if (e.Key == Key.Escape)
         {
             _viewModel.LimpiarBusquedaCommand.Execute(null);
-            EnfocarDni(seleccionarTodo: true);
+            EnfocarBuscador(seleccionarTodo: true);
             e.Handled = true;
         }
     }
 
-    private void EnfocarDni(bool seleccionarTodo)
+    private void EnfocarBuscador(bool seleccionarTodo)
     {
-        _dniBox.Focus();
+        _buscador.Focus();
 
-        if (!seleccionarTodo)
+        if (seleccionarTodo)
         {
-            return;
+            _buscador.SelectAll();
         }
-
-        _dniBox.ApplyTemplate();
-        _dniBox.GetVisualDescendants()
-            .OfType<TextBox>()
-            .FirstOrDefault()
-            ?.SelectAll();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

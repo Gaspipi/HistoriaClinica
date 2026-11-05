@@ -8,29 +8,29 @@ namespace HistoriaClinica.Tests;
 public sealed class PacienteServiceTests
 {
     [Fact]
-    public async Task SaveAsync_NormalizaAlergiasYProblemasActivos()
+    public async Task SaveAsync_NormalizaNombreYAntecedentes()
     {
         var repositorio = new PacienteServiceFakeRepository();
         var service = new PacienteService(repositorio);
         var paciente = new Paciente
         {
             Dni = " 12345678 ",
-            FirstName = " Ana ",
-            LastName = " Pérez ",
-            Alergias = "  Penicilina  ",
-            ProblemasActivos = "  Asma  ",
+            Nombre = " Ana ",
+            Apellido = " Pérez ",
+            AntecedentesFamiliares = "  Diabetes  ",
+            AntecedentesPersonales = "  Hipertensión  ",
         };
 
         await service.SaveAsync(paciente);
 
-        Assert.Equal("Penicilina", paciente.Alergias);
-        Assert.Equal("Asma", paciente.ProblemasActivos);
+        Assert.Equal("Diabetes", paciente.AntecedentesFamiliares);
+        Assert.Equal("Hipertensión", paciente.AntecedentesPersonales);
 
         var guardado = await repositorio.GetByDniAsync("12345678");
         Assert.NotNull(guardado);
-        Assert.Equal("Ana", guardado.FirstName);
-        Assert.Equal("Penicilina", guardado.Alergias);
-        Assert.Equal("Asma", guardado.ProblemasActivos);
+        Assert.Equal("Ana", guardado.Nombre);
+        Assert.Equal("Diabetes", guardado.AntecedentesFamiliares);
+        Assert.Equal("Hipertensión", guardado.AntecedentesPersonales);
     }
 
     [Fact]
@@ -42,12 +42,12 @@ public sealed class PacienteServiceTests
         var paciente = new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
+            Nombre = "Ana",
+            Apellido = "Pérez",
         };
 
         await service.SaveAsync(paciente, "ana");
-        paciente.FirstName = "Ana María";
+        paciente.Nombre = "Ana María";
         await service.SaveAsync(paciente, "ana");
 
         Assert.Equal(2, auditoria.Registros.Count);
@@ -71,8 +71,8 @@ public sealed class PacienteServiceTests
         await service.SaveAsync(new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
+            Nombre = "Ana",
+            Apellido = "Pérez",
         });
 
         var registro = Assert.Single(auditoria.Registros);
@@ -88,7 +88,7 @@ public sealed class PacienteServiceTests
         var service = new PacienteService(repositorio, auditoria);
 
         var exception = await Assert.ThrowsAsync<ValidationException>(() => service.SaveAsync(
-            new Paciente { Dni = "123", FirstName = "Ana", LastName = "Pérez" },
+            new Paciente { Dni = "123", Nombre = "Ana", Apellido = "Pérez" },
             "ana"));
 
         Assert.Contains(DniValidator.ErrorMessage, exception.Errors);
@@ -115,8 +115,8 @@ public sealed class PacienteServiceTests
         repositorio.Agregar(new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
+            Nombre = "Ana",
+            Apellido = "Pérez",
         });
         var service = new PacienteService(repositorio);
 
@@ -126,7 +126,7 @@ public sealed class PacienteServiceTests
 
         Assert.Equal(new[] { "12345678" }, dnis);
         Assert.NotNull(paciente);
-        Assert.Equal("Ana", paciente.FirstName);
+        Assert.Equal("Ana", paciente.Nombre);
         Assert.Null(inexistente);
     }
 }
@@ -155,10 +155,11 @@ internal sealed class PacienteServiceFakeRepository : IPacienteRepository
         _consultas.Add(query);
         return Task.FromResult<IReadOnlyList<Paciente>>(_pacientes.Values
             .Where(paciente =>
-                paciente.FirstName.Contains(query, StringComparison.OrdinalIgnoreCase)
-                || paciente.LastName.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .OrderBy(paciente => paciente.LastName, StringComparer.Ordinal)
-            .ThenBy(paciente => paciente.FirstName, StringComparer.Ordinal)
+                paciente.Nombre.Contains(query, StringComparison.OrdinalIgnoreCase)
+                || paciente.Apellido.Contains(query, StringComparison.OrdinalIgnoreCase)
+                || paciente.Dni.StartsWith(query, StringComparison.Ordinal))
+            .OrderBy(paciente => paciente.Apellido, StringComparer.Ordinal)
+            .ThenBy(paciente => paciente.Nombre, StringComparer.Ordinal)
             .ToList());
     }
 

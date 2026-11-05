@@ -99,14 +99,14 @@
 
               <StackPanel>
                 <TextBlock Text="Nombre" Classes="fieldLabel" />
-                <TextBox x:Name="FirstNameTextBox"
-                         Text="{Binding FirstName, Mode=TwoWay}"
+                <TextBox x:Name="NombreTextBox"
+                         Text="{Binding Nombre, Mode=TwoWay}"
                          automation:AutomationProperties.Name="Nombre del paciente" />
               </StackPanel>
 
               <StackPanel>
                 <TextBlock Text="Apellido" Classes="fieldLabel" />
-                <TextBox Text="{Binding LastName, Mode=TwoWay}"
+                <TextBox Text="{Binding Apellido, Mode=TwoWay}"
                          automation:AutomationProperties.Name="Apellido del paciente" />
               </StackPanel>
             </layout:ResponsiveGrid>
@@ -119,7 +119,7 @@
             <layout:ResponsiveGrid MaxColumns="3" MinColumnWidth="260" ColumnSpacing="16" RowSpacing="12">
               <StackPanel>
                 <TextBlock Text="Teléfono" Classes="fieldLabel" />
-                <TextBox Text="{Binding Phone, Mode=TwoWay}"
+                <TextBox Text="{Binding Telefono, Mode=TwoWay}"
                          automation:AutomationProperties.Name="Teléfono del paciente" />
               </StackPanel>
 
@@ -131,7 +131,7 @@
 
               <StackPanel>
                 <TextBlock Text="Nro asociado" Classes="fieldLabel" />
-                <TextBox Text="{Binding NroSocio, Mode=TwoWay}"
+                <TextBox Text="{Binding NumeroSocio, Mode=TwoWay}"
                          automation:AutomationProperties.Name="Número de asociado" />
               </StackPanel>
             </layout:ResponsiveGrid>
@@ -140,11 +140,11 @@
 
         <Border Classes="card">
           <StackPanel Spacing="12">
-            <TextBlock Text="Antecedentes y medicación" Classes="sectionTitle" />
-            <layout:ResponsiveGrid MaxColumns="3" MinColumnWidth="260" ColumnSpacing="16" RowSpacing="12">
+            <TextBlock Text="Antecedentes" Classes="sectionTitle" />
+            <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="260" ColumnSpacing="16" RowSpacing="12">
               <StackPanel>
                 <TextBlock Text="Personales" Classes="fieldLabel" />
-                <TextBox Text="{Binding AntecPers, Mode=TwoWay}"
+                <TextBox Text="{Binding AntecedentesPersonales, Mode=TwoWay}"
                          AcceptsReturn="True"
                          TextWrapping="Wrap"
                          Classes="multiline"
@@ -153,41 +153,14 @@
 
               <StackPanel>
                 <TextBlock Text="Familiares" Classes="fieldLabel" />
-                <TextBox Text="{Binding AntecFam, Mode=TwoWay}"
+                <TextBox Text="{Binding AntecedentesFamiliares, Mode=TwoWay}"
                          AcceptsReturn="True"
                          TextWrapping="Wrap"
                          Classes="multiline"
                          automation:AutomationProperties.Name="Antecedentes familiares" />
               </StackPanel>
-
-              <StackPanel>
-                <TextBlock Text="Medicación" Classes="fieldLabel" />
-                <TextBox Text="{Binding Medicacion, Mode=TwoWay}"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         Classes="multiline"
-                          automation:AutomationProperties.Name="Medicación" />
-               </StackPanel>
-             </layout:ResponsiveGrid>
-             <StackPanel Spacing="12">
-               <StackPanel>
-                 <TextBlock Text="Alergias" Classes="fieldLabel" />
-                 <TextBox Text="{Binding Alergias, Mode=TwoWay}"
-                          AcceptsReturn="True"
-                          TextWrapping="Wrap"
-                          Classes="multiline"
-                          automation:AutomationProperties.Name="Alergias" />
-               </StackPanel>
-               <StackPanel>
-                 <TextBlock Text="Problemas activos" Classes="fieldLabel" />
-                 <TextBox Text="{Binding ProblemasActivos, Mode=TwoWay}"
-                          AcceptsReturn="True"
-                          TextWrapping="Wrap"
-                          Classes="multiline"
-                          automation:AutomationProperties.Name="Problemas activos" />
-               </StackPanel>
-             </StackPanel>
-           </StackPanel>
+            </layout:ResponsiveGrid>
+          </StackPanel>
         </Border>
 
         <Border Classes="errorBanner" IsVisible="{Binding HayError}">

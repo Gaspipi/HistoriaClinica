@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using HistoriaClinica.Core.Data;
 using HistoriaClinica.Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -40,27 +42,31 @@ public sealed class PacienteRepository : IPacienteRepository
             return Array.Empty<Paciente>();
         }
 
-        return await context.Pacientes
+        var normalizedTerm = RemoveDiacritics(term);
+
+        var pacientes = await context.Pacientes
             .AsNoTracking()
-            .Where(p => p.FirstName.Contains(term) || p.LastName.Contains(term))
-            .OrderBy(p => p.LastName)
-            .ThenBy(p => p.FirstName)
+            .ToListAsync(cancellationToken);
+
+        return pacientes
+            .Where(p => RemoveDiacritics(p.Nombre).Contains(normalizedTerm, StringComparison.OrdinalIgnoreCase)
+                     || RemoveDiacritics(p.Apellido).Contains(normalizedTerm, StringComparison.OrdinalIgnoreCase)
+                     || p.Dni.StartsWith(normalizedTerm, StringComparison.Ordinal))
+            .OrderBy(p => p.Apellido)
+            .ThenBy(p => p.Nombre)
             .Select(p => new Paciente
             {
                 Dni = p.Dni,
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                DOB = p.DOB,
-                Phone = p.Phone,
+                Nombre = p.Nombre,
+                Apellido = p.Apellido,
+                FechaNacimiento = p.FechaNacimiento,
+                Telefono = p.Telefono,
                 ObraSocial = p.ObraSocial,
-                NroSocio = p.NroSocio,
-                AntecFam = p.AntecFam,
-                AntecPers = p.AntecPers,
-                Medicacion = p.Medicacion,
-                Alergias = p.Alergias,
-                ProblemasActivos = p.ProblemasActivos,
+                NumeroSocio = p.NumeroSocio,
+                AntecedentesFamiliares = p.AntecedentesFamiliares,
+                AntecedentesPersonales = p.AntecedentesPersonales,
             })
-            .ToListAsync(cancellationToken);
+            .ToList();
     }
 
     public async Task SaveAsync(Paciente paciente, CancellationToken cancellationToken = default)
@@ -79,5 +85,25 @@ public sealed class PacienteRepository : IPacienteRepository
         }
 
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private static string RemoveDiacritics(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return value;
+        }
+
+        var normalized = value.Normalize(NormalizationForm.FormD);
+        var builder = new StringBuilder(normalized.Length);
+        foreach (var character in normalized)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
+            {
+                builder.Append(character);
+            }
+        }
+
+        return builder.ToString().Normalize(NormalizationForm.FormC);
     }
 }

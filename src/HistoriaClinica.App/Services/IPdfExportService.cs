@@ -2,11 +2,11 @@ using HistoriaClinica.Core.Models;
 
 namespace HistoriaClinica.App.Services;
 
-public interface IHtmlExportService
+public interface IPdfExportService
 {
-    string GenerarHtml(Paciente paciente, FichaDiaria? ficha);
+    byte[] GenerarPdf(Paciente paciente, FichaDiaria? ficha);
 
-    Task<string> GenerarHtmlAsync(
+    Task<byte[]> GenerarPdfAsync(
         Paciente paciente,
         FichaDiaria? ficha,
         CancellationToken cancellationToken = default);
@@ -22,13 +22,13 @@ public interface IHtmlExportService
         FichaDiaria? ficha,
         CancellationToken cancellationToken = default);
 
-    Task ExportarHtmlAsync(
+    Task ExportarPdfAsync(
         Paciente paciente,
         FichaDiaria? ficha,
         string rutaArchivo,
         CancellationToken cancellationToken = default);
 
-    Task<string?> ExportarHtmlAsync(
+    Task<string?> ExportarPdfAsync(
         Paciente paciente,
         FichaDiaria? ficha,
         CancellationToken cancellationToken = default);

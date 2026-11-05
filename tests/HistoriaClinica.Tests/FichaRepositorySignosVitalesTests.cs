@@ -78,8 +78,8 @@ public sealed class FichaRepositorySignosVitalesTests : IDisposable
     private static Paciente CrearPaciente() => new()
     {
         Dni = "12345678",
-        FirstName = "Ana",
-        LastName = "Pérez",
+        Nombre = "Ana",
+        Apellido = "Pérez",
     };
 
     private static FichaDiaria CrearFicha() => new()

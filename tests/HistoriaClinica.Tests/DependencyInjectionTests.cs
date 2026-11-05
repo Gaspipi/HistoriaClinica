@@ -40,7 +40,7 @@ public sealed class DependencyInjectionTests : IDisposable
         services.AddSingleton<IAppNavigator, FakeAppNavigator>();
         services.AddSingleton<IClipboardService, FakeClipboardService>();
         services.AddSingleton<IDataMaintenanceService, FakeDataMaintenanceService>();
-        services.AddSingleton<IHtmlExportService, HtmlExportService>();
+        services.AddSingleton<IPdfExportService, PdfExportService>();
         services.AddTransient<MainWindowViewModel>();
         return services.BuildServiceProvider();
     }
@@ -81,7 +81,7 @@ public sealed class DependencyInjectionTests : IDisposable
         var auditoria = provider.GetRequiredService<IAuditLogRepository>();
 
         await pacientes.SaveAsync(
-            new Paciente { Dni = "12345678", FirstName = "Ana", LastName = "Pérez" },
+            new Paciente { Dni = "12345678", Nombre = "Ana", Apellido = "Pérez" },
             "ana");
 
         var logs = await auditoria.GetAllAsync();

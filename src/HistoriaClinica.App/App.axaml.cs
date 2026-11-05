@@ -58,7 +58,7 @@ public partial class App : Application
             services.AddSingleton<IClipboardService, ClipboardService>();
             services.AddSingleton<ISqliteBackupService, SqliteBackupService>();
             services.AddSingleton<IDataMaintenanceService, DataMaintenanceService>();
-            services.AddSingleton<IHtmlExportService, HtmlExportService>();
+            services.AddSingleton<IPdfExportService, PdfExportService>();
             services.AddSingleton<IUserPreferencesService, UserPreferencesService>();
             services.AddTransient<AuthViewModel>();
             services.AddTransient<AuthWindow>();

@@ -31,9 +31,14 @@ public sealed class DatabaseMigrationException : InvalidOperationException
 
 public sealed record SchemaMigrationResult(int FromVersion, int ToVersion, string? BackupPath);
 
+// Migrador propio de esquema (legacy): ya no recibe cambios. Solo se usa para
+// llevar bases anteriores al esquema 8 (el punto donde toma el relevo EF Core
+// Migrations). Para evolucionar el modelo a partir del esquema 8, agregá una
+// migración con "dotnet dotnet-ef migrations add" (manifiesto en
+// .config/dotnet-tools.json).
 public static class DatabaseSchemaMigrator
 {
-    public const int CurrentVersion = 7;
+    public const int CurrentVersion = 8;
 
     private static readonly SemaphoreSlim _migrationLock = new(1, 1);
 
@@ -132,6 +137,39 @@ public static class DatabaseSchemaMigrator
         );
         """;
 
+    // Reconstruye "Pacientes" con columnas en español y sin las columnas
+    // "Medicacion", "Alergias" y "ProblemasActivos". Conserva todos los datos,
+    // normalizando "DOB" para no heredar valores '0001-01-01' de bases viejas.
+    private const string MigrationToVersion8Sql = """
+        CREATE TABLE "Pacientes_Nuevo" (
+          "Dni" TEXT NOT NULL CONSTRAINT "PK_Pacientes" PRIMARY KEY,
+          "Nombre" TEXT NOT NULL,
+          "Apellido" TEXT NOT NULL,
+          "FechaNacimiento" TEXT NULL,
+          "Telefono" TEXT NOT NULL,
+          "ObraSocial" TEXT NOT NULL,
+          "NumeroSocio" TEXT NOT NULL,
+          "AntecedentesFamiliares" TEXT NOT NULL,
+          "AntecedentesPersonales" TEXT NOT NULL
+        );
+        INSERT INTO "Pacientes_Nuevo" ("Dni","Nombre","Apellido","FechaNacimiento","Telefono","ObraSocial","NumeroSocio","AntecedentesFamiliares","AntecedentesPersonales")
+        SELECT "Dni",
+               COALESCE("FirstName", ''),
+               COALESCE("LastName", ''),
+               CASE
+                   WHEN "DOB" IS NULL OR "DOB" = '' OR "DOB" = '0001-01-01 00:00:00' OR "DOB" = '0001-01-01' THEN NULL
+                   ELSE substr("DOB", 1, 10)
+               END,
+               COALESCE("Phone", ''),
+               COALESCE("ObraSocial", ''),
+               COALESCE("NroSocio", ''),
+               COALESCE("AntecFam", ''),
+               COALESCE("AntecPers", '')
+        FROM "Pacientes";
+        DROP TABLE "Pacientes";
+        ALTER TABLE "Pacientes_Nuevo" RENAME TO "Pacientes";
+        """;
+
     private static readonly (int Version, string Sql)[] Migrations =
     [
         (1, MigrationToVersion1Sql),
@@ -141,6 +179,7 @@ public static class DatabaseSchemaMigrator
         (5, MigrationToVersion5Sql),
         (6, MigrationToVersion6Sql),
         (7, MigrationToVersion7Sql),
+        (8, MigrationToVersion8Sql),
     ];
 
     public static async Task<int> ReadSchemaVersionAsync(
@@ -241,6 +280,18 @@ public static class DatabaseSchemaMigrator
             {
                 if (migration.Version <= targetVersion)
                 {
+                    continue;
+                }
+
+                // Bases creadas con EnsureCreated sobre el modelo nuevo ya tienen
+                // las columnas en español ("Nombre"), por lo que las migraciones
+                // que modifican la estructura de "Pacientes" (2, 4 y 8) solo deben
+                // actualizar la versión del esquema.
+                if (migration.Version is 2 or 4 or 8
+                    && await EsquemaPacientesNuevoAsync(connection, cancellationToken))
+                {
+                    await SetUserVersionAsync(connection, transaction, migration.Version, cancellationToken);
+                    targetVersion = migration.Version;
                     continue;
                 }
 
@@ -419,6 +470,16 @@ public static class DatabaseSchemaMigrator
         }
 
         return false;
+    }
+
+    // Detecta bases creadas con EnsureCreated sobre el modelo actual: si ya
+    // tienen columnas en español y no queda ninguna con los nombres viejos.
+    private static async Task<bool> EsquemaPacientesNuevoAsync(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        return !await ColumnExistsAsync(connection, "Pacientes", "FirstName", cancellationToken)
+            && await ColumnExistsAsync(connection, "Pacientes", "Nombre", cancellationToken);
     }
 
     private static async Task<int> GetUserVersionAsync(

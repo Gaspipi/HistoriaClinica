@@ -47,12 +47,12 @@ public sealed class PacienteService
             var details = JsonSerializer.Serialize(new
             {
                 paciente.Dni,
-                paciente.FirstName,
-                paciente.LastName,
-                paciente.DOB,
-                paciente.Phone,
+                paciente.Nombre,
+                paciente.Apellido,
+                paciente.FechaNacimiento,
+                paciente.Telefono,
                 paciente.ObraSocial,
-                paciente.NroSocio
+                paciente.NumeroSocio
             });
             if (existente is null)
             {
@@ -76,15 +76,12 @@ public sealed class PacienteService
     private static void Normalizar(Paciente paciente)
     {
         paciente.Dni = paciente.Dni?.Trim() ?? string.Empty;
-        paciente.FirstName = paciente.FirstName?.Trim() ?? string.Empty;
-        paciente.LastName = paciente.LastName?.Trim() ?? string.Empty;
-        paciente.Phone = paciente.Phone?.Trim() ?? string.Empty;
+        paciente.Nombre = paciente.Nombre?.Trim() ?? string.Empty;
+        paciente.Apellido = paciente.Apellido?.Trim() ?? string.Empty;
+        paciente.Telefono = paciente.Telefono?.Trim() ?? string.Empty;
         paciente.ObraSocial = paciente.ObraSocial?.Trim() ?? string.Empty;
-        paciente.NroSocio = paciente.NroSocio?.Trim() ?? string.Empty;
-        paciente.AntecFam = paciente.AntecFam?.Trim() ?? string.Empty;
-        paciente.AntecPers = paciente.AntecPers?.Trim() ?? string.Empty;
-        paciente.Medicacion = paciente.Medicacion?.Trim() ?? string.Empty;
-        paciente.Alergias = paciente.Alergias?.Trim() ?? string.Empty;
-        paciente.ProblemasActivos = paciente.ProblemasActivos?.Trim() ?? string.Empty;
+        paciente.NumeroSocio = paciente.NumeroSocio?.Trim() ?? string.Empty;
+        paciente.AntecedentesFamiliares = paciente.AntecedentesFamiliares?.Trim() ?? string.Empty;
+        paciente.AntecedentesPersonales = paciente.AntecedentesPersonales?.Trim() ?? string.Empty;
     }
 }

@@ -60,11 +60,9 @@ public sealed class PacienteSearchTests : IDisposable
         await _pacientes.SaveAsync(new Paciente
         {
             Dni = "12345678",
-            FirstName = "Ana",
-            LastName = "Pérez",
-            DOB = new DateOnly(1990, 5, 4),
-            Alergias = "Penicilina",
-            ProblemasActivos = "Asma",
+            Nombre = "Ana",
+            Apellido = "Pérez",
+            FechaNacimiento = new DateOnly(1990, 5, 4),
         });
 
         var fichas = new FichaRepository(_database.Factory);
@@ -79,10 +77,24 @@ public sealed class PacienteSearchTests : IDisposable
 
         var resultado = Assert.Single(await _pacientes.SearchAsync("Ana"));
 
-        Assert.Equal(new DateOnly(1990, 5, 4), resultado.DOB);
-        Assert.Equal("Penicilina", resultado.Alergias);
-        Assert.Equal("Asma", resultado.ProblemasActivos);
+        Assert.Equal(new DateOnly(1990, 5, 4), resultado.FechaNacimiento);
         Assert.Empty(resultado.FichasDiarias);
+    }
+
+    [Fact]
+    public async Task SearchAsync_CoincidePorPrefijoDeDni()
+    {
+        await _pacientes.SaveAsync(CrearPaciente("12345678", "Ana", "Pérez"));
+        await _pacientes.SaveAsync(CrearPaciente("23451234", "Beto", "Gómez"));
+
+        var porPrefijo = await _pacientes.SearchAsync("1234");
+
+        Assert.Equal(new[] { "12345678" }, porPrefijo.Select(paciente => paciente.Dni));
+
+        // Un fragmento en el medio del DNI no coincide (es startsWith, no contains).
+        var fragmentoMedio = await _pacientes.SearchAsync("5678");
+
+        Assert.Empty(fragmentoMedio);
     }
 
     [Fact]
@@ -94,19 +106,19 @@ public sealed class PacienteSearchTests : IDisposable
     }
 
     [Fact]
-    public async Task SearchAsync_ConMinusculas_NoCoincidePorSerCaseSensitive()
+    public async Task SearchAsync_ConMinusculas_CoincidePorSerCaseInsensitive()
     {
         await _pacientes.SaveAsync(CrearPaciente("12345678", "Ana", "Pérez"));
 
         var resultados = await _pacientes.SearchAsync("ana");
 
-        Assert.Empty(resultados);
+        Assert.Equal(new[] { "12345678" }, resultados.Select(paciente => paciente.Dni));
     }
 
     private static Paciente CrearPaciente(string dni, string nombre, string apellido) => new()
     {
         Dni = dni,
-        FirstName = nombre,
-        LastName = apellido,
+        Nombre = nombre,
+        Apellido = apellido,
     };
 }

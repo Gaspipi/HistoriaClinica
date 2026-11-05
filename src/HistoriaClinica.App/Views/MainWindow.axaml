@@ -158,20 +158,12 @@
       <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="16">
         <StackPanel Spacing="6">
           <TextBlock Text="Buscar paciente" Classes="fieldLabel" />
-          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-            <TextBlock Text="DNI" Classes="fieldLabel" VerticalAlignment="Center" Margin="0,0,4,0" />
-            <AutoCompleteBox x:Name="DniBox"
-                             Grid.Column="1"
-                             Text="{Binding Dni, Mode=TwoWay}"
-                             ItemsSource="{Binding DnisSugeridos}"
-                             MinimumPrefixLength="0"
-                             FilterMode="Contains"
-                             IsTextCompletionEnabled="False"
-                             MaxLength="8"
-                             MaxDropDownHeight="260"
-                             PlaceholderText="Ingresá los 8 dígitos"
-                             automation:AutomationProperties.Name="DNI del paciente" />
-            <Button Grid.Column="2"
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <TextBox x:Name="BuscadorBox"
+                     Text="{Binding BusquedaTexto, Mode=TwoWay}"
+                     PlaceholderText="DNI (8 dígitos) o nombre del paciente"
+                     automation:AutomationProperties.Name="Buscar paciente por DNI o nombre" />
+            <Button Grid.Column="1"
                     Classes="primary"
                     Command="{Binding BuscarCommand}"
                     automation:AutomationProperties.Name="Buscar paciente">
@@ -181,13 +173,7 @@
               </StackPanel>
             </Button>
           </Grid>
-          <StackPanel Spacing="4">
-            <TextBlock Text="Nombre o apellido" Classes="fieldLabel" />
-            <TextBox x:Name="BusquedaTextoBox"
-                     Text="{Binding BusquedaTexto, Mode=TwoWay}"
-                     PlaceholderText="Ej: Juan Pérez"
-                     automation:AutomationProperties.Name="Nombre o apellido del paciente" />
-            <Border x:Name="ResultadosBusqueda" Classes="card">
+          <Border x:Name="ResultadosBusqueda" Classes="card">
               <ItemsControl x:Name="ResultadosList"
                             ItemsSource="{Binding ResultadosBusqueda}"
                             automation:AutomationProperties.Name="Resultados de búsqueda">
@@ -203,7 +189,7 @@
                         <TextBlock Text="{Binding Converter={StaticResource PacienteDisplayConverter}}"
                                    Classes="strong"
                                    TextWrapping="Wrap" />
-                        <TextBlock Text="{Binding Dni}"
+                        <TextBlock Text="{Binding Dni, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin DNI', FallbackValue='Sin DNI', TargetNullValue='Sin DNI'}"
                                    Classes="caption" />
                       </StackPanel>
                     </Button>
@@ -211,7 +197,6 @@
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
             </Border>
-          </StackPanel>
         </StackPanel>
 
         <StackPanel x:Name="SearchActions"
@@ -278,7 +263,7 @@
                 HorizontalAlignment="Center"
                 Data="{x:Static icons:LucideIcons.UserSearch}" />
           <TextBlock Text="Buscá un paciente para comenzar" Classes="emptyTitle" />
-          <TextBlock Text="Ingresá el DNI y presioná Buscar, o creá un paciente nuevo."
+          <TextBlock Text="Buscá por DNI o por nombre, o creá un paciente nuevo."
                      Classes="emptyDescription" />
           <Button Classes="primary"
                   Command="{Binding NuevoPacienteCommand}"
@@ -380,7 +365,7 @@
 
                       <TextBlock Grid.Row="3" Text="Teléfono" Classes="caption" VerticalAlignment="Center" />
                       <TextBlock Grid.Row="3" Grid.Column="1"
-                                 Text="{Binding PacienteActual.Phone, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin teléfono', FallbackValue='Sin teléfono', TargetNullValue='Sin teléfono'}"
+                                 Text="{Binding PacienteActual.Telefono, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin teléfono', FallbackValue='Sin teléfono', TargetNullValue='Sin teléfono'}"
                                  Classes="strong" VerticalAlignment="Center" />
                     </Grid>
                   </StackPanel>
@@ -397,7 +382,7 @@
 
                       <TextBlock Grid.Row="1" Text="Nro asociado" Classes="caption" VerticalAlignment="Center" />
                       <TextBlock Grid.Row="1" Grid.Column="1"
-                                 Text="{Binding PacienteActual.NroSocio, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin número', FallbackValue='Sin número', TargetNullValue='Sin número'}"
+                                 Text="{Binding PacienteActual.NumeroSocio, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin número', FallbackValue='Sin número', TargetNullValue='Sin número'}"
                                  Classes="strong" VerticalAlignment="Center" />
                     </Grid>
                   </StackPanel>
@@ -411,47 +396,18 @@
                     <StackPanel Spacing="4">
                       <TextBlock Text="Personales" Classes="fieldLabel" />
                       <SelectableTextBlock
-                          Text="{Binding PacienteActual.AntecPers, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes personales registrados', FallbackValue='Sin antecedentes personales registrados', TargetNullValue='Sin antecedentes personales registrados'}"
+                          Text="{Binding PacienteActual.AntecedentesPersonales, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes personales registrados', FallbackValue='Sin antecedentes personales registrados', TargetNullValue='Sin antecedentes personales registrados'}"
                           Classes="valueBlock" />
                     </StackPanel>
                     <StackPanel Spacing="4">
                       <TextBlock Text="Familiares" Classes="fieldLabel" />
                       <SelectableTextBlock
-                          Text="{Binding PacienteActual.AntecFam, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes familiares registrados', FallbackValue='Sin antecedentes familiares registrados', TargetNullValue='Sin antecedentes familiares registrados'}"
+                          Text="{Binding PacienteActual.AntecedentesFamiliares, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin antecedentes familiares registrados', FallbackValue='Sin antecedentes familiares registrados', TargetNullValue='Sin antecedentes familiares registrados'}"
                           Classes="valueBlock" />
                     </StackPanel>
                   </layout:ResponsiveGrid>
                 </StackPanel>
               </Border>
-
-               <Border Classes="card">
-                 <StackPanel Spacing="12">
-                   <TextBlock Text="Medicación" Classes="sectionTitle" />
-                   <SelectableTextBlock
-                       Text="{Binding PacienteActual.Medicacion, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin medicación registrada', FallbackValue='Sin medicación registrada', TargetNullValue='Sin medicación registrada'}"
-                       Classes="valueBlock" />
-                 </StackPanel>
-               </Border>
-
-               <Border Classes="card">
-                 <StackPanel Spacing="12">
-                   <TextBlock Text="Alergias y problemas activos" Classes="sectionTitle" />
-                   <layout:ResponsiveGrid MaxColumns="2" MinColumnWidth="300" ColumnSpacing="20" RowSpacing="12">
-                     <StackPanel Spacing="4">
-                       <TextBlock Text="Alergias" Classes="fieldLabel" />
-                       <SelectableTextBlock
-                           Text="{Binding PacienteActual.Alergias, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin alergias registradas', FallbackValue='Sin alergias registradas', TargetNullValue='Sin alergias registradas'}"
-                           Classes="valueBlock" />
-                     </StackPanel>
-                     <StackPanel Spacing="4">
-                       <TextBlock Text="Problemas activos" Classes="fieldLabel" />
-                       <SelectableTextBlock
-                           Text="{Binding PacienteActual.ProblemasActivos, Converter={StaticResource EmptyTextConverter}, ConverterParameter='Sin problemas activos registrados', FallbackValue='Sin problemas activos registrados', TargetNullValue='Sin problemas activos registrados'}"
-                           Classes="valueBlock" />
-                     </StackPanel>
-                   </layout:ResponsiveGrid>
-                 </StackPanel>
-               </Border>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
@@ -573,7 +529,7 @@
                           </StackPanel>
                         </Button>
                         <Button Classes="secondary small"
-                                Command="{Binding ExportarHtmlCommand}"
+                                Command="{Binding ExportarPdfCommand}"
                                 automation:AutomationProperties.Name="Exportar ficha">
                           <StackPanel Orientation="Horizontal" Spacing="4">
                             <Path Classes="icon small onSecondary" Data="{x:Static icons:LucideIcons.FileText}" />

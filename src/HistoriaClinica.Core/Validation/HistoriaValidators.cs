@@ -13,7 +13,7 @@ public static class HistoriaValidators
             errors.Add(DniValidator.ErrorMessage);
         }
 
-        if (paciente.DOB.HasValue && paciente.DOB.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Today)
+        if (paciente.FechaNacimiento.HasValue && paciente.FechaNacimiento.Value.ToDateTime(TimeOnly.MinValue) > DateTime.Today)
         {
             errors.Add("La fecha de nacimiento no puede ser posterior a hoy.");
         }
